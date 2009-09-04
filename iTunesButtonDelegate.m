@@ -14,7 +14,7 @@
 - (void) connectionDidFinishLoading: (NSURLConnection *)connection {
 }
 
-- (void) fire: (NSTimer *)t {
+- (void) fire {
 	iTunesApplication *iTunes = [SBApplication applicationWithBundleIdentifier: @"com.apple.iTunes"];
 	if (!iTunes) {
 		[self setHidden: YES];
@@ -26,7 +26,7 @@
 	NSString *name = [NSString stringWithFormat: @"%@ (%@)", [[iTunes currentTrack] name], (state == iTunesEPlSPlaying ? @"Playing" : @"Not Playing")];
 	if (name) {
 		[self setHidden: NO];
-		priority = 15;
+		priority = 6;
 		[self setShortTitle: name];
 		[self setTitle: name];
 	} else {

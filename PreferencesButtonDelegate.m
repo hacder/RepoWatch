@@ -11,8 +11,7 @@
 }
 
 - (void) setupTimer {
-	[NSTimer scheduledTimerWithTimeInterval: 120.0 target: self selector: @selector(fire:) userInfo: nil repeats: YES];
-	[self fire: nil];
+	[self realTimer: 120];
 }
 
 - (void) beep: (id) something {
@@ -67,7 +66,7 @@
 	});
 }
 
-- (void) fire: (NSTimer *)t {
+- (void) fire {
 	priority = -100;
 	[self setTitle: @"Preferences"];
 }

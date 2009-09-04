@@ -1,4 +1,6 @@
 #import "TwitterTrendingButtonDelegate.h"
+#import "TwitterTrendView.h"
+#import <dispatch/dispatch.h>
 
 @implementation TwitterTrendingButtonDelegate
 
@@ -8,17 +10,25 @@
 
 - (void) setupTimer {
 	int delay = [[[NSUserDefaults standardUserDefaults] stringForKey: @"trendDelay"] intValue];
-	[NSTimer scheduledTimerWithTimeInterval: (1.0 * delay) target: self selector: @selector(fire:) userInfo: nil repeats: YES];
-	[self fire: nil];
+	[self realTimer: delay];
 }
 
 - (void) beep: (id) something {
 }
 
+/*
+- (void) addMenuItem {
+	[super addMenuItem];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[menuItem setView: [[TwitterTrendView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]];
+	});
+}
+*/
+
 - (void) connectionDidFinishLoading: (NSURLConnection *)connection {
 }
 
-- (void) fire: (NSTimer *)t {
+- (void) fire {
 	NSURL *url = [NSURL URLWithString: @"http://search.twitter.com/trends.json"];
 	NSURLRequest *request = [NSURLRequest requestWithURL: url];
 

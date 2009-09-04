@@ -19,7 +19,7 @@
 - (void) beep: (id) something {
 }
 
-- (void) fire: (NSTimer *)t {
+- (void) fire {
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {

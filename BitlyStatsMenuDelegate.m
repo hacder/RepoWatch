@@ -72,8 +72,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 - (void) setupTimer {
 	int delay = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyDelay"] intValue];
-	[NSTimer scheduledTimerWithTimeInterval: (1.0 * delay) target: self selector: @selector(fire:) userInfo: nil repeats: YES];
-	[self fire: nil];
+	[self realTimer: delay];
 }
 
 - (void) beep: (id) something {
@@ -90,7 +89,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 	});
 }
 
-- (void) fire: (NSTimer *)t {
+- (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSString *username = [defaults stringForKey: @"twitterUsername"];
 	NSString *password = [defaults stringForKey: @"twitterPassword"];
@@ -112,6 +111,11 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 	[request setValue: [NSString stringWithFormat: @"Basic %@", auth] forHTTPHeaderField: @"Authorization"];
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
+	if (data == nil) {
+		priority = 1;
+		[self setTitle: @"Bitly error fetching XML"];
+		return;
+	}
 	NSXMLDocument *doc  = [[NSXMLDocument alloc] initWithData: data options: 0 error: nil];
 	NSArray *statuses = [doc objectsForXQuery: @"//text" error: nil];
 
@@ -119,12 +123,19 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 	count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
 	for (; i < [statuses count]; i++) {
 		NSString *tweet = [[statuses objectAtIndex: i] stringValue];
+		NSRange r = [tweet rangeOfString: @"(via"];
+		if (r.location != NSNotFound)
+			continue;
+
 		NSArray *pieces = [tweet componentsSeparatedByString: @"//bit.ly/"];
 		if ([pieces count] == 1)
 			continue;
 		int m = 1;
 		for (; m < [pieces count]; m++) {
-			NSString *hash = [[pieces objectAtIndex: m] substringToIndex: 6];
+			NSString *tmp = [pieces objectAtIndex: m];
+			NSArray *pieces = [tmp componentsSeparatedByCharactersInSet: [[NSCharacterSet alphanumericCharacterSet] invertedSet]];
+			NSString *hash = [pieces objectAtIndex: 0];
+			
 			priority = 16;
 			[self getBitlyInfoWithHash: hash];
 			return;

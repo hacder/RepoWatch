@@ -8,14 +8,13 @@
 
 - (void) setupTimer {
 	int delay = [[[NSUserDefaults standardUserDefaults] stringForKey: @"loadDelay"] intValue];
-	[NSTimer scheduledTimerWithTimeInterval: (1.0 * delay) target: self selector: @selector(fire:) userInfo: nil repeats: YES];
-	[self fire: nil];
+	[self realTimer: delay];
 }
 
 - (void) beep: (id) something {
 }
 
-- (void) fire: (NSTimer *)t {
+- (void) fire {
 	double loads[3];
 	getloadavg(loads, 3);
 	
@@ -25,7 +24,7 @@
 	else if (loads[0] < 1.0 && loads[1] < 1.0 && loads[2] < 1.0)
 		priority = 14;
 	else
-		priority = 14;
+		priority = 17;
 	
 	NSFont *stringFont;
 	if (priority <= 10)

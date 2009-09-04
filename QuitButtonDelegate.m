@@ -14,7 +14,7 @@
 	[NSApp terminate: self];
 }
 
-- (void) fire: (NSTimer *)t {
+- (void) fire {
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {

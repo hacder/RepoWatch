@@ -1,12 +1,14 @@
 #import "MainController.h"
 #import "ButtonDelegate.h"
 #import "LoadButtonDelegate.h"
+#import "WeatherButtonDelegate.h"
 #import "TwitterTrendingButtonDelegate.h"
 #import "PreferencesButtonDelegate.h"
 #import "SeparatorButtonDelegate.h"
 #import "BitlyStatsButtonDelegate.h"
 #import "QuitButtonDelegate.h"
 #import "iTunesButtonDelegate.h"
+#import "TimeMachineAlertButtonDelegate.h"
 #import <dirent.h>
 
 @implementation MainController
@@ -18,12 +20,28 @@
 	
 	[statusItem setTitle: NSLocalizedString(@"Initializing...", @"")];
 	[statusItem setHighlightMode: YES];
-	theMenu = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
+	theMenu = [[[NSMenu alloc] initWithTitle: @"Testing"] retain];
 	
 	[statusItem setMenu: theMenu];
 	
-	NSArray *defaultKeys = [NSArray arrayWithObjects: @"twitterUsername", @"twitterPassword", @"bitlyEnabled", @"shortTwitterTrendCount", @"bitlyTwitterHistory", @"bitlyDelay", @"loadDelay", @"trendDelay", nil];
-	NSArray *defaultValues = [NSArray arrayWithObjects: @"", @"", @"YES", @"3", @"20", @"300", @"10", @"120", nil];
+	NSArray *defaultKeys = [NSArray arrayWithObjects:
+			@"twitterUsername",
+			@"twitterPassword",
+			@"bitlyEnabled",
+			@"shortTwitterTrendCount",
+			@"bitlyTwitterHistory",
+			@"bitlyDelay",
+			@"loadDelay",
+			@"trendDelay", nil];
+	NSArray *defaultValues = [NSArray arrayWithObjects:
+			@"",
+			@"",
+			@"YES",
+			@"3",
+			@"20",
+			@"300",
+			@"10",
+			@"120", nil];
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];
 }
@@ -38,6 +56,8 @@
 	[[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self];
 	[[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self];
 	[[iTunesButtonDelegate alloc] initWithTitle: @"iTunes" menu: theMenu script: nil statusItem: statusItem mainController: self];
+	[[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self];
+	[[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self];
 }
 
 - addDir: (NSString *)dir {
@@ -85,6 +105,8 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 	}
 	ButtonDelegate *bd2 = [[arr objectAtIndex: 0] target];
 	NSString *sh = [bd2 shortTitle];
+//	NSLog(@"Setting title to %@\n", sh);
+//	NSLog(@"Menu: %@\n", theMenu);
 	[statusItem setTitle: sh];
 }
 

@@ -17,7 +17,7 @@
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc;
 - (NSString *)runScriptWithArgument: (NSString *)arg;
-- (void) fire: (NSTimer *)t;
+- (void) fire;
 - (void) setupTimer;
 - (void) addMenuItem;
 - (void) forceRefresh;
@@ -25,5 +25,6 @@
 - (void) setShortTitle: (NSString *)t;
 - (void) setTitle: (NSString *)t;
 - (void) setHidden: (BOOL)b;
+- (void) realTimer: (int)t;
 
 @end

@@ -19,6 +19,17 @@
 	return self;
 }
 
+- (void) realTimer: (int)t {
+	dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(0, 0));
+	dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 1ull * t * NSEC_PER_SEC, 1ull * NSEC_PER_SEC);
+	NSLog(@"Scheduling timer for %d seconds on %@\n", t, [self shortTitle]);
+	dispatch_source_set_event_handler(timer, ^{
+		NSLog(@"Firing on %@\n", [self shortTitle]);
+		[self fire];
+	});
+	dispatch_resume(timer);
+}
+
 - (void) setHidden: (BOOL) b {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[menuItem setHidden: b];
@@ -53,18 +64,22 @@
 }
 
 - (void) forceRefresh {
-	[self fire: nil];
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[self fire];
+	});
 }
 
 - (void) addMenuItem {
-	menuItem = [menu insertItemWithTitle: title action: @selector(beep:) keyEquivalent: @"" atIndex: [menu numberOfItems]];
-	[menuItem setTarget: self];
-	[menuItem setAction: @selector(beep:)];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		menuItem = [menu insertItemWithTitle: title action: @selector(beep:) keyEquivalent: @"" atIndex: [menu numberOfItems]];
+		[menuItem retain];
+		[menuItem setTarget: self];
+		[menuItem setAction: @selector(beep:)];
+	});
 }
 
 - (void) setupTimer {
-	[NSTimer scheduledTimerWithTimeInterval: 30.0 target: self selector: @selector(fire:) userInfo: nil repeats: YES];
-	[self fire: nil];
+	[self realTimer: 30];
 }
 
 - (void) beep: (id) something {
@@ -74,20 +89,21 @@
 	[statusItem popUpStatusItemMenu: tempMenu];
 }
 
-- (void) fire: (NSTimer *)t {
+- (void) fire {
 	priority = [[self runScriptWithArgument: @"level"] intValue];
 	NSFont *stringFont;
-	if (priority <= 10)
-		stringFont = [NSFont systemFontOfSize: 9.0];
-	else if (priority <= 20)
+//	if (priority <= 10)
+//		stringFont = [NSFont systemFontOfSize: 9.0];
+//	else if (priority <= 20)
 		stringFont = [NSFont systemFontOfSize: 14.0];
-	else
-		stringFont = [NSFont systemFontOfSize: 20.0];
+//	else
+//		stringFont = [NSFont systemFontOfSize: 20.0];
 	NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject: stringFont forKey: NSFontAttributeName];
 	NSString *mainString = [self runScriptWithArgument: @"update"];
 	NSAttributedString *lowerString = [[NSAttributedString alloc] initWithString: mainString attributes: stringAttributes];
 	title = mainString;
 	[menuItem setAttributedTitle: lowerString];
+	[self setShortTitle: mainString];
 	[mainController rearrange];
 }
 
