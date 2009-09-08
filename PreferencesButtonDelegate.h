@@ -4,14 +4,16 @@
 
 @interface PreferencesButtonDelegate : ButtonDelegate <NSWindowDelegate> {
 	NSWindow *window;
-	NSTextField *_twitterUsername;
-	NSSecureTextField *_twitterPassword;
-	NSButton *_bitlyEnabled;
 	NSUserDefaults *defaults;
+	IBOutlet id _twitterUsername;
+	IBOutlet id _twitterPassword;
+	NSArray *_plugins;
 @public
 	NSString *twitterUsername;
 	NSString *twitterPassword;
-	BOOL bitlyEnabled;
 }
+
+- initWithTitle: (NSString *)t menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc plugins: (NSArray *)plugins;
+
 
 @end

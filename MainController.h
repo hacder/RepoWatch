@@ -4,6 +4,7 @@
 @interface MainController : NSObject {
 	NSStatusItem *statusItem;
 	NSMenu *theMenu;
+	NSMutableArray *plugins;
 }
 
 - init;

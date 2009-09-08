@@ -11,6 +11,21 @@
 	[self realTimer: delay];
 }
 
+- (NSView *) preferences {
+	if (_prefView != nil)
+		return _prefView;
+
+	NSNib *loadNib = [[NSNib alloc] initWithNibNamed: @"load" bundle: nil];
+	[loadNib retain];
+	NSArray *arr2;
+	[loadNib instantiateNibWithOwner: self topLevelObjects: &arr2];
+	NSLog(@"Pref view objects: %@\n", arr2);
+		
+	_prefView = [arr2 objectAtIndex: 1];
+	[_prefView retain];
+	return _prefView;
+}
+
 - (void) beep: (id) something {
 }
 
@@ -21,7 +36,7 @@
 	NSString *status = [[NSString alloc] initWithFormat: @"Load: %0.2f %0.2f %0.2f", loads[0], loads[1], loads[2]];		
 	if (loads[0] < 0.1 && loads[1] < 0.1 && loads[2] < 0.1)
 		priority = 6;
-	else if (loads[0] < 1.0 && loads[1] < 1.0 && loads[2] < 1.0)
+	else if (loads[0] < 1.0)
 		priority = 14;
 	else
 		priority = 17;

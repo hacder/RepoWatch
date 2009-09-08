@@ -10,6 +10,7 @@
 	NSMenu *menu;
 	NSStatusItem *statusItem;
 	MainController *mainController;
+	NSView *_prefView;
 @public
 	NSString *title;
 	int priority;
@@ -26,5 +27,6 @@
 - (void) setTitle: (NSString *)t;
 - (void) setHidden: (BOOL)b;
 - (void) realTimer: (int)t;
+- (NSView *) preferences;
 
 @end

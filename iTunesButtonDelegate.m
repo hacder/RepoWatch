@@ -23,14 +23,14 @@
 	}
 	
 	iTunesEPlS state = [iTunes playerState];
-	NSString *name = [NSString stringWithFormat: @"%@ (%@)", [[iTunes currentTrack] name], (state == iTunesEPlSPlaying ? @"Playing" : @"Not Playing")];
-	if (name) {
+	if ([[iTunes currentTrack] name] == NULL) {
+		[self setHidden: YES];
+	} else {
+		NSString *name = [NSString stringWithFormat: @"%@ (%@)", [[iTunes currentTrack] name], (state == iTunesEPlSPlaying ? @"Playing" : @"Not Playing")];
 		[self setHidden: NO];
 		priority = 6;
 		[self setShortTitle: name];
 		[self setTitle: name];
-	} else {
-		[self setHidden: YES];
 	}
 		
 }

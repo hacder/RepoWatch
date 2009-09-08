@@ -19,6 +19,10 @@
 	return self;
 }
 
+- (NSView *) preferences {
+	return nil;
+}
+
 - (void) realTimer: (int)t {
 	dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(0, 0));
 	dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 1ull * t * NSEC_PER_SEC, 1ull * NSEC_PER_SEC);
@@ -83,10 +87,16 @@
 }
 
 - (void) beep: (id) something {
-	NSString *s = [self runScriptWithArgument: @"click"];
-	NSMenu *tempMenu = [[NSMenu alloc] initWithTitle: @"Temp"];
-	[tempMenu insertItemWithTitle: s action: nil keyEquivalent: @"" atIndex: 0];
-	[statusItem popUpStatusItemMenu: tempMenu];
+	if (script == nil) {
+		// If we're not a script, and we haven't overridden this function, just "refresh" the
+		// display.
+		[self fire];
+	} else {
+		NSString *s = [self runScriptWithArgument: @"click"];
+		NSMenu *tempMenu = [[NSMenu alloc] initWithTitle: @"Temp"];
+		[tempMenu insertItemWithTitle: s action: nil keyEquivalent: @"" atIndex: 0];
+		[statusItem popUpStatusItemMenu: tempMenu];
+	}
 }
 
 - (void) fire {

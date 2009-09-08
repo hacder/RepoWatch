@@ -4,8 +4,9 @@
 @implementation BitlyStatsButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
-	[super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	last_clicks = -1;
+	return self;
 }
 
 static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -59,13 +60,14 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 		return;
 
 	NSString *objOneString = [[counts objectAtIndex: 0] stringValue];
+	NSString *objTwoString = [[directs objectAtIndex: 0] stringValue];
 
-	int clicks = [objOneString intValue];
+	int clicks = [objTwoString intValue];
 	if (last_clicks != -1 && last_clicks != clicks)
 		NSBeep();
 	last_clicks = clicks;
 
-	NSString *tit = [[NSString alloc] initWithFormat: @"Bitly: %@ %@ clicks, %@ direct", hash, objOneString, [[directs objectAtIndex: 0] stringValue]];
+	NSString *tit = [[NSString alloc] initWithFormat: @"Bitly: %@ %@ clicks, %@ direct", hash, objOneString, objTwoString];
 	[self setShortTitle: tit];
 	[self setTitle: tit];
 }

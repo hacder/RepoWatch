@@ -43,21 +43,22 @@
 			@"10",
 			@"120", nil];
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
-	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];
+	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
+	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
 }
 
 - initWithDirectory: (NSString *)dir {
 	[self init];
 	[self addDir: dir];
-	[[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self];
-	[[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self];
-	[[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self];
-	[[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self];
-	[[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self];
-	[[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self];
-	[[iTunesButtonDelegate alloc] initWithTitle: @"iTunes" menu: theMenu script: nil statusItem: statusItem mainController: self];
-	[[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self];
-	[[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self];
+	[plugins addObject: [[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
+	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+//	[plugins addObject: [[iTunesButtonDelegate alloc] initWithTitle: @"iTunes" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+//	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 }
 
 - addDir: (NSString *)dir {
@@ -96,18 +97,20 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 }
 
 - (void) rearrange {
-	NSArray *arr = [[theMenu itemArray] sortedArrayUsingFunction: sortMenuItems context: NULL];
-	int i;
-	for (i = 0; i < [arr count]; i++) {
-		ButtonDelegate *bd = [[arr objectAtIndex: i] target];
-		[theMenu removeItem: [arr objectAtIndex: i]];
-		[theMenu insertItem: [arr objectAtIndex: i] atIndex: i];
-	}
-	ButtonDelegate *bd2 = [[arr objectAtIndex: 0] target];
-	NSString *sh = [bd2 shortTitle];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSArray *arr = [[theMenu itemArray] sortedArrayUsingFunction: sortMenuItems context: NULL];
+		int i;
+		for (i = 0; i < [arr count]; i++) {
+			ButtonDelegate *bd = [[arr objectAtIndex: i] target];
+			[theMenu removeItem: [arr objectAtIndex: i]];
+			[theMenu insertItem: [arr objectAtIndex: i] atIndex: i];
+		}
+		ButtonDelegate *bd2 = [[arr objectAtIndex: 0] target];
+		NSString *sh = [bd2 shortTitle];
 //	NSLog(@"Setting title to %@\n", sh);
 //	NSLog(@"Menu: %@\n", theMenu);
-	[statusItem setTitle: sh];
+		[statusItem setTitle: sh];
+	});
 }
 
 @end

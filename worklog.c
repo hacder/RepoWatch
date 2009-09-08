@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 int main(int argc, char *argv[]) {
 	char *line = (char *)malloc(1024);
@@ -39,22 +40,31 @@ int main(int argc, char *argv[]) {
 			running = 0;
 		if (strstr(line, "requested state [")) {
 			char *state = strstr(line, "requested state [") + 17;
-			if (strncmp("CS_NORMAL", state, strlen("CS_NORMAL")) == 0) {
+			if (logging == 0 && strncmp("CS_NORMAL", state, strlen("CS_NORMAL")) == 0) {
+				logging = 1;
+				if (today) {
+					if (argc == 1)
+						printf("%s turns into %d\n", line, cur_time);
+					start_time = cur_time;
+				}
+			} else if (logging == 0 && strncmp("CS_RESUME", state, strlen("CS_RESUME")) == 0) {
 				logging = 1;
 				if (today)
 					start_time = cur_time;
-			} else if (strncmp("CS_RESUME", state, strlen("CS_RESUME")) == 0) {
-				logging = 1;
-				if (today)
-					start_time = cur_time;
-			} else if (strncmp("CS_SUSPENDED", state, strlen("CS_SUSPENDED")) == 0) {
+			} else if (logging == 1 && strncmp("CS_SUSPENDED", state, strlen("CS_SUSPENDED")) == 0) {
 				logging = 0;
-				if (today)
+				if (today) {
+					if (argc == 1)
+						printf("Found time block %d to %d (%d)", start_time, cur_time, (cur_time - start_time));
 					logged_time += (cur_time - start_time);
-			} else if (strncmp("CS_DISCONNECTED", state, strlen("CS_DISCONNECTED")) == 0) {
+				}
+			} else if (logging == 1 && strncmp("CS_DISCONNECTED", state, strlen("CS_DISCONNECTED")) == 0) {
 				logging = 0;
-				if (today)
+				if (today) {
+					if (argc == 1)
+						printf("Found time block %d to %d (%d)", start_time, cur_time, (cur_time - start_time));
 					logged_time += (cur_time - start_time);
+				}
 			}
 		}
 	}
@@ -69,8 +79,15 @@ int main(int argc, char *argv[]) {
 	if (logging)
 		logged_time += (seconds - start_time);
 	
+	if (argc == 1)
+		return;
+		
 	if (strcmp("update", argv[1]) == 0) {
-		printf("%s: Logged %02d:%02d", logging ? "Working" : "Idle", logged_time / (60 * 60), (logged_time - (logged_time / (60 * 60))) / 60);
+		printf("%s: Logged %02d:%02d", logging ? "Working" : "Idle",
+				(int)floor(logged_time / 3600.0),
+				(int)floor((logged_time -
+					(floor(logged_time / 3600.0) * 3600)
+				) / 60.0));
 	} else if (strcmp("level", argv[1]) == 0) {
 		if (logging)
 			printf("30");
