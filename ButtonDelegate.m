@@ -6,6 +6,7 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super init];
 	script = sc;
+	[script retain];
 	mainController = mc;
 	statusItem = si;
 	menu = m;
@@ -119,7 +120,8 @@
 	if (script != nil) {
 		task = [[NSTask alloc] init];
 		[task setLaunchPath: script];
-		[task setArguments: [NSArray arrayWithObject: arg]];
+		NSArray *arr = [NSArray arrayWithObject: arg];
+		[task setArguments: arr];
 
 		NSPipe *pipe = [NSPipe pipe];
 		[task setStandardOutput: pipe];
@@ -130,6 +132,7 @@
 		
 		NSData *data = [file readDataToEndOfFile];
 		NSString *string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+		[task release];
 		return string;
 	}
 	return @"Error";
