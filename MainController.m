@@ -55,7 +55,7 @@
 	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-//	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 //	[plugins addObject: [[iTunesButtonDelegate alloc] initWithTitle: @"iTunes" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 //	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
@@ -88,12 +88,14 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 }
 
 - (void) reset {
-	NSArray *arr = [theMenu itemArray];
-	int i;
-	for (i = 0; i < [arr count]; i++) {
-		ButtonDelegate *bd = [[arr objectAtIndex: i] target];
-		[bd forceRefresh];
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSArray *arr = [theMenu itemArray];
+		int i;
+		for (i = 0; i < [arr count]; i++) {
+			ButtonDelegate *bd = [[arr objectAtIndex: i] target];
+			[bd forceRefresh];
+		}
+	});
 }
 
 - (void) rearrange {

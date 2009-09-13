@@ -101,15 +101,13 @@
 
 - (void) fire {
 	priority = [[self runScriptWithArgument: @"level"] intValue];
+	
 	NSFont *stringFont;
-//	if (priority <= 10)
-//		stringFont = [NSFont systemFontOfSize: 9.0];
-//	else if (priority <= 20)
-		stringFont = [NSFont systemFontOfSize: 14.0];
-//	else
-//		stringFont = [NSFont systemFontOfSize: 20.0];
+	stringFont = [NSFont systemFontOfSize: 14.0];
 	NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject: stringFont forKey: NSFontAttributeName];
+
 	NSString *mainString = [self runScriptWithArgument: @"update"];
+	
 	NSAttributedString *lowerString = [[NSAttributedString alloc] initWithString: mainString attributes: stringAttributes];
 	title = mainString;
 	[menuItem setAttributedTitle: lowerString];
