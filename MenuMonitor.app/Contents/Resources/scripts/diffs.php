@@ -7,7 +7,7 @@ switch ($argv[1]) {
 	case "update":
 		chdir($git_dir);
 		$result = shell_exec("git diff | diffstat | tail -n 1");
-		echo "$git_dir: ";
+		echo basename($git_dir) . ": ";
 		echo trim($result);
 		break;
 	case "level":

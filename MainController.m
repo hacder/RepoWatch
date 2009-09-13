@@ -55,7 +55,7 @@
 	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+//	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 //	[plugins addObject: [[iTunesButtonDelegate alloc] initWithTitle: @"iTunes" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 //	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
@@ -107,8 +107,6 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 		}
 		ButtonDelegate *bd2 = [[arr objectAtIndex: 0] target];
 		NSString *sh = [bd2 shortTitle];
-//	NSLog(@"Setting title to %@\n", sh);
-//	NSLog(@"Menu: %@\n", theMenu);
 		[statusItem setTitle: sh];
 	});
 }
