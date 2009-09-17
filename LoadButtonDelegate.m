@@ -39,7 +39,7 @@
 	double loads[3];
 	getloadavg(loads, 3);
 	
-	NSString *status = [[NSString alloc] initWithFormat: @"Load: %0.2f %0.2f %0.2f", loads[0], loads[1], loads[2]];		
+	NSString *status = [[NSString alloc] initWithFormat: @"Load: %0.2f %0.2f %0.2f", loads[0], loads[1], loads[2]];
 	if (loads[0] < 0.1 && loads[1] < 0.1 && loads[2] < 0.1)
 		priority = 6;
 	else if (loads[0] < 1.0)
@@ -55,9 +55,9 @@
 	else
 		stringFont = [NSFont systemFontOfSize: 20.0];
 	NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject: stringFont forKey: NSFontAttributeName];
-	NSAttributedString *lowerString = [[NSAttributedString alloc] initWithString: status attributes: stringAttributes];
 	[self setShortTitle: status];
 	[self setTitle: status];
+	[status release];
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {

@@ -11,6 +11,7 @@
 	statusItem = si;
 	menu = m;
 	title = s;
+	[title retain];
 	shortTitle = s;
 	priority = 0;
 	[self addMenuItem];
@@ -101,7 +102,9 @@
 }
 
 - (void) fire {
-	priority = [[self runScriptWithArgument: @"level"] intValue];
+	NSString *priString = [self runScriptWithArgument: @"level"];
+	priority = [priString intValue];
+	[priString release];
 	
 	NSFont *stringFont;
 	stringFont = [NSFont systemFontOfSize: 14.0];
@@ -110,8 +113,12 @@
 	NSString *mainString = [self runScriptWithArgument: @"update"];
 	
 	NSAttributedString *lowerString = [[NSAttributedString alloc] initWithString: mainString attributes: stringAttributes];
+	[title release];
 	title = mainString;
+	[title retain];
+	
 	[menuItem setAttributedTitle: lowerString];
+	[lowerString release];
 	[self setShortTitle: mainString];
 	[mainController rearrange];
 }
