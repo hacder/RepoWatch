@@ -104,7 +104,7 @@
 
 - (void) fire {
 	NSString *priString = [self runScriptWithArgument: @"level"];
-	priority = [priString intValue];
+	[self setPriority: [priString intValue]];
 	[priString release];
 	
 	NSFont *stringFont;
