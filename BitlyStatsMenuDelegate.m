@@ -180,7 +180,9 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 		NSArray *pieces = [tweet componentsSeparatedByString: @"//bit.ly/"];
 		if ([pieces count] == 1)
 			continue;
+
 		int m = 1;
+		NSLog(@"Found bitly link, posted %f hours ago", timeSince / 3600);
 		for (; m < [pieces count]; m++) {
 			NSString *tmp = [pieces objectAtIndex: m];
 			NSArray *pieces = [tmp componentsSeparatedByCharactersInSet: [[NSCharacterSet alphanumericCharacterSet] invertedSet]];
