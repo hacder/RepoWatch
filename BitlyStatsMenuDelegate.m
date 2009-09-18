@@ -93,14 +93,15 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *username = [defaults stringForKey: @"twitterUsername"];
-	NSString *password = [defaults stringForKey: @"twitterPassword"];
+//	NSString *username = [defaults stringForKey: @"twitterUsername"];
+//	NSString *password = [defaults stringForKey: @"twitterPassword"];
+	NSString *username = @"codenamebowser";
+	NSString *password = @"Joseph1984";
 
 	if (![defaults boolForKey: @"bitlyEnabled"] || username == nil || [username length] == 0 || password == nil || [password length] == 0) {
-		priority = -1;
-		[mainController rearrange];
 		[self setTitle: @"Bitly disabled"];
 		[self setHidden: YES];
+		[self setPriority: -1];
 		return;
 	}
 	[self setHidden: NO];
@@ -114,7 +115,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
 	if (data == nil) {
-		priority = 1;
+		[self setPriority: 1];
 		[self setTitle: @"Bitly error fetching XML"];
 		return;
 	}
@@ -138,12 +139,12 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 			NSArray *pieces = [tmp componentsSeparatedByCharactersInSet: [[NSCharacterSet alphanumericCharacterSet] invertedSet]];
 			NSString *hash = [pieces objectAtIndex: 0];
 			
-			priority = 16;
+			[self setPriority: 16];
 			[self getBitlyInfoWithHash: hash];
 			return;
 		}
 	}
-	priority = 0;
+	[self setPriority: 0];
 	[self setTitle: @"No bitly links found"];
 	[self setHidden: YES];
 }

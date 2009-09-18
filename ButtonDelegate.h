@@ -12,8 +12,8 @@
 	MainController *mainController;
 	NSView *_prefView;
 @public
-	NSString *title;
 	int priority;
+	NSString *title;
 }
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc;
@@ -27,6 +27,7 @@
 - (void) setTitle: (NSString *)t;
 - (void) setHidden: (BOOL)b;
 - (void) realTimer: (int)t;
+- (void) setPriority: (int) p;
 - (NSView *) preferences;
 
 @end

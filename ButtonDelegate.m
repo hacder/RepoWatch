@@ -49,15 +49,16 @@
 	// This needs to be done on the main queue.
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[menuItem setTitle: t];
-		[mainController rearrange];
 	});
 }
 
+/*
 - (void) forceRearrage {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[mainController rearrange];
 	});
 }
+*/
 
 - (void) setShortTitle: (NSString *)t {
 	[shortTitle release];
@@ -120,6 +121,12 @@
 	[menuItem setAttributedTitle: lowerString];
 	[lowerString release];
 	[self setShortTitle: mainString];
+}
+
+- (void) setPriority: (int) p {
+	if (priority == p)
+		return;
+	priority = p;
 	[mainController rearrange];
 }
 

@@ -1,19 +1,18 @@
 #import "MainController.h"
 #import "ButtonDelegate.h"
 #import "LoadButtonDelegate.h"
-#import "WeatherButtonDelegate.h"
 #import "TwitterTrendingButtonDelegate.h"
 #import "PreferencesButtonDelegate.h"
 #import "SeparatorButtonDelegate.h"
 #import "BitlyStatsButtonDelegate.h"
 #import "QuitButtonDelegate.h"
-#import "iTunesButtonDelegate.h"
 #import "TimeMachineAlertButtonDelegate.h"
 #import <dirent.h>
 
 @implementation MainController
 
 - init {
+	self = [super init];
 	NSStatusBar *bar = [NSStatusBar systemStatusBar];
 	statusItem = [bar statusItemWithLength: NSVariableStatusItemLength];
 	[statusItem retain];
@@ -45,6 +44,7 @@
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
+	return self;
 }
 
 - initWithDirectory: (NSString *)dir {
@@ -56,9 +56,7 @@
 	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-//	[plugins addObject: [[iTunesButtonDelegate alloc] initWithTitle: @"iTunes" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-//	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 }
 
 - addDir: (NSString *)dir {
@@ -98,8 +96,22 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 	});
 }
 
+- (void) testpopup {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSLog(@"Pre");
+		SEL click = [statusItem action];
+		
+		NSLog(@"Click is %@", click);
+		[statusItem performSelector: click];
+		
+//		[statusItem popUpStatusItemMenu: theMenu];
+		NSLog(@"Post");
+	});
+}
+
 - (void) rearrange {
 	dispatch_async(dispatch_get_main_queue(), ^{
+		NSLog(@"Rearranging");
 		NSArray *arr = [[theMenu itemArray] sortedArrayUsingFunction: sortMenuItems context: NULL];
 		int i;
 		for (i = 0; i < [arr count]; i++) {

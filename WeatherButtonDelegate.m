@@ -3,7 +3,8 @@
 @implementation WeatherButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
-	[super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	return self;
 }
 
 - (void) setupTimer {
@@ -49,12 +50,12 @@
 	NSArray *s = [[doc nodesForXPath: @"//hazards/hazard-conditions" error: nil] filteredArrayUsingPredicate: pred];
 	
 	NSString *t = [NSString stringWithFormat: @"Temp: %dF Precip: %d%%%@", temperature, precip, [s count] == 0 ? @"" : @" Warnings!"];
-	if ([s count])
-		priority = 29;
-	else
-		priority = 2;
 	[self setTitle: t];
 	[self setShortTitle: t];
+	if ([s count])
+		[self setPriority: 29];
+	else
+		[self setPriority: 2];
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {

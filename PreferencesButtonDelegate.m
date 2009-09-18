@@ -5,6 +5,7 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc plugins: (NSArray *)plugins {
 	self = [self initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	_plugins = plugins;
+	[self setPriority: -100];
 	return self;
 }
 
@@ -77,7 +78,6 @@
 }
 
 - (void) fire {
-	priority = -100;
 	[self setTitle: @"Preferences"];
 }
 

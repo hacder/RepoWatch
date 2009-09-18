@@ -5,7 +5,8 @@
 @implementation TwitterTrendingButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
-	[super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	return self;
 }
 
 - (void) setupTimer {
@@ -39,26 +40,44 @@
 	[res addObjectsFromArray: results];
 	[res removeObjectAtIndex: 0];
 	
-	int i;
+	int i, z = 0;
 	NSMutableString *r = [NSMutableString stringWithCapacity: 10];
 	NSMutableString *r2 = [NSMutableString stringWithCapacity: 20];
 	
 	int num = [[[NSUserDefaults standardUserDefaults] stringForKey: @"shortTwitterTrendCount"] intValue];
+
+	NSCharacterSet *cs = [NSCharacterSet characterSetWithCharactersInString: @"\"#"];
 	for (i = 0; i < [res count]; i++) {
 		NSRange ra = [[res objectAtIndex: i] rangeOfString: @"\""];
-		if (i < num) {
-			[r appendString: [[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\"#"]]];
-			if (i != num - 1)
+		NSString *potential = [[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: cs];
+
+// TODO: Add recurring trending topics here
+// TODO: Put this behind a preference
+		if (![potential caseInsensitiveCompare: @"musicmonday"])
+			continue;
+		if (![potential caseInsensitiveCompare: @"followfriday"])
+			continue;
+		if (![potential caseInsensitiveCompare: @"goodnight"])
+			continue;
+		if (![potential caseInsensitiveCompare: @"lmao"])
+			continue;
+
+		if (z < num) {
+			[r appendString: potential];
+			z++;
+			if (z != num - 1)
 				[r appendString: @", "];
 		}
-		[r2 appendString: [[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\"#"]]];
+		[r2 appendString: potential];
 		if (i != [res count] - 1)
 			[r2 appendString: @", "];
 	}
 	
-	priority = 15;
 	[self setShortTitle: r];
 	[self setTitle: r2];
+	[self setPriority: 15];
+	
+//	[mainController testpopup];
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {

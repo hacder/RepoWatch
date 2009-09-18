@@ -12,5 +12,6 @@
 - addDir: (NSString *)s;
 - (void) rearrange;
 - (void) reset;
+- (void) testpopup;
 
 @end

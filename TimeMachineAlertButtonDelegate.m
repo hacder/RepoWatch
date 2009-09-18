@@ -3,7 +3,8 @@
 @implementation TimeMachineAlertButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
-	[super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	return self;
 }
 
 - (void) beep: (id) something {
@@ -33,13 +34,15 @@
 	NSString *titular;
 	if (intHours > 10) {
 		titular = [NSString stringWithFormat: @"TimeMachine Overdue!: %02dh:%02dm", intHours, intMinutes];
-		priority = 26;
+		[self setShortTitle: titular];
+		[self setTitle: titular];
+		[self setPriority: 26];
 	} else {
 		titular = [NSString stringWithFormat: @"TimeMachine last backup: %02dh:%02dm", intHours, intMinutes];
-		priority = 3;
+		[self setShortTitle: titular];
+		[self setTitle: titular];
+		[self setPriority: 3];
 	}
-	[self setShortTitle: titular];
-	[self setTitle: titular];
 }
 
 @end

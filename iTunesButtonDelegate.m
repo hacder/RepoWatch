@@ -5,7 +5,9 @@
 @implementation iTunesButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
-	[super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	[self setPriority: 6];
+	return self;
 }
 
 - (void) beep: (id) something {
@@ -28,7 +30,6 @@
 	} else {
 		NSString *name = [NSString stringWithFormat: @"%@ (%@)", [[iTunes currentTrack] name], (state == iTunesEPlSPlaying ? @"Playing" : @"Not Playing")];
 		[self setHidden: NO];
-		priority = 6;
 		[self setShortTitle: name];
 		[self setTitle: name];
 	}
