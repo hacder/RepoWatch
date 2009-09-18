@@ -51,7 +51,6 @@
 		NSRange ra = [[res objectAtIndex: i] rangeOfString: @"\""];
 		NSString *potential = [[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: cs];
 
-// TODO: Add recurring trending topics here
 // TODO: Put this behind a preference
 		if (![potential caseInsensitiveCompare: @"musicmonday"])
 			continue;
@@ -60,6 +59,10 @@
 		if (![potential caseInsensitiveCompare: @"goodnight"])
 			continue;
 		if (![potential caseInsensitiveCompare: @"lmao"])
+			continue;
+		if (![potential caseInsensitiveCompare: @"follow friday"])
+			continue;
+		if (![potential caseInsensitiveCompare: @"music monday"])
 			continue;
 
 		if (z < num) {
