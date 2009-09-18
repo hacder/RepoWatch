@@ -64,6 +64,8 @@
 			continue;
 		if (![potential caseInsensitiveCompare: @"music monday"])
 			continue;
+		if (![potential caseInsensitiveCompare: @"TGIF"])
+			continue;
 
 		if (z < num) {
 			[r appendString: potential];

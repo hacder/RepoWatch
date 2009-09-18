@@ -104,8 +104,6 @@
 
 - (void) fire {
 	NSString *priString = [self runScriptWithArgument: @"level"];
-	[self setPriority: [priString intValue]];
-	[priString release];
 	
 	NSFont *stringFont;
 	stringFont = [NSFont systemFontOfSize: 14.0];
@@ -121,6 +119,8 @@
 	[menuItem setAttributedTitle: lowerString];
 	[lowerString release];
 	[self setShortTitle: mainString];
+	[self setPriority: [priString intValue]];
+	[priString release];
 }
 
 - (void) setPriority: (int) p {
