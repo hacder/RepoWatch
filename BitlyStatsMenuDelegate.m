@@ -91,6 +91,34 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 	});
 }
 
+- (int) monthNameToInt: (NSString *)name {
+	if ([name isEqualToString: @"Jan"])
+		return 1;
+	if ([name isEqualToString: @"Feb"])
+		return 2;
+	if ([name isEqualToString: @"Mar"])
+		return 3;
+	if ([name isEqualToString: @"Apr"])
+		return 4;
+	if ([name isEqualToString: @"May"])
+		return 5;
+	if ([name isEqualToString: @"Jun"])
+		return 6;
+	if ([name isEqualToString: @"Jul"])
+		return 7;
+	if ([name isEqualToString: @"Aug"])
+		return 8;
+	if ([name isEqualToString: @"Sep"])
+		return 9;
+	if ([name isEqualToString: @"Oct"])
+		return 10;
+	if ([name isEqualToString: @"Nov"])
+		return 11;
+	if ([name isEqualToString: @"Dec"])
+		return 12;
+	return 0;
+}
+
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 //	NSString *username = [defaults stringForKey: @"twitterUsername"];
@@ -121,10 +149,29 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 	}
 	NSXMLDocument *doc  = [[NSXMLDocument alloc] initWithData: data options: 0 error: nil];
 	NSArray *statuses = [doc objectsForXQuery: @"//text" error: nil];
+	NSArray *status_times = [doc objectsForXQuery: @"//status/created_at" error: nil];
 
 	int i = 0;
 	count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
 	for (; i < [statuses count]; i++) {
+		NSDateComponents *components = [[NSDateComponents alloc] init];
+		NSArray *stringPieces = [[[status_times objectAtIndex: i] stringValue] componentsSeparatedByString: @" "];
+		[components setYear: [[stringPieces objectAtIndex: 5] intValue]];
+		[components setDay: [[stringPieces objectAtIndex: 2] intValue]];
+		[components setMonth: [self monthNameToInt: [stringPieces objectAtIndex: 1]]];
+		stringPieces = [[stringPieces objectAtIndex: 3] componentsSeparatedByString: @":"];
+		[components setHour: [[stringPieces objectAtIndex: 0] intValue]];
+		[components setMinute: [[stringPieces objectAtIndex: 1] intValue]];
+		[components setSecond: [[stringPieces objectAtIndex: 2] intValue]];
+		
+		NSTimeZone *tz = [NSTimeZone timeZoneWithName: @"GMT"];
+		NSCalendar *greg = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
+		[greg setTimeZone: tz];
+		NSDate *tweetDate = [greg dateFromComponents: components];
+		NSTimeInterval timeSince = [tweetDate timeIntervalSinceNow] * -1;
+		if (timeSince / 3600 >= 24)
+			continue;
+
 		NSString *tweet = [[statuses objectAtIndex: i] stringValue];
 		NSRange r = [tweet rangeOfString: @"(via"];
 		if (r.location != NSNotFound)
