@@ -186,8 +186,8 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 			NSArray *pieces = [tmp componentsSeparatedByCharactersInSet: [[NSCharacterSet alphanumericCharacterSet] invertedSet]];
 			NSString *hash = [pieces objectAtIndex: 0];
 			
-			[self setPriority: 16];
 			[self getBitlyInfoWithHash: hash];
+			[self setPriority: 16];
 			return;
 		}
 	}
