@@ -13,6 +13,7 @@
 	title = s;
 	[title retain];
 	shortTitle = s;
+	[shortTitle retain];
 	priority = 0;
 	[self addMenuItem];
 	[self setupTimer];
@@ -43,12 +44,12 @@
 }
 
 - (void) setTitle: (NSString *)t {
-	[title release];
-	title = t;
-	[title retain];
 	// This needs to be done on the main queue.
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[menuItem setTitle: t];
+		[title release];
+		title = t;
+		[title retain];
 	});
 }
 
@@ -107,17 +108,10 @@
 	
 	NSFont *stringFont;
 	stringFont = [NSFont systemFontOfSize: 14.0];
-	NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject: stringFont forKey: NSFontAttributeName];
 
 	NSString *mainString = [self runScriptWithArgument: @"update"];
 	
-	NSAttributedString *lowerString = [[NSAttributedString alloc] initWithString: mainString attributes: stringAttributes];
-	[title release];
-	title = mainString;
-	[title retain];
-	
-	[menuItem setAttributedTitle: lowerString];
-	[lowerString release];
+	[self setTitle: mainString];
 	[self setShortTitle: mainString];
 	[self setPriority: [priString intValue]];
 	[priString release];
