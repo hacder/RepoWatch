@@ -132,7 +132,6 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 		[self setPriority: -1];
 		return;
 	}
-	[self setHidden: NO];
 
 	NSString *auth = [self base64Username: username password: password];
 	
@@ -190,6 +189,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 			
 			[self getBitlyInfoWithHash: hash];
 			[self setPriority: 16];
+			[self setHidden: NO];
 			return;
 		}
 	}
