@@ -18,8 +18,6 @@
 }
 
 - (void) fire {
-	if (dispatch_get_current_queue() == dispatch_get_main_queue())
-		NSLog(@"Warning: TimeMachine plugin is running fire on main queue");
 	NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: @"/var/db/.TimeMachine.Results.plist"];
 	if (!dict) {
 		[self setHidden: TRUE];
