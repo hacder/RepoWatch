@@ -40,17 +40,17 @@
 	double loads[3];
 	getloadavg(loads, 3);
 	
-	NSString *status = [[NSString alloc] initWithFormat: @"Load: %0.2f %0.2f %0.2f", loads[0], loads[1], loads[2]];
+	NSString *status = [[NSString alloc] initWithFormat: @"Load: %0.2f %0.2f %0.2f", loads[0], loads[1], loads[2]];	
+	[self setShortTitle: status];
+	[self setTitle: status];
+	[status release];
+
 	if (loads[0] < 0.1 && loads[1] < 0.1 && loads[2] < 0.1)
 		[self setPriority: 6];
 	else if (loads[0] < 1.0)
 		[self setPriority: 14];
 	else
 		[self setPriority: 17];
-	
-	[self setShortTitle: status];
-	[self setTitle: status];
-	[status release];
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {
