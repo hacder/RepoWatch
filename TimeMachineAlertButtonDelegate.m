@@ -18,7 +18,19 @@
 }
 
 - (void) fire {
-	NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: @"/var/db/.TimeMachine.Results.plist"];
+	NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: @"/Library/Preferences/com.apple.TimeMachine.plist"];
+	if (!dict) {
+		[self setHidden: TRUE];
+		return;
+	}
+	
+	BOOL b = [[dict objectForKey: @"AutoBackup"] boolValue];
+	if (b == NO) {
+		[self setHidden: TRUE];
+		return;
+	}
+	
+	dict = [NSDictionary dictionaryWithContentsOfFile: @"/var/db/.TimeMachine.Results.plist"];
 	if (!dict) {
 		[self setHidden: TRUE];
 		return;

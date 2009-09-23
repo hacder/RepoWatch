@@ -33,7 +33,8 @@
 			@"bitlyDelay",
 			@"loadDelay",
 			@"trendDelay", 
-			@"twitterFollowerTimer", nil];
+			@"twitterFollowerTimer",
+			@"loadEnabled", nil];
 	NSArray *defaultValues = [NSArray arrayWithObjects:
 			@"",
 			@"",
@@ -43,7 +44,8 @@
 			@"300",
 			@"10",
 			@"120",
-			@"600", nil];
+			@"600",
+			@"0", nil];
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
@@ -58,7 +60,7 @@
 	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-//	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TwitFollowerButtonDelegate alloc] initWithTitle: @"Twitter Follower" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 }
