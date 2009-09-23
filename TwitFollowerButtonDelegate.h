@@ -3,9 +3,8 @@
 #import "TwitterBaseButtonDelegate.h"
 #import "PreferencesButtonDelegate.h"
 
-@interface BitlyStatsButtonDelegate : TwitterBaseButtonDelegate {
-	int last_clicks;
-	NSString *curHash;
+@interface TwitFollowerButtonDelegate : TwitterBaseButtonDelegate {
+	NSMutableArray *foll;
 }
 
 @end

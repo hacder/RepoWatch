@@ -9,35 +9,6 @@
 	return self;
 }
 
-static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-- (NSString *) base64Username: (NSString *)u password: (NSString *)p {
-	NSString *realData = [[NSString alloc] initWithFormat: @"%@:%@", u, p];
-	if ([realData length] == 0)
-		return @"";
-	char *characters = malloc(((([realData length] + 2) / 3) * 4) + 1);
-	characters[((([realData length] + 2) / 3) * 4)] = '\0';
-	NSUInteger length = 0;
-	NSUInteger i = 0;
-	while (i < [realData length]) {
-		char buffer[3] = {0,0,0};
-		short bufferLength = 0;
-		while (bufferLength < 3 && i < [realData length])
-			buffer[bufferLength++] = ((char *)[realData cStringUsingEncoding: NSASCIIStringEncoding])[i++];
-		characters[length++] = encodingTable[(buffer[0] & 0xFC) >> 2];
-		characters[length++] = encodingTable[((buffer[0] & 0x03) << 4) | ((buffer[1] & 0xF0) >> 4)];
-		if (bufferLength > 1)
-			characters[length++] = encodingTable[((buffer[1] & 0x0F) << 2) | ((buffer[2] & 0xC0) << 6)];
-		else
-			characters[length++] = '=';
-		if (bufferLength > 2)
-			characters[length++] = encodingTable[buffer[2] & 0x3F];
-		else
-			characters[length++] = '=';
-	}
-	return [[[NSString alloc] initWithBytesNoCopy: characters length: length encoding: NSASCIIStringEncoding freeWhenDone: YES] autorelease];
-}
-
 - (void) getBitlyInfoWithHash: (NSString *)hash {
 	[curHash release];
 	curHash = hash;
@@ -121,26 +92,16 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//	NSString *username = [defaults stringForKey: @"twitterUsername"];
-//	NSString *password = [defaults stringForKey: @"twitterPassword"];
-	NSString *username = @"codenamebowser";
-	NSString *password = @"Joseph1984";
-
-	if (![defaults boolForKey: @"bitlyEnabled"] || username == nil || [username length] == 0 || password == nil || [password length] == 0) {
+	NSString *username = [defaults stringForKey: @"twitterUsername"];
+	if (![defaults boolForKey: @"bitlyEnabled"]) {
 		[self setTitle: @"Bitly disabled"];
 		[self setHidden: YES];
 		[self setPriority: -1];
 		return;
 	}
-
-	NSString *auth = [self base64Username: username password: password];
 	
 	int count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
-	NSURL *url = [[NSURL alloc] initWithString: [[NSString alloc] initWithFormat: @"http://www.twitter.com/statuses/user_timeline.xml?screen_name=%@&count=%d", username, count]];
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: url];
-	[request setValue: [NSString stringWithFormat: @"Basic %@", auth] forHTTPHeaderField: @"Authorization"];
-	
-	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
+	NSData *data = [self fetchDataForURL: [[NSURL alloc] initWithString: [[NSString alloc] initWithFormat: @"http://www.twitter.com/statuses/user_timeline.xml?screen_name=%@&count=%d", username, count]]];
 	if (data == nil) {
 		[self setPriority: 1];
 		[self setTitle: @"Bitly error fetching XML"];
@@ -193,8 +154,9 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 			return;
 		}
 	}
-	[self setPriority: 0];
+
 	[self setTitle: @"No bitly links found"];
+	[self setPriority: 0];
 	[self setHidden: YES];
 }
 
