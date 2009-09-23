@@ -52,8 +52,9 @@
 			NSArray *arrrrrr = [doc2 objectsForXQuery: @"//following" error: nil];
 			NSArray *arr2 = [doc2 objectsForXQuery: @"//name" error: nil];
 			if ([@"true" compare: [[arrrrrr objectAtIndex: 0] stringValue]] == NSOrderedSame) {
-				[self setTitle: 
-					[[NSString alloc] initWithFormat: @"Defollowed by %@", [[arr2 objectAtIndex: 0] stringValue]]];
+				NSString *s = [[NSString alloc] initWithFormat: @"Defollowed by %@", [[arr2 objectAtIndex: 0] stringValue]];
+				[self setTitle: s];
+				[self setShortTitle: s];
 				[self setHidden: NO];
 				[self setPriority: 20];
 				return;
