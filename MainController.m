@@ -25,9 +25,25 @@
 	[statusItem setMenu: theMenu];
 	
 	NSArray *defaultKeys = [NSArray arrayWithObjects:
-			@"trendNumber", nil];
+			@"trendNumber",
+			@"bitlyEnabled",
+			@"bitlyTimeout",
+			@"bitlyTwitterHistory",
+			@"trendMundaneFilter",
+			@"timeMachineEnabled",
+			@"timeMachineOverdueTime",
+			@"defollowEnabled",
+			nil];
 	NSArray *defaultValues = [NSArray arrayWithObjects:
-			@"3", nil];
+			@"3",
+			@"1",
+			@"2",
+			@"50",
+			@"1",
+			@"1",
+			@"5",
+			@"1",
+			nil];
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];

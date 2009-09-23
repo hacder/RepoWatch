@@ -40,7 +40,6 @@
 	
 	NSString *auth = [self base64Username: username password: password];
 	
-	int count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: url];
 	[request setValue: [NSString stringWithFormat: @"Basic %@", auth] forHTTPHeaderField: @"Authorization"];
 	

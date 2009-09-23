@@ -109,7 +109,6 @@
 	NSArray *status_times = [doc objectsForXQuery: @"//status/created_at" error: nil];
 
 	int i = 0;
-	count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
 	for (; i < [statuses count]; i++) {
 		NSDateComponents *components = [[NSDateComponents alloc] init];
 		NSArray *stringPieces = [[[status_times objectAtIndex: i] stringValue] componentsSeparatedByString: @" "];
