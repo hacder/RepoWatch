@@ -39,7 +39,6 @@
 		return nil;
 	
 	NSString *auth = [self base64Username: username password: password];
-	NSLog(@"Username %@ Password %@ Auth %@", username, password, auth);
 	
 	int count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: url];

@@ -26,12 +26,10 @@
 	NSString *username = [defaults stringForKey: @"twitterUsername"];
 
 	NSData *data = [self fetchDataForURL: [[NSURL alloc] initWithString: [[NSString alloc] initWithFormat: @"http://www.twitter.com/followers/ids.xml?cursor=-1"]]];
-	if (data == nil) {
-		NSLog(@"TwitFollower data is nil");
+	if (data == nil)
 		return;
-	}
+		
 	NSXMLDocument *doc  = [[NSXMLDocument alloc] initWithData: data options: 0 error: nil];
-	NSLog(@"Got: %@", doc);
 
 	NSArray *f = [doc objectsForXQuery: @"//id" error: nil];
 	NSMutableArray *followers = [NSMutableArray arrayWithCapacity: [f count]];
@@ -69,7 +67,6 @@
 	}
 	for (i = 0; i < [followers count]; i++)
 		[foll addObject: [[followers objectAtIndex: i] stringValue]];
-	NSLog(@"Count of followers: %d", [foll count]);
 	
 	[self setHidden: YES];
 	[self setTitle: @"Yay"];

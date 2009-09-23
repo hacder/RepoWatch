@@ -17,16 +17,13 @@
 		return _prefView;
 	
 	// Need better way to handle this?
-	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
-		NSLog(@"No! Load button asked for its preferences from queue %s", dispatch_queue_get_label(dispatch_get_current_queue()));
+	if (dispatch_get_current_queue() != dispatch_get_main_queue())
 		return nil;
-	}
 
 	NSNib *loadNib = [[NSNib alloc] initWithNibNamed: @"load" bundle: nil];
 	[loadNib retain];
 	NSArray *arr2;
 	[loadNib instantiateNibWithOwner: self topLevelObjects: &arr2];
-	NSLog(@"Pref view objects: %@\n", arr2);
 		
 	_prefView = [arr2 objectAtIndex: 1];
 	[_prefView retain];

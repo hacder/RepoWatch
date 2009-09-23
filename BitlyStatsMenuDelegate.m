@@ -50,15 +50,10 @@
 
 - (void) beep: (id) something {
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSLog(@"Trying to do tricky work\n");
 		NSWorkspace *workSpace = [NSWorkspace sharedWorkspace];
-		NSLog(@"Got workspace %@\n", workSpace);
 		NSString *sUrl = [NSString stringWithFormat: @"http://bit.ly/%@%@", curHash, @"+"];
-		NSLog(@"Got url %@\n", sUrl);
 		NSURL *url = [NSURL URLWithString: sUrl];
-		NSLog(@"Got url object %@\n", url);
 		[workSpace openURL: url];
-		NSLog(@"Done");
 	});
 }
 
@@ -142,7 +137,6 @@
 			continue;
 
 		int m = 1;
-		NSLog(@"Found bitly link, posted %f hours ago", timeSince / 3600);
 		for (; m < [pieces count]; m++) {
 			NSString *tmp = [pieces objectAtIndex: m];
 			NSArray *pieces = [tmp componentsSeparatedByCharactersInSet: [[NSCharacterSet alphanumericCharacterSet] invertedSet]];
