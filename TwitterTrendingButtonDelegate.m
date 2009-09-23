@@ -67,9 +67,9 @@
 		if (![potential caseInsensitiveCompare: @"TGIF"])
 			continue;
 
-		if (z <= num) {
+		if (z < num) {
 			[r appendString: potential];
-			if (z <= num - 1)
+			if (z < num - 1)
 				[r appendString: @", "];
 			z++;
 		}
