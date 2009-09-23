@@ -37,6 +37,14 @@
 }
 
 - (void) fire {
+	int enabled = [[[NSUserDefaults standardUserDefaults] objectForKey: @"loadEnabled"] intValue];
+	if (!enabled) {
+		[self setHidden: YES];
+		[self setPriority: 1];
+		return;
+	}
+	[self setHidden: NO];
+	
 	double loads[3];
 	getloadavg(loads, 3);
 	
