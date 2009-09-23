@@ -23,6 +23,15 @@
 
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+	if ([defaults integerForKey: @"defollowEnabled"] == 0) {
+		[self setTitle: @""];
+		[self setShortTitle: @""];
+		[self setHidden: YES];
+		[self setPriority: 1];
+		return;
+	}
+
 	NSString *username = [defaults stringForKey: @"twitterUsername"];
 
 	NSData *data = [self fetchDataForURL: [[NSURL alloc] initWithString: [[NSString alloc] initWithFormat: @"http://www.twitter.com/followers/ids.xml?cursor=-1"]]];

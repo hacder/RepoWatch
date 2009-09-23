@@ -44,28 +44,29 @@
 	NSMutableString *r = [NSMutableString stringWithCapacity: 10];
 	NSMutableString *r2 = [NSMutableString stringWithCapacity: 20];
 	
-	int num = [[[NSUserDefaults standardUserDefaults] stringForKey: @"shortTwitterTrendCount"] intValue];
+	int num = [[[NSUserDefaults standardUserDefaults] stringForKey: @"trendNumber"] intValue];
 
 	NSCharacterSet *cs = [NSCharacterSet characterSetWithCharactersInString: @"\"#"];
 	for (i = 0; i < [res count]; i++) {
 		NSRange ra = [[res objectAtIndex: i] rangeOfString: @"\""];
 		NSString *potential = [[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: cs];
 
-// TODO: Put this behind a preference
-		if (![potential caseInsensitiveCompare: @"musicmonday"])
-			continue;
-		if (![potential caseInsensitiveCompare: @"followfriday"])
-			continue;
-		if (![potential caseInsensitiveCompare: @"goodnight"])
-			continue;
-		if (![potential caseInsensitiveCompare: @"lmao"])
-			continue;
-		if (![potential caseInsensitiveCompare: @"follow friday"])
-			continue;
-		if (![potential caseInsensitiveCompare: @"music monday"])
-			continue;
-		if (![potential caseInsensitiveCompare: @"TGIF"])
-			continue;
+		if ([[NSUserDefaults standardUserDefaults] integerForKey: @"trendMundaneFilter"]) {
+			if (![potential caseInsensitiveCompare: @"musicmonday"])
+				continue;
+			if (![potential caseInsensitiveCompare: @"followfriday"])
+				continue;
+			if (![potential caseInsensitiveCompare: @"goodnight"])
+				continue;
+			if (![potential caseInsensitiveCompare: @"lmao"])
+				continue;
+			if (![potential caseInsensitiveCompare: @"follow friday"])
+				continue;
+			if (![potential caseInsensitiveCompare: @"music monday"])
+				continue;
+			if (![potential caseInsensitiveCompare: @"TGIF"])
+				continue;
+		}
 
 		if (z < num) {
 			[r appendString: potential];

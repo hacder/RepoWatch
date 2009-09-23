@@ -35,7 +35,8 @@
 
 	int clicks = [objTwoString intValue];
 	if (last_clicks != -1 && last_clicks != clicks)
-		NSBeep();
+		if ([[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyBeep"] intValue] == 1)
+			NSBeep();
 	last_clicks = clicks;
 
 	NSString *tit = [[NSString alloc] initWithFormat: @"Bitly: %@ %@ clicks, %@ direct", hash, objOneString, objTwoString];
@@ -88,7 +89,7 @@
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSString *username = [defaults stringForKey: @"twitterUsername"];
-	if (![defaults boolForKey: @"bitlyEnabled"]) {
+	if ([defaults integerForKey: @"bitlyEnabled"] == 0) {
 		[self setTitle: @"Bitly disabled"];
 		[self setHidden: YES];
 		[self setPriority: -1];
@@ -98,8 +99,9 @@
 	int count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
 	NSData *data = [self fetchDataForURL: [[NSURL alloc] initWithString: [[NSString alloc] initWithFormat: @"http://www.twitter.com/statuses/user_timeline.xml?screen_name=%@&count=%d", username, count]]];
 	if (data == nil) {
-		[self setPriority: 1];
+		[self setHidden: YES];
 		[self setTitle: @"Bitly error fetching XML"];
+		[self setPriority: 1];
 		return;
 	}
 	NSXMLDocument *doc  = [[NSXMLDocument alloc] initWithData: data options: 0 error: nil];
@@ -124,7 +126,7 @@
 		[greg setTimeZone: tz];
 		NSDate *tweetDate = [greg dateFromComponents: components];
 		NSTimeInterval timeSince = [tweetDate timeIntervalSinceNow] * -1;
-		if (timeSince / 3600 >= 24)
+		if (timeSince / 3600 >= [defaults integerForKey: @"bitlyTimeout"])
 			continue;
 
 		NSString *tweet = [[statuses objectAtIndex: i] stringValue];

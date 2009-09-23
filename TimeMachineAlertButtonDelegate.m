@@ -18,31 +18,40 @@
 }
 
 - (void) fire {
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	if ([defaults integerForKey: @"timeMachineEnabled"] == 0) {
+		[self setTitle: @""];
+		[self setShortTitle: @""];
+		[self setHidden: YES];
+		[self setPriority: 1];
+		return;
+	}
+	
 	NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: @"/Library/Preferences/com.apple.TimeMachine.plist"];
 	if (!dict) {
-		[self setHidden: TRUE];
+		[self setHidden: YES];
 		return;
 	}
 	
 	BOOL b = [[dict objectForKey: @"AutoBackup"] boolValue];
 	if (b == NO) {
-		[self setHidden: TRUE];
+		[self setHidden: YES];
 		return;
 	}
 	
 	dict = [NSDictionary dictionaryWithContentsOfFile: @"/var/db/.TimeMachine.Results.plist"];
 	if (!dict) {
-		[self setHidden: TRUE];
+		[self setHidden: YES];
 		return;
 	}
-	[self setHidden: FALSE];
+	[self setHidden: NO];
 	NSDate *backupDate = [dict objectForKey: @"BACKUP_COMPLETED_DATE"];
 	int interval = (int)fabs([backupDate timeIntervalSinceNow]);
 	int intMinutes = (interval / 60) % 60;
 	int intHours = (interval / 3600);
 	
 	NSString *titular;
-	if (intHours > 10) {
+	if (intHours > [defaults integerForKey: @"timeMachineOverdueTime"]) {
 		titular = [NSString stringWithFormat: @"TimeMachine Overdue!: %02dh:%02dm", intHours, intMinutes];
 		[self setShortTitle: titular];
 		[self setTitle: titular];
