@@ -122,7 +122,7 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 			[theMenu insertItem: [arr objectAtIndex: i] atIndex: i];
 		}
 		for (i = 0; i < [arr count]; i++) {
-			if ([[arr objectAtIndex: 0] isHidden] == NO) {
+			if ([[arr objectAtIndex: i] isHidden] == NO) {
 				ButtonDelegate *bd2 = [[arr objectAtIndex: i] target];
 				NSString *sh = [bd2 shortTitle];
 				[statusItem setTitle: sh];
