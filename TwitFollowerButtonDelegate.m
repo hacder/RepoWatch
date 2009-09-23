@@ -14,6 +14,9 @@
 }
 
 - (void) beep: (id) something {
+	[self setHidden: YES];
+	[self setTitle: @"Yay"];
+	[self setPriority: 1];
 }
 
 - (void) fire {
