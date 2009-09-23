@@ -70,7 +70,7 @@
 		if (z <= num) {
 			[r appendString: potential];
 			z++;
-			if (z <= n - 1)
+			if (z <= num - 1)
 				[r appendString: @", "];
 		}
 		[r2 appendString: potential];

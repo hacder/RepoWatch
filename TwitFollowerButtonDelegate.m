@@ -67,7 +67,7 @@
 	
 	[self setHidden: YES];
 	[self setTitle: @"Yay"];
-	[self setPriority: 20];
+	[self setPriority: 1];
 }
 
 @end
