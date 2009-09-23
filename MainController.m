@@ -32,7 +32,8 @@
 			@"bitlyTwitterHistory",
 			@"bitlyDelay",
 			@"loadDelay",
-			@"trendDelay", nil];
+			@"trendDelay", 
+			@"twitterFollowerTimer", nil];
 	NSArray *defaultValues = [NSArray arrayWithObjects:
 			@"",
 			@"",
@@ -41,7 +42,8 @@
 			@"20",
 			@"300",
 			@"10",
-			@"120", nil];
+			@"120",
+			@"600", nil];
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];

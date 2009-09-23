@@ -10,7 +10,9 @@
 }
 
 - (void) setupTimer {
-	[self realTimer: 600];
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	NSString *timerSetting = [defaults stringForKey: @"twitterFollowerTimer"];
+	[self realTimer: [timerSetting intValue]];
 }
 
 - (void) beep: (id) something {
