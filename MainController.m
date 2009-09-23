@@ -25,27 +25,9 @@
 	[statusItem setMenu: theMenu];
 	
 	NSArray *defaultKeys = [NSArray arrayWithObjects:
-			@"twitterUsername",
-			@"twitterPassword",
-			@"bitlyEnabled",
-			@"shortTwitterTrendCount",
-			@"bitlyTwitterHistory",
-			@"bitlyDelay",
-			@"loadDelay",
-			@"trendDelay", 
-			@"twitterFollowerTimer",
-			@"loadEnabled", nil];
+			@"trendNumber", nil];
 	NSArray *defaultValues = [NSArray arrayWithObjects:
-			@"",
-			@"",
-			@"YES",
-			@"3",
-			@"20",
-			@"300",
-			@"10",
-			@"120",
-			@"600",
-			@"0", nil];
+			@"3", nil];
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
