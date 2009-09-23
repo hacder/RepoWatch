@@ -54,8 +54,8 @@
 			if ([@"true" compare: [[arrrrrr objectAtIndex: 0] stringValue]] == NSOrderedSame) {
 				[self setTitle: 
 					[[NSString alloc] initWithFormat: @"Defollowed by %@", [[arr2 objectAtIndex: 0] stringValue]]];
-				[self setPriority: 20];
 				[self setHidden: NO];
+				[self setPriority: 20];
 				return;
 			}
 			// oldFollower just removed us!
