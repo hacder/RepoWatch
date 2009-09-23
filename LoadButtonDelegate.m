@@ -12,24 +12,6 @@
 	[self realTimer: delay];
 }
 
-- (NSView *) preferences {
-	if (_prefView != nil)
-		return _prefView;
-	
-	// Need better way to handle this?
-	if (dispatch_get_current_queue() != dispatch_get_main_queue())
-		return nil;
-
-	NSNib *loadNib = [[NSNib alloc] initWithNibNamed: @"load" bundle: nil];
-	[loadNib retain];
-	NSArray *arr2;
-	[loadNib instantiateNibWithOwner: self topLevelObjects: &arr2];
-		
-	_prefView = [arr2 objectAtIndex: 1];
-	[_prefView retain];
-	return _prefView;
-}
-
 - (void) beep: (id) something {
 }
 
