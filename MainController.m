@@ -37,6 +37,7 @@
 			@"loadDelay",
 			@"trendDelay",
 			@"followerDelay",
+			@"loadEnabled",
 			nil];
 	NSArray *defaultValues = [NSArray arrayWithObjects:
 			@"3",
@@ -51,6 +52,7 @@
 			@"10",
 			@"600",
 			@"600",
+			@"1",
 			nil];
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
