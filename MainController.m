@@ -33,6 +33,10 @@
 			@"timeMachineEnabled",
 			@"timeMachineOverdueTime",
 			@"defollowEnabled",
+			@"bitlyDelay",
+			@"loadDelay",
+			@"trendDelay",
+			@"followerDelay",
 			nil];
 	NSArray *defaultValues = [NSArray arrayWithObjects:
 			@"3",
@@ -43,6 +47,10 @@
 			@"1",
 			@"5",
 			@"1",
+			@"60",
+			@"10",
+			@"600",
+			@"600",
 			nil];
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
@@ -52,7 +60,8 @@
 
 - initWithDirectory: (NSString *)dir {
 	[self init];
-	[self addDir: dir];
+	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"C42XXY"] == 1)
+		[self addDir: dir];
 	[plugins addObject: [[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
 	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
@@ -97,7 +106,17 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 			ButtonDelegate *bd = [[arr objectAtIndex: i] target];
 			[bd forceRefresh];
 		}
+		[self rearrange];
 	});
+}
+
+- (void) maybeRefresh: (ButtonDelegate *)bd {
+	NSArray *arr = [theMenu itemArray];
+	if ([arr count] == 0)
+		return;
+	ButtonDelegate *bd2 = [[arr objectAtIndex: 0] target];
+	if (bd2 == bd)
+		[self rearrange];
 }
 
 - (void) rearrange {

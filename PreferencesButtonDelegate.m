@@ -20,9 +20,7 @@
 
 - (void) beep: (id) something {
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
-		NSLog(@"Delaying Preferences'beep' until later...");
 		dispatch_async(dispatch_get_main_queue(), ^{
-			NSLog(@"Should be running beep now");
 			[self beep: something];
 		});
 		return;
@@ -60,6 +58,7 @@
 - (BOOL) windowShouldClose: (id) win {
 	window = nil;
 	[[NSUserDefaultsController sharedUserDefaultsController] save: self];
+	[mainController reset];
 	return YES;
 }
 

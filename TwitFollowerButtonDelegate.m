@@ -11,7 +11,7 @@
 
 - (void) setupTimer {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *timerSetting = [defaults stringForKey: @"twitterFollowerTimer"];
+	NSString *timerSetting = [defaults stringForKey: @"followerDelay"];
 	[self realTimer: [timerSetting intValue]];
 }
 
@@ -33,10 +33,22 @@
 	}
 
 	NSString *username = [defaults stringForKey: @"twitterUsername"];
+	if (username == nil) {
+		[self setTitle: @""];
+		[self setShortTitle: @""];
+		[self setHidden: YES];
+		[self setPriority: 1];
+		return;
+	}
 
 	NSData *data = [self fetchDataForURL: [[NSURL alloc] initWithString: [[NSString alloc] initWithFormat: @"http://www.twitter.com/followers/ids.xml?cursor=-1"]]];
-	if (data == nil)
+	if (data == nil) {
+		[self setTitle: @""];
+		[self setShortTitle: @""];
+		[self setHidden: YES];
+		[self setPriority: 1];
 		return;
+	}
 		
 	NSXMLDocument *doc  = [[NSXMLDocument alloc] initWithData: data options: 0 error: nil];
 
@@ -63,6 +75,8 @@
 			NSXMLDocument *doc2 = [[NSXMLDocument alloc] initWithData: data2 options: 0 error: nil];
 			NSArray *arrrrrr = [doc2 objectsForXQuery: @"//following" error: nil];
 			NSArray *arr2 = [doc2 objectsForXQuery: @"//name" error: nil];
+			if ([arrrrrr count] == 0 || [arr2 count] == 0)
+				return;
 			if ([@"true" compare: [[arrrrrr objectAtIndex: 0] stringValue]] == NSOrderedSame) {
 				NSString *s = [[NSString alloc] initWithFormat: @"Defollowed by %@", [[arr2 objectAtIndex: 0] stringValue]];
 				[self setTitle: s];

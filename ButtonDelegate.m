@@ -61,6 +61,9 @@
 	[shortTitle release];
 	shortTitle = t;
 	[shortTitle retain];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[mainController maybeRefresh: self];
+	});
 }
 
 - (NSString *) shortTitle {
