@@ -8,6 +8,7 @@
 #import "QuitButtonDelegate.h"
 #import "TimeMachineAlertButtonDelegate.h"
 #import "TwitFollowerButtonDelegate.h"
+#import "WeatherButtonDelegate.h"
 #import <dirent.h>
 
 @implementation MainController
@@ -72,6 +73,7 @@
 	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TwitFollowerButtonDelegate alloc] initWithTitle: @"Twitter Follower" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 }
 
 - addDir: (NSString *)dir {

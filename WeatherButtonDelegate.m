@@ -28,7 +28,29 @@
 }
 
 - (void) fire {
-	NSURL *url = [NSURL URLWithString: @"http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php?zipCodeList=35805&product=time-series&begin=2009-09-03T22:26Z&end=2009-09-03T23:59Z&temp=temp&pop12=pop12&wwa=wwa&ptornado=ptornado"];
+	// begin=2009-09-03T22:26Z&end=2009-09-03T23:59Z
+	int zip = [[NSUserDefaults standardUserDefaults] integerForKey: @"zipcode"];
+	if (zip == 0) {
+		[self setHidden: YES];
+		[self setTitle: @"Go away"];
+		[self setPriority: 1];
+		return;
+	}
+	
+	NSDate *now = [NSDate date];
+	NSDate *hourAgo = [NSDate dateWithTimeIntervalSinceNow: 3600];
+	NSDateComponents *nowComponents = [[NSCalendar currentCalendar] components: NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit fromDate: now];
+	NSDateComponents *hourAgoComponents = [[NSCalendar currentCalendar] components: NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit fromDate: hourAgo];
+	
+	NSString *urlString = [[[NSString alloc] initWithFormat:
+		@"http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php?zipCodeList=%d&product=time-series&temp=temp&pop12=pop12&wwa=wwa&ptornado=ptornado&begin=%04d-%02d-%02dT%02d:00Z&end=%04d-%02d-%02dT%02d:00dZ",
+			zip,
+			[nowComponents year], [nowComponents month], [nowComponents day], [nowComponents hour],
+			[hourAgoComponents year], [hourAgoComponents month], [hourAgoComponents day], [hourAgoComponents hour]
+		] autorelease];
+	NSLog(@"URL String: %@", urlString);
+	NSURL *url = [[NSURL URLWithString: urlString] autorelease];
+	
 	NSURLRequest *request = [NSURLRequest requestWithURL: url];
 	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
 	if (data == nil) {
@@ -47,15 +69,28 @@
 			return YES;
 		return NO;
 	}];
-	NSArray *s = [[doc nodesForXPath: @"//hazards/hazard-conditions" error: nil] filteredArrayUsingPredicate: pred];
+	NSArray *s = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@phenomena" error: nil] filteredArrayUsingPredicate: pred];
+	NSArray *s2 = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@significance" error: nil] filteredArrayUsingPredicate: pred];
 	
-	NSString *t = [NSString stringWithFormat: @"Temp: %dF Precip: %d%%%@", temperature, precip, [s count] == 0 ? @"" : @" Warnings!"];
-	[self setTitle: t];
-	[self setShortTitle: t];
-	if ([s count])
-		[self setPriority: 29];
-	else
+	NSString *t;
+	if ([s count] == 0) {
+		t = [[NSString stringWithFormat: @"Temp: %dF Precip: %d%%", temperature, precip] autorelease];
+		[self setTitle: t];
+		[self setShortTitle: t];
 		[self setPriority: 2];
+	} else if ([s count] == 1) {
+		// Pull full info in full title
+		t = [[NSString stringWithFormat: @"WARNING: %@ %@", [[s objectAtIndex: 0] stringValue], [[s2 objectAtIndex: 0] stringValue]] autorelease];
+		[self setTitle: t];
+		[self setShortTitle: t];
+		[self setPriority: 30];
+	} else {
+		// Put full info, including the multiple warnings in the full title.
+		t = [[NSString stringWithFormat: @"WARNING: %d weather events!", [s count]] autorelease];
+		[self setTitle: t];
+		[self setShortTitle: t];
+		[self setPriority: 30];
+	}
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {
