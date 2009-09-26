@@ -103,17 +103,16 @@
 }
 
 - (void) fire {
-	NSString *priString = [self runScriptWithArgument: @"level"];
+	NSString *priString = [[self runScriptWithArgument: @"level"] autorelease];
 	
 	NSFont *stringFont;
 	stringFont = [NSFont systemFontOfSize: 14.0];
 
-	NSString *mainString = [self runScriptWithArgument: @"update"];
+	NSString *mainString = [[self runScriptWithArgument: @"update"] autorelease];
 	
 	[self setTitle: mainString];
 	[self setShortTitle: mainString];
 	[self setPriority: [priString intValue]];
-	[priString release];
 }
 
 - (void) setPriority: (int) p {

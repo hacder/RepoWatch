@@ -41,7 +41,9 @@
 		return;
 	}
 
-	NSData *data = [self fetchDataForURL: [[NSURL alloc] initWithString: [[NSString alloc] initWithFormat: @"http://www.twitter.com/followers/ids.xml?cursor=-1"]]];
+	NSString *fireString = [[[NSString alloc] initWithFormat: @"http://www.twitter.com/followers/ids.xml?cursor=-1"] autorelease];
+	NSURL *fireURL = [[[NSURL alloc] initWithString: fireString] autorelease];
+	NSData *data = [self fetchDataForURL: fireURL];
 	if (data == nil) {
 		[self setTitle: @""];
 		[self setShortTitle: @""];
@@ -50,7 +52,7 @@
 		return;
 	}
 		
-	NSXMLDocument *doc  = [[NSXMLDocument alloc] initWithData: data options: 0 error: nil];
+	NSXMLDocument *doc  = [[[NSXMLDocument alloc] initWithData: data options: 0 error: nil] autorelease];
 
 	NSArray *f = [doc objectsForXQuery: @"//id" error: nil];
 	NSMutableArray *followers = [NSMutableArray arrayWithCapacity: [f count]];
@@ -71,14 +73,15 @@
 			}
 		}
 		if (!found_it) {
-			NSData *data2 = [self fetchDataForURL: [[NSURL alloc] initWithString: [[NSString alloc] initWithFormat: @"http://www.twitter.com/users/show.xml?user_id=%@", oldFollower]]];
-			NSXMLDocument *doc2 = [[NSXMLDocument alloc] initWithData: data2 options: 0 error: nil];
+			NSString *foundString = [[[NSString alloc] initWithFormat: @"http://www.twitter.com/users/show.xml?user_id=%@", oldFollower] autorelease];
+			NSData *data2 = [self fetchDataForURL: [[NSURL alloc] initWithString: foundString]];
+			NSXMLDocument *doc2 = [[[NSXMLDocument alloc] initWithData: data2 options: 0 error: nil] autorelease];
 			NSArray *arrrrrr = [doc2 objectsForXQuery: @"//following" error: nil];
 			NSArray *arr2 = [doc2 objectsForXQuery: @"//name" error: nil];
 			if ([arrrrrr count] == 0 || [arr2 count] == 0)
 				return;
 			if ([@"true" compare: [[arrrrrr objectAtIndex: 0] stringValue]] == NSOrderedSame) {
-				NSString *s = [[NSString alloc] initWithFormat: @"Defollowed by %@", [[arr2 objectAtIndex: 0] stringValue]];
+				NSString *s = [[[NSString alloc] initWithFormat: @"Defollowed by %@", [[arr2 objectAtIndex: 0] stringValue]] autorelease];
 				[self setTitle: s];
 				[self setShortTitle: s];
 				[self setHidden: NO];

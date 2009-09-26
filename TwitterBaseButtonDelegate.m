@@ -11,7 +11,7 @@
 }
 
 - (NSString *) base64Username: (NSString *)u password: (NSString *)p {
-	NSString *realData = [[NSString alloc] initWithFormat: @"%@:%@", u, p];
+	NSString *realData = [[[NSString alloc] initWithFormat: @"%@:%@", u, p] autorelease];
 	const char *rd = [[realData dataUsingEncoding: NSASCIIStringEncoding allowLossyConversion: NO] bytes];
 
 	BIO *mem = BIO_new(BIO_s_mem());
@@ -38,7 +38,7 @@
 	if (username == nil || [username length] == 0 || password == nil || [password length] == 0)
 		return nil;
 	
-	NSString *auth = [self base64Username: username password: password];
+	NSString *auth = [[self base64Username: username password: password] autorelease];
 	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: url];
 	[request setValue: [NSString stringWithFormat: @"Basic %@", auth] forHTTPHeaderField: @"Authorization"];

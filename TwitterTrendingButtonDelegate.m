@@ -34,7 +34,7 @@
 	NSURLRequest *request = [NSURLRequest requestWithURL: url];
 
 	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
-	NSString *result = [[NSString alloc] initWithBytes: [data bytes] length: [data length] encoding: NSUTF8StringEncoding];
+	NSString *result = [[[NSString alloc] initWithBytes: [data bytes] length: [data length] encoding: NSUTF8StringEncoding] autorelease];
 	NSArray *results = [result componentsSeparatedByString: @"\"name\":\""];
 	NSMutableArray *res = [NSMutableArray arrayWithCapacity: [results count]];
 	[res addObjectsFromArray: results];

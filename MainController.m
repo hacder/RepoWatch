@@ -82,7 +82,8 @@
 	while ((dent = readdir(dire)) != NULL) {
 		if (dent->d_name[0] == '.')
 			continue;
-		NSString *total = [[dir stringByAppendingString: @"/"] stringByAppendingString: [[NSString alloc] initWithCString: dent->d_name encoding: NSUTF8StringEncoding]];
+		NSString *dirPart = [[[NSString alloc] initWithCString: dent->d_name encoding: NSUTF8StringEncoding] autorelease];
+		NSString *total = [[[dir stringByAppendingString: @"/"] stringByAppendingString: dirPart] autorelease];
 		ButtonDelegate *bd = [[ButtonDelegate alloc] initWithTitle: total menu: theMenu script: total statusItem: statusItem mainController: self];
 	}
 	closedir(dire);

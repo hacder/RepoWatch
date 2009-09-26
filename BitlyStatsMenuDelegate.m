@@ -21,7 +21,7 @@
 	
 	NSData *response = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
 
-	NSXMLDocument *doc = [[NSXMLDocument alloc] initWithData: response options: 0 error: nil];
+	NSXMLDocument *doc = [[[NSXMLDocument alloc] initWithData: response options: 0 error: nil] autorelease];
 	NSArray *counts = [doc objectsForXQuery: @"//clicks" error: nil];
 	NSArray *directs = [doc objectsForXQuery: @"//direct" error: nil];
 	
@@ -39,7 +39,7 @@
 			NSBeep();
 	last_clicks = clicks;
 
-	NSString *tit = [[NSString alloc] initWithFormat: @"Bitly: %@ %@ clicks, %@ direct", hash, objOneString, objTwoString];
+	NSString *tit = [[[NSString alloc] initWithFormat: @"Bitly: %@ %@ clicks, %@ direct", hash, objOneString, objTwoString] autorelease];
 	[self setShortTitle: tit];
 	[self setTitle: tit];
 }
@@ -97,20 +97,23 @@
 	}
 	
 	int count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
-	NSData *data = [self fetchDataForURL: [[NSURL alloc] initWithString: [[NSString alloc] initWithFormat: @"http://www.twitter.com/statuses/user_timeline.xml?screen_name=%@&count=%d", username, count]]];
+	NSString *urlString = [[[NSString alloc] initWithFormat: @"http://www.twitter.com/statuses/user_timeline.xml?screen_name=%@&count=%d", username, count] autorelease];
+	NSURL *fireURL = [[[NSURL alloc] initWithString: urlString] autorelease];
+	NSData *data = [self fetchDataForURL: fireURL];
 	if (data == nil) {
 		[self setHidden: YES];
 		[self setTitle: @"Bitly error fetching XML"];
 		[self setPriority: 1];
 		return;
 	}
-	NSXMLDocument *doc  = [[NSXMLDocument alloc] initWithData: data options: 0 error: nil];
+	
+	NSXMLDocument *doc  = [[[NSXMLDocument alloc] initWithData: data options: 0 error: nil] autorelease];
 	NSArray *statuses = [doc objectsForXQuery: @"//text" error: nil];
 	NSArray *status_times = [doc objectsForXQuery: @"//status/created_at" error: nil];
 
 	int i = 0;
 	for (; i < [statuses count]; i++) {
-		NSDateComponents *components = [[NSDateComponents alloc] init];
+		NSDateComponents *components = [[[NSDateComponents alloc] init] autorelease];
 		NSArray *stringPieces = [[[status_times objectAtIndex: i] stringValue] componentsSeparatedByString: @" "];
 		[components setYear: [[stringPieces objectAtIndex: 5] intValue]];
 		[components setDay: [[stringPieces objectAtIndex: 2] intValue]];
@@ -121,7 +124,7 @@
 		[components setSecond: [[stringPieces objectAtIndex: 2] intValue]];
 		
 		NSTimeZone *tz = [NSTimeZone timeZoneWithName: @"GMT"];
-		NSCalendar *greg = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
+		NSCalendar *greg = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
 		[greg setTimeZone: tz];
 		NSDate *tweetDate = [greg dateFromComponents: components];
 		NSTimeInterval timeSince = [tweetDate timeIntervalSinceNow] * -1;
