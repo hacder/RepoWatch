@@ -41,6 +41,10 @@
 		
 	NSData *data = [file readDataToEndOfFile];
 	NSString *string = [[[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	NSArray *arr = [string componentsSeparatedByString: @"\n"];
+	string = [arr objectAtIndex: [arr count] - 1];
+	string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
 	if ([string isEqual: @"0 files changed"]) {
 		[self setHidden: TRUE];
 		[self setPriority: 0];
@@ -49,6 +53,7 @@
 	
 		[self setTitle: sTit];
 		[self setShortTitle: sTit];
+		[self setHidden: FALSE];
 		[self setPriority: 10];
 	}
 //	[t release];

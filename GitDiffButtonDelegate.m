@@ -41,6 +41,7 @@
 	
 		[self setTitle: sTit];
 		[self setShortTitle: sTit];
+		[self setHidden: FALSE];
 		[self setPriority: 25];
 	}
 	[task release];
