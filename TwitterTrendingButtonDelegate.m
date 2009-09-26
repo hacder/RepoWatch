@@ -49,7 +49,10 @@
 	NSCharacterSet *cs = [NSCharacterSet characterSetWithCharactersInString: @"\"#"];
 	for (i = 0; i < [res count]; i++) {
 		NSRange ra = [[res objectAtIndex: i] rangeOfString: @"\""];
-		NSString *potential = [[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: cs];
+		NSString *potential =
+			[[NSString stringWithUTF8String: 
+				[[[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: cs] UTF8String]
+			] autorelease];
 
 		if ([[NSUserDefaults standardUserDefaults] integerForKey: @"trendMundaneFilter"]) {
 			if (![potential caseInsensitiveCompare: @"musicmonday"])
