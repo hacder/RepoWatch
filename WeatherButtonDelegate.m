@@ -49,7 +49,6 @@
 			[nowComponents year], [nowComponents month], [nowComponents day], [nowComponents hour],
 			[hourAgoComponents year], [hourAgoComponents month], [hourAgoComponents day], [hourAgoComponents hour]
 		] autorelease];
-	NSLog(@"URL String: %@", urlString);
 	NSURL *url = [[NSURL URLWithString: urlString] autorelease];
 	
 	NSURLRequest *request = [NSURLRequest requestWithURL: url];
@@ -60,10 +59,8 @@
 	}
 	
 	NSXMLDocument *doc  = [[NSXMLDocument alloc] initWithData: data options: 0 error: nil];
-	NSLog(@"weather xml: %@\n", doc);
 	int temperature = [self getIntFromDoc: doc withKey: @"//temperature"];
 	int precip = [self getIntFromDoc: doc withKey: @"//probability-of-precipitation"];
-	NSLog(@"Temp: %d Precip: %d%%\n", temperature, precip);
 	if (temperature == -1 && precip == -1) {
 		// Something bad happened
 		[self setHidden: YES];

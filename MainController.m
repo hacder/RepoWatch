@@ -137,7 +137,7 @@ char *find_execable(const char *filename) {
 	} else {
 		int i;
 		for (i = 0; i < [contents count]; i++) {
-			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] autorelease];
+			NSString *s = [NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]];
 			[self searchPath: s forGit: git svn: svn hg: hg];
 		}
 	}
