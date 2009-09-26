@@ -9,7 +9,11 @@
 #import "TimeMachineAlertButtonDelegate.h"
 #import "TwitFollowerButtonDelegate.h"
 #import "WeatherButtonDelegate.h"
+#import "GitDiffButtonDelegate.h"
+#import "SVNDiffButtonDelegate.h"
+#import "MercurialDiffButtonDelegate.h"
 #import <dirent.h>
+#import <sys/stat.h>
 
 @implementation MainController
 
@@ -61,6 +65,99 @@
 	return self;
 }
 
+char *concat_path_file(const char *path, const char *filename) {
+	char *lc;
+	if (!path)
+		path = "";
+	if (path && *path) {
+		size_t sz = strlen(path) - 1;
+		if ((unsigned char)*(path + sz) == '/')
+			lc = (char *)(path + sz);
+		else
+			lc = NULL;
+	} else {
+		lc = NULL;
+	}
+	while (*filename == '/')
+		filename++;
+	char *tmp;
+	asprintf(&tmp, "%s%s%s", path, (lc == NULL ? "/" : ""), filename);
+	return tmp;
+}
+
+char *find_execable(const char *filename) {
+	char *path, *p, *n;
+	
+	p = path = strdup(getenv("PATH"));
+	while (p) {
+		n = strchr(p, ':');
+		if (n)
+			*n++ = '\0';
+		if (*p != '\0') {
+			p = concat_path_file(p, filename);
+			struct stat s;
+			if (!access(p, X_OK) && !stat(p, &s) && S_ISREG(s.st_mode)) {
+				free(path);
+				return p;
+			}
+			free(p);
+		}
+		p = n;
+	}
+	free(path);
+	return NULL;
+}
+
+- (void) searchPath: (NSString *)path forGit: (char *)git svn: (char *)svn hg: (char *)hg {
+	// Do not search the library. A LOT of crazy stuff is in there, and it's not a sane place to put repositories.
+	if ([path isEqual: [@"~/Library" stringByStandardizingPath]])
+		return;
+	if ([path isEqual: [@"~/Downloads" stringByStandardizingPath]])
+		return;
+		
+	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
+	if ([contents containsObject: @".git"]) {
+		if (git) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self gitPath: git repository: path]];
+			});
+		}
+	} else if ([contents containsObject: @".svn"]) {
+		if (svn) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self svnPath: svn repository: path]];
+			});
+		}
+	} else if ([contents containsObject: @".hg"]) {
+		if (hg) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self hgPath: hg repository: path]];
+			});
+		}
+	} else {
+		int i;
+		for (i = 0; i < [contents count]; i++) {
+			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] autorelease];
+			[self searchPath: s forGit: git svn: svn hg: hg];
+		}
+	}
+}
+
+- (void) searchAllPathsForGit: (char *)git svn: (char *)svn hg: (char *)hg {
+	[self searchPath: [@"~" stringByStandardizingPath] forGit: git svn: svn hg: hg];
+}
+
+- (void) findSupportedSCMS {
+	char *git = find_execable("git");
+	char *svn = find_execable("svn");
+	char *hg = find_execable("hg");
+	
+	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[self searchAllPathsForGit: git svn: svn hg: hg];
+	});
+}
+
 - initWithDirectory: (NSString *)dir {
 	[self init];
 	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"C42XXY"] == 1)
@@ -74,6 +171,9 @@
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TwitFollowerButtonDelegate alloc] initWithTitle: @"Twitter Follower" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[self findSupportedSCMS];
+	});
 }
 
 - addDir: (NSString *)dir {

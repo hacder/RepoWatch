@@ -9,7 +9,8 @@
 
 - (void) setupTimer {
 	// NOAA only updates once per hour.
-	[self realTimer: 3600];
+	[self realTimer: 3610];
+	[self setHidden: YES];
 }
 
 - (void) beep: (id) something {
@@ -63,6 +64,11 @@
 	int temperature = [self getIntFromDoc: doc withKey: @"//temperature"];
 	int precip = [self getIntFromDoc: doc withKey: @"//probability-of-precipitation"];
 	NSLog(@"Temp: %d Precip: %d%%\n", temperature, precip);
+	if (temperature == -1 && precip == -1) {
+		// Something bad happened
+		[self setHidden: YES];
+		return;
+	}
 	
 	NSPredicate *pred = [NSPredicate predicateWithBlock: ^(id evaluatedObject, NSDictionary *bindings) {
 		if ([evaluatedObject stringValue] != nil && [[evaluatedObject stringValue] length] != 0)
@@ -77,18 +83,21 @@
 		t = [[NSString stringWithFormat: @"Temp: %dF Precip: %d%%", temperature, precip] autorelease];
 		[self setTitle: t];
 		[self setShortTitle: t];
+		[self setHidden: NO];
 		[self setPriority: 2];
 	} else if ([s count] == 1) {
 		// Pull full info in full title
 		t = [[NSString stringWithFormat: @"WARNING: %@ %@", [[s objectAtIndex: 0] stringValue], [[s2 objectAtIndex: 0] stringValue]] autorelease];
 		[self setTitle: t];
 		[self setShortTitle: t];
+		[self setHidden: NO];
 		[self setPriority: 30];
 	} else {
 		// Put full info, including the multiple warnings in the full title.
 		t = [[NSString stringWithFormat: @"WARNING: %d weather events!", [s count]] autorelease];
 		[self setTitle: t];
 		[self setShortTitle: t];
+		[self setHidden: NO];
 		[self setPriority: 30];
 	}
 }
