@@ -18,8 +18,8 @@
 }
 
 - (void) fire {
-	NSTask *t = [[NSTask alloc] init];
-	NSString *lp = [[NSString stringWithFormat: @"%s", svn] autorelease];
+	NSTask *t = [[[NSTask alloc] init] autorelease];
+	NSString *lp = [NSString stringWithFormat: @"%s", svn];
 	[t setLaunchPath: lp];
 	[t setCurrentDirectoryPath: repository];
 	[t setArguments: [NSArray arrayWithObjects: @"diff", nil]];
@@ -27,7 +27,7 @@
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
 	
-	NSTask *t2 = [[NSTask alloc] init];
+	NSTask *t2 = [[[NSTask alloc] init] autorelease];
 	[t2 setLaunchPath: @"/usr/bin/diffstat"];
 	[t2 setStandardInput: pipe];
 	
@@ -35,9 +35,17 @@
 	[t2 setStandardOutput: pipe2];
 		
 	NSFileHandle *file = [pipe2 fileHandleForReading];
-		
-	[t launch];
-	[t2 launch];
+	
+	@try {
+		[t launch];
+		[t2 launch];
+	}
+	@catch (NSException *e) {
+		dispatch_suspend(timer);
+		return;
+	}
+	@finally {
+	}
 		
 	NSData *data = [file readDataToEndOfFile];
 	NSString *string = [[[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -56,8 +64,6 @@
 		[self setHidden: FALSE];
 		[self setPriority: 25];
 	}
-//	[t release];
-//	[t2 release];
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {

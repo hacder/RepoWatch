@@ -18,8 +18,8 @@
 }
 
 - (void) fire {
-	NSTask *t = [[NSTask alloc] init];
-	NSString *lp = [[NSString stringWithFormat: @"%s", git] autorelease];
+	NSTask *t = [[[NSTask alloc] init] autorelease];
+	NSString *lp = [NSString stringWithFormat: @"%s", git];
 	[t setLaunchPath: lp];
 	[t setCurrentDirectoryPath: repository];
 	[t setArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
@@ -30,7 +30,6 @@
 	NSFileHandle *file = [pipe fileHandleForReading];
 		
 	[t launch];
-		
 	NSData *data = [file readDataToEndOfFile];
 	NSString *string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
 	if ([string isEqual: @""]) {
@@ -44,7 +43,6 @@
 		[self setHidden: FALSE];
 		[self setPriority: 25];
 	}
-	[task release];
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {

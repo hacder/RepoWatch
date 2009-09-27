@@ -10,11 +10,8 @@
 - (void) beep: (id) something {
 	[self setShortTitle: @"TimeMachine running"];
 	[self setTitle: @"TimeMachine running"]; 
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		NSTask *backupTask = [NSTask launchedTaskWithLaunchPath: @"/System/Library/CoreServices/backupd.bundle/Contents/Resources/backupd-helper" arguments: nil];
-		[backupTask launch];
-		[self forceRefresh];
-	});
+	NSTask *backupTask = [NSTask launchedTaskWithLaunchPath: @"/System/Library/CoreServices/backupd.bundle/Contents/Resources/backupd-helper" arguments: nil];
+	[backupTask launch];
 }
 
 - (void) fire {

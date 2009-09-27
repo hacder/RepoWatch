@@ -11,6 +11,7 @@
 	NSStatusItem *statusItem;
 	MainController *mainController;
 	NSView *_prefView;
+	dispatch_source_t timer;
 @public
 	int priority;
 	NSString *title;

@@ -50,12 +50,10 @@
 }
 
 - (void) beep: (id) something {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		NSWorkspace *workSpace = [NSWorkspace sharedWorkspace];
-		NSString *sUrl = [NSString stringWithFormat: @"http://bit.ly/%@%@", curHash, @"+"];
-		NSURL *url = [NSURL URLWithString: sUrl];
-		[workSpace openURL: url];
-	});
+	NSWorkspace *workSpace = [NSWorkspace sharedWorkspace];
+	NSString *sUrl = [NSString stringWithFormat: @"http://bit.ly/%@%@", curHash, @"+"];
+	NSURL *url = [NSURL URLWithString: sUrl];
+	[workSpace openURL: url];
 }
 
 - (int) monthNameToInt: (NSString *)name {
@@ -86,6 +84,31 @@
 	return 0;
 }
 
+- (NSXMLDocument *) testingStupidGCStuff: (NSData *)data {
+	NSXMLDocument *doc = [[[NSXMLDocument alloc] initWithData: data options: 0 error: nil] autorelease];
+	return doc;
+}
+
+- (NSCalendar *) getGregorianInGMT {
+	NSCalendar *greg = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	NSTimeZone *tz = [NSTimeZone timeZoneWithName: @"GMT"];
+	[greg setTimeZone: tz];
+	return greg;
+}
+
+- (NSDateComponents *)getDateComponentsFromString: (NSString *)s {
+	NSDateComponents *components = [[[NSDateComponents alloc] init] autorelease];
+	NSArray *stringPieces = [s componentsSeparatedByString: @" "];
+	[components setYear: [[stringPieces objectAtIndex: 5] intValue]];
+	[components setDay: [[stringPieces objectAtIndex: 2] intValue]];
+	[components setMonth: [self monthNameToInt: [stringPieces objectAtIndex: 1]]];
+	stringPieces = [[stringPieces objectAtIndex: 3] componentsSeparatedByString: @":"];
+	[components setHour: [[stringPieces objectAtIndex: 0] intValue]];
+	[components setMinute: [[stringPieces objectAtIndex: 1] intValue]];
+	[components setSecond: [[stringPieces objectAtIndex: 2] intValue]];
+	return components;
+}
+
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSString *username = [defaults stringForKey: @"twitterUsername"];
@@ -107,26 +130,17 @@
 		return;
 	}
 	
-	NSXMLDocument *doc  = [[[NSXMLDocument alloc] initWithData: data options: 0 error: nil] autorelease];
+	NSXMLDocument *doc  = [self testingStupidGCStuff: data];
 	NSArray *statuses = [doc objectsForXQuery: @"//text" error: nil];
 	NSArray *status_times = [doc objectsForXQuery: @"//status/created_at" error: nil];
 
+	NSCalendar *greg = [self getGregorianInGMT];
+	
 	int i = 0;
 	for (; i < [statuses count]; i++) {
-		NSDateComponents *components = [[[NSDateComponents alloc] init] autorelease];
-		NSArray *stringPieces = [[[status_times objectAtIndex: i] stringValue] componentsSeparatedByString: @" "];
-		[components setYear: [[stringPieces objectAtIndex: 5] intValue]];
-		[components setDay: [[stringPieces objectAtIndex: 2] intValue]];
-		[components setMonth: [self monthNameToInt: [stringPieces objectAtIndex: 1]]];
-		stringPieces = [[stringPieces objectAtIndex: 3] componentsSeparatedByString: @":"];
-		[components setHour: [[stringPieces objectAtIndex: 0] intValue]];
-		[components setMinute: [[stringPieces objectAtIndex: 1] intValue]];
-		[components setSecond: [[stringPieces objectAtIndex: 2] intValue]];
-		
-		NSTimeZone *tz = [NSTimeZone timeZoneWithName: @"GMT"];
-		NSCalendar *greg = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-		[greg setTimeZone: tz];
+		NSDateComponents *components = [self getDateComponentsFromString: [[status_times objectAtIndex: i] stringValue]];
 		NSDate *tweetDate = [greg dateFromComponents: components];
+		
 		NSTimeInterval timeSince = [tweetDate timeIntervalSinceNow] * -1;
 		if (timeSince / 3600 >= [defaults integerForKey: @"bitlyTimeout"])
 			continue;
@@ -140,9 +154,8 @@
 		if ([pieces count] == 1)
 			continue;
 
-		int m = 1;
-		for (; m < [pieces count]; m++) {
-			NSString *tmp = [pieces objectAtIndex: m];
+		if ([pieces count] > 1) {
+			NSString *tmp = [pieces objectAtIndex: 1];
 			NSArray *pieces = [tmp componentsSeparatedByCharactersInSet: [[NSCharacterSet alphanumericCharacterSet] invertedSet]];
 			NSString *hash = [pieces objectAtIndex: 0];
 			

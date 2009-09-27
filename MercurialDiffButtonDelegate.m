@@ -18,8 +18,8 @@
 }
 
 - (void) fire {
-	NSTask *t = [[NSTask alloc] init];
-	NSString *lp = [[NSString stringWithFormat: @"%s", hg] autorelease];
+	NSTask *t = [[[NSTask alloc] init] autorelease];
+	NSString *lp = [NSString stringWithFormat: @"%s", hg];
 	[t setLaunchPath: lp];
 	[t setCurrentDirectoryPath: repository];
 	[t setArguments: [NSArray arrayWithObjects: @"diff", nil]];
@@ -27,7 +27,7 @@
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
 	
-	NSTask *t2 = [[NSTask alloc] init];
+	NSTask *t2 = [[[NSTask alloc] init] autorelease];
 	[t2 setLaunchPath: @"/usr/bin/diffstat"];
 	[t2 setStandardInput: pipe];
 	
@@ -56,8 +56,6 @@
 		[self setHidden: FALSE];
 		[self setPriority: 10];
 	}
-//	[t release];
-//	[t2 release];
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {

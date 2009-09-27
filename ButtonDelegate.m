@@ -10,11 +10,9 @@
 	mainController = mc;
 	statusItem = si;
 	menu = m;
-	title = s;
-	[title retain];
-	shortTitle = s;
-	[shortTitle retain];
-	priority = 0;
+	[self setTitle: s];
+	[self setShortTitle: s];
+	[self setPriority: 0];
 	[self addMenuItem];
 	[self setupTimer];
 	return self;
@@ -25,7 +23,7 @@
 }
 
 - (void) realTimer: (int)t {
-	dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(0, 0));
+	timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
 	dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 1ull * t * NSEC_PER_SEC, 1ull * NSEC_PER_SEC);
 	dispatch_source_set_event_handler(timer, ^{
 		[self fire];
@@ -34,36 +32,22 @@
 }
 
 - (void) setHidden: (BOOL) b {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[menuItem setHidden: b];
-	});
+	[menuItem setHidden: b];
 }
 
 - (void) setTitle: (NSString *)t {
 	// This needs to be done on the main queue.
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[menuItem setTitle: t];
-		[title release];
-		title = t;
-		[title retain];
-	});
+	[t retain];
+	[menuItem setTitle: t];
+	[title release];
+	title = t;
 }
-
-/*
-- (void) forceRearrage {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[mainController rearrange];
-	});
-}
-*/
 
 - (void) setShortTitle: (NSString *)t {
+	[t retain];
 	[shortTitle release];
 	shortTitle = t;
-	[shortTitle retain];
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[mainController maybeRefresh: self];
-	});
+	[mainController maybeRefresh: self];
 }
 
 - (NSString *) shortTitle {
@@ -71,18 +55,14 @@
 }
 
 - (void) forceRefresh {
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[self fire];
-	});
+	[self fire];
 }
 
 - (void) addMenuItem {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		menuItem = [menu insertItemWithTitle: title action: @selector(beep:) keyEquivalent: @"" atIndex: [menu numberOfItems]];
-		[menuItem retain];
-		[menuItem setTarget: self];
-		[menuItem setAction: @selector(beep:)];
-	});
+	menuItem = [menu insertItemWithTitle: title action: @selector(beep:) keyEquivalent: @"" atIndex: [menu numberOfItems]];
+	[menuItem retain];
+	[menuItem setTarget: self];
+	[menuItem setAction: @selector(beep:)];
 }
 
 - (void) setupTimer {

@@ -20,9 +20,11 @@
 /*
 - (void) addMenuItem {
 	[super addMenuItem];
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[menuItem setView: [[TwitterTrendView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]];
-	});
+	NSLog(@"Add menu item");
+	NSLog(@"In first dispatch");
+	tv = [[[TwitterTrendView alloc] initWithFrame: NSMakeRect(0, 0, 600, 500)] autorelease];
+	[menuItem setView: tv];
+	[tv setMainFrameURL: @"file:///Users/dgrace/Desktop/test.html"];
 }
 */
 
@@ -50,9 +52,9 @@
 	for (i = 0; i < [res count]; i++) {
 		NSRange ra = [[res objectAtIndex: i] rangeOfString: @"\""];
 		NSString *potential =
-			[[NSString stringWithUTF8String: 
+			[NSString stringWithUTF8String: 
 				[[[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: cs] UTF8String]
-			] autorelease];
+			];
 
 		if ([[NSUserDefaults standardUserDefaults] integerForKey: @"trendMundaneFilter"]) {
 			if (![potential caseInsensitiveCompare: @"musicmonday"])
@@ -78,6 +80,8 @@
 			z++;
 		}
 		[r2 appendString: potential];
+//		[tv setTrend: (i + 1) title: potential description: @"description"];
+//		[potential release];
 		if (i < [res count] - 1)
 			[r2 appendString: @", "];
 	}

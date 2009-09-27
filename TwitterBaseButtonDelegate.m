@@ -26,7 +26,7 @@
 	
 	char *base64Pointer;
 	long base64Length = BIO_get_mem_data(mem, &base64Pointer);
-	NSString *base64String = [[NSString alloc] initWithCString: base64Pointer length: base64Length];
+	NSString *base64String = [[[NSString alloc] initWithCString: base64Pointer length: base64Length] autorelease];
 	BIO_free_all(mem);
 	return base64String;
 }
@@ -38,13 +38,13 @@
 	if (username == nil || [username length] == 0 || password == nil || [password length] == 0)
 		return nil;
 	
-	NSString *auth = [[self base64Username: username password: password] autorelease];
+	NSString *auth = [self base64Username: username password: password];
 	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: url];
 	[request setValue: [NSString stringWithFormat: @"Basic %@", auth] forHTTPHeaderField: @"Authorization"];
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
-	return data;	
+	return data;
 }
 
 @end

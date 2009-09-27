@@ -114,25 +114,22 @@ char *find_execable(const char *filename) {
 		return;
 	if ([path isEqual: [@"~/Downloads" stringByStandardizingPath]])
 		return;
-		
+
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
 	if ([contents containsObject: @".git"]) {
 		if (git) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self gitPath: git repository: path]];
-			});
+			NSLog(@"Found git dir");
+			[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self gitPath: git repository: path]];
 		}
 	} else if ([contents containsObject: @".svn"]) {
 		if (svn) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self svnPath: svn repository: path]];
-			});
+			NSLog(@"Found svn dir");
+			[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self svnPath: svn repository: path]];
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self hgPath: hg repository: path]];
-			});
+			NSLog(@"Found mercurial dir");
+			[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self hgPath: hg repository: path]];
 		}
 	} else {
 		int i;
@@ -152,16 +149,14 @@ char *find_execable(const char *filename) {
 	char *svn = find_execable("svn");
 	char *hg = find_execable("hg");
 	
+	NSLog(@"Git: %s Svn: %s Mercurial: %s", git, svn, hg);
+	
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[self searchAllPathsForGit: git svn: svn hg: hg];
-	});
+	[self searchAllPathsForGit: git svn: svn hg: hg];
 }
 
 - initWithDirectory: (NSString *)dir {
 	[self init];
-	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"C42XXY"] == 1)
-		[self addDir: dir];
 	[plugins addObject: [[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
 	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
@@ -169,11 +164,9 @@ char *find_execable(const char *filename) {
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-	[plugins addObject: [[TwitFollowerButtonDelegate alloc] initWithTitle: @"Twitter Follower" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[self findSupportedSCMS];
-	});
+	[plugins addObject: [[TwitFollowerButtonDelegate alloc] initWithTitle: @"Twitter Follower" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[self findSupportedSCMS];
 }
 
 - addDir: (NSString *)dir {
@@ -204,15 +197,13 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 }
 
 - (void) reset {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		NSArray *arr = [theMenu itemArray];
-		int i;
-		for (i = 0; i < [arr count]; i++) {
-			ButtonDelegate *bd = [[arr objectAtIndex: i] target];
-			[bd forceRefresh];
-		}
-		[self rearrange];
-	});
+	NSArray *arr = [theMenu itemArray];
+	int i;
+	for (i = 0; i < [arr count]; i++) {
+		ButtonDelegate *bd = [[arr objectAtIndex: i] target];
+		[bd forceRefresh];
+	}
+	[self rearrange];
 }
 
 - (void) maybeRefresh: (ButtonDelegate *)bd {
@@ -225,23 +216,21 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 }
 
 - (void) rearrange {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		NSArray *arr = [[theMenu itemArray] sortedArrayUsingFunction: sortMenuItems context: NULL];
-		int i;
-		for (i = 0; i < [arr count]; i++) {
-			ButtonDelegate *bd = [[arr objectAtIndex: i] target];
-			[theMenu removeItem: [arr objectAtIndex: i]];
-			[theMenu insertItem: [arr objectAtIndex: i] atIndex: i];
+	NSArray *arr = [[theMenu itemArray] sortedArrayUsingFunction: sortMenuItems context: NULL];
+	int i;
+	for (i = 0; i < [arr count]; i++) {
+		ButtonDelegate *bd = [[arr objectAtIndex: i] target];
+		[theMenu removeItem: [arr objectAtIndex: i]];
+		[theMenu insertItem: [arr objectAtIndex: i] atIndex: i];
+	}
+	for (i = 0; i < [arr count]; i++) {
+		if ([[arr objectAtIndex: i] isHidden] == NO) {
+			ButtonDelegate *bd2 = [[arr objectAtIndex: i] target];
+			NSString *sh = [bd2 shortTitle];
+			[statusItem setTitle: sh];
+			break;
 		}
-		for (i = 0; i < [arr count]; i++) {
-			if ([[arr objectAtIndex: i] isHidden] == NO) {
-				ButtonDelegate *bd2 = [[arr objectAtIndex: i] target];
-				NSString *sh = [bd2 shortTitle];
-				[statusItem setTitle: sh];
-				break;
-			}
-		}
-	});
+	}
 }
 
 @end

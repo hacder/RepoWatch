@@ -19,12 +19,6 @@
 }
 
 - (void) beep: (id) something {
-	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self beep: something];
-		});
-		return;
-	}
 	[NSApp activateIgnoringOtherApps: YES];
 
 	NSNib *nib = [[NSNib alloc] initWithNibNamed: @"preferences" bundle: nil];
