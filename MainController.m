@@ -12,6 +12,7 @@
 #import "GitDiffButtonDelegate.h"
 #import "SVNDiffButtonDelegate.h"
 #import "MercurialDiffButtonDelegate.h"
+#import <Sparkle/Sparkle.h>
 #import <dirent.h>
 #import <sys/stat.h>
 
@@ -43,6 +44,10 @@
 			@"trendDelay",
 			@"followerDelay",
 			@"loadEnabled",
+			@"twitterEnabled",
+			@"trendingEnabled",
+			@"vcsEnabled",
+			@"weatherEnabled",
 			nil];
 	NSArray *defaultValues = [NSArray arrayWithObjects:
 			@"3",
@@ -58,10 +63,19 @@
 			@"600",
 			@"600",
 			@"1",
+			@"1",
+			@"1",
+			@"1",
+			@"1",
 			nil];
 	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
+	
+	SUUpdater *su = [SUUpdater sharedUpdater];
+	[su checkForUpdatesInBackground];
+	NSLog(@"Got updater %@", su);
+	
 	return self;
 }
 
@@ -230,6 +244,7 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 		ButtonDelegate *bd = [[arr objectAtIndex: i] target];
 		[theMenu removeItem: [arr objectAtIndex: i]];
 		[theMenu insertItem: [arr objectAtIndex: i] atIndex: i];
+		[theMenu itemChanged: [arr objectAtIndex: i]];
 	}
 	for (i = 0; i < [arr count]; i++) {
 		if ([[arr objectAtIndex: i] isHidden] == NO) {
