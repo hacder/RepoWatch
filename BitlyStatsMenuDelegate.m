@@ -117,14 +117,14 @@
 
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *username = [defaults stringForKey: @"twitterUsername"];
-	if ([defaults integerForKey: @"bitlyEnabled"] == 0) {
-		[self setTitle: @"Bitly disabled"];
+	if ([defaults integerForKey: @"bitlyEnabled"] == 0 || [defaults integerForKey: @"twitterEnabled"] == 0) {
 		[self setHidden: YES];
+		[self setTitle: @"Bitly disabled"];
 		[self setPriority: -1];
 		return;
 	}
 	
+	NSString *username = [defaults stringForKey: @"twitterUsername"];
 	int count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
 	NSString *urlString = [[[NSString alloc] initWithFormat: @"http://www.twitter.com/statuses/user_timeline.xml?screen_name=%@&count=%d", username, count] autorelease];
 	NSURL *fireURL = [[NSURL alloc] initWithString: urlString];
