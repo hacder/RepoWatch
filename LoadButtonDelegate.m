@@ -36,11 +36,11 @@
 	[self setTitle: status];
 	[status release];
 
-	if (loads[0] < 0.1 && loads[1] < 0.1 && loads[2] < 0.1) {
-		ignore = NO;
-		[self setHidden: NO];
+	if (loads[0] < 0.75 && loads[1] < 0.75 && loads[2] < 0.75) {
 		[self setPriority: 6];
 	} else if (loads[0] < 1.0) {
+		ignore = NO;
+		[self setHidden: NO];
 		[self setPriority: 14];
 	} else {
 		[self setPriority: 17];
