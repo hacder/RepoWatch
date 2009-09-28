@@ -45,7 +45,6 @@
 }
 
 - (void) setTitle: (NSString *)t {
-	// This needs to be done on the main queue.
 	[t retain];
 	[menuItem setTitle: t];
 	[title release];

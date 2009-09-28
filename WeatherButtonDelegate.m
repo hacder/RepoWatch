@@ -32,7 +32,6 @@
 	int zip = [[NSUserDefaults standardUserDefaults] integerForKey: @"zipcode"];
 	if (zip == 0) {
 		[self setHidden: YES];
-		[self setTitle: @"Go away"];
 		[self setPriority: 1];
 		return;
 	}
@@ -54,6 +53,7 @@
 	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
 	if (data == nil) {
 		[self setHidden: YES];
+		[self setPriority: 1];
 		return;
 	}
 	
@@ -63,6 +63,7 @@
 	if (temperature == -1 && precip == -1) {
 		// Something bad happened
 		[self setHidden: YES];
+		[self setPriority: 1];
 		return;
 	}
 	
@@ -76,21 +77,21 @@
 	
 	NSString *t;
 	if ([s count] == 0) {
-		t = [[NSString stringWithFormat: @"Temp: %dF Precip: %d%%", temperature, precip] autorelease];
+		t = [NSString stringWithFormat: @"Temp: %dF Precip: %d%%", temperature, precip];
 		[self setTitle: t];
 		[self setShortTitle: t];
 		[self setHidden: NO];
 		[self setPriority: 2];
 	} else if ([s count] == 1) {
 		// Pull full info in full title
-		t = [[NSString stringWithFormat: @"WARNING: %@ %@", [[s objectAtIndex: 0] stringValue], [[s2 objectAtIndex: 0] stringValue]] autorelease];
+		t = [NSString stringWithFormat: @"WARNING: %@ %@", [[s objectAtIndex: 0] stringValue], [[s2 objectAtIndex: 0] stringValue]];
 		[self setTitle: t];
 		[self setShortTitle: t];
 		[self setHidden: NO];
 		[self setPriority: 30];
 	} else {
 		// Put full info, including the multiple warnings in the full title.
-		t = [[NSString stringWithFormat: @"WARNING: %d weather events!", [s count]] autorelease];
+		t = [NSString stringWithFormat: @"WARNING: %d weather events!", [s count]];
 		[self setTitle: t];
 		[self setShortTitle: t];
 		[self setHidden: NO];
