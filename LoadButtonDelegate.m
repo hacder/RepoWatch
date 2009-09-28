@@ -15,6 +15,7 @@
 
 - (void) beep: (id) something {
 	ignore = YES;
+	[self setHidden: YES];
 }
 
 - (void) fire {
