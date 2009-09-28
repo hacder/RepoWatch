@@ -17,9 +17,10 @@
 	NSString *real_url = [NSString stringWithFormat: @"%@%@", tmp_url, hash];
 	
 	NSURL *url = [NSURL URLWithString: real_url];
-	NSURLRequest *request = [NSURLRequest requestWithURL: url];
+	NSURLRequest *request = [[NSURLRequest requestWithURL: url] retain];
 	
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[request autorelease]
 		NSData *response = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
 		NSXMLDocument *doc = [[[NSXMLDocument alloc] initWithData: response options: 0 error: nil] autorelease];
 		NSArray *counts = [doc objectsForXQuery: @"//clicks" error: nil];
