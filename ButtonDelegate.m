@@ -5,6 +5,7 @@
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super init];
+	ignore = NO;
 	script = sc;
 	[script retain];
 	mainController = mc;
@@ -52,6 +53,9 @@
 }
 
 - (void) setShortTitle: (NSString *)t {
+	if ([t isEqual: shortTitle])
+		return;
+	ignore = NO;
 	[t retain];
 	[shortTitle release];
 	shortTitle = t;
@@ -79,9 +83,9 @@
 
 - (void) beep: (id) something {
 	if (script == nil) {
-		// If we're not a script, and we haven't overridden this function, just "refresh" the
-		// display.
-		[self fire];
+		ignore = YES;
+		[self setHidden: YES];
+		[self setPriority: 1];
 	} else {
 		NSString *s = [self runScriptWithArgument: @"click"];
 		NSMenu *tempMenu = [[NSMenu alloc] initWithTitle: @"Temp"];
@@ -106,6 +110,7 @@
 - (void) setPriority: (int) p {
 	if (priority == p)
 		return;
+	ignore = NO;
 	priority = p;
 	[mainController rearrange];
 }
