@@ -34,7 +34,7 @@
 	[self setTitle: status];
 	[status release];
 
-	if (loads[0] < 0.75 && loads[1] < 0.75 && loads[2] < 0.75) {
+	if (loads[0] < 0.75 && loads[1] < 0.75) {
 		[self setPriority: 6];
 	} else if (loads[0] < 1.0) {
 		[self setPriority: 14];
