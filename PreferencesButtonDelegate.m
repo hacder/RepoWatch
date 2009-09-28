@@ -51,11 +51,9 @@
 
 - (BOOL) windowShouldClose: (id) win {
 	window = nil;
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[[NSUserDefaultsController sharedUserDefaultsController] save: self];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[mainController reset];
-		});
+	[[NSUserDefaultsController sharedUserDefaultsController] save: self];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[mainController reset];
 	});
 	return YES;
 }
