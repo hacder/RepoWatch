@@ -5,7 +5,6 @@
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super init];
-	ignore = NO;
 	script = sc;
 	[script retain];
 	mainController = mc;
@@ -43,6 +42,7 @@
 
 - (void) setHidden: (BOOL) b {
 	[menuItem setHidden: b];
+	[mainController maybeRefresh: self];
 }
 
 - (void) setTitle: (NSString *)t {
@@ -82,9 +82,6 @@
 
 - (void) beep: (id) something {
 	if (script == nil) {
-		ignore = YES;
-		[self setHidden: YES];
-		[self setPriority: 1];
 	} else {
 		NSString *s = [self runScriptWithArgument: @"click"];
 		NSMenu *tempMenu = [[NSMenu alloc] initWithTitle: @"Temp"];
@@ -109,7 +106,6 @@
 - (void) setPriority: (int) p {
 	if (priority == p)
 		return;
-	ignore = NO;
 	priority = p;
 	[mainController rearrange];
 }

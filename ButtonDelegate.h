@@ -12,7 +12,6 @@
 	MainController *mainController;
 	NSView *_prefView;
 	dispatch_source_t timer;
-	BOOL ignore;
 @public
 	int priority;
 	NSString *title;
