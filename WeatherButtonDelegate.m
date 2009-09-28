@@ -29,7 +29,6 @@
 }
 
 - (void) fire {
-	// begin=2009-09-03T22:26Z&end=2009-09-03T23:59Z
 	int zip = [[NSUserDefaults standardUserDefaults] integerForKey: @"zipcode"];
 	if (zip == 0) {
 		[self setHidden: YES];
@@ -58,7 +57,7 @@
 		return;
 	}
 	
-	NSXMLDocument *doc  = [[NSXMLDocument alloc] initWithData: data options: 0 error: nil];
+	NSXMLDocument *doc  = [[[NSXMLDocument alloc] initWithData: data options: 0 error: nil] autorelease];
 	int temperature = [self getIntFromDoc: doc withKey: @"//temperature"];
 	int precip = [self getIntFromDoc: doc withKey: @"//probability-of-precipitation"];
 	if (temperature == -1 && precip == -1) {

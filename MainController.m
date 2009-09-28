@@ -114,6 +114,10 @@ char *find_execable(const char *filename) {
 		return;
 	if ([path isEqual: [@"~/Downloads" stringByStandardizingPath]])
 		return;
+	if ([path isEqual: [@"~/Music" stringByStandardizingPath]])
+		return;
+	if ([path isEqual: [@"~/Movies" stringByStandardizingPath]])
+		return;
 
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
 	if ([contents containsObject: @".git"]) {
