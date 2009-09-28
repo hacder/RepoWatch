@@ -33,15 +33,19 @@
 
 - (NSData *)fetchDataForURL: (NSURL *)url {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *username = [defaults stringForKey: @"twitterUsername"];
-	NSString *password = [defaults stringForKey: @"twitterPassword"];
-	if (username == nil || [username length] == 0 || password == nil || [password length] == 0)
-		return nil;
-	
-	NSString *auth = [self base64Username: username password: password];
-	
+
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: url];
-	[request setValue: [NSString stringWithFormat: @"Basic %@", auth] forHTTPHeaderField: @"Authorization"];
+
+	// Only add the authorization key if twitter is enabled. Otherwise... I hope you do not need authorization!
+	if ([defaults integerForKey: @"twitterEnabled"]) {
+		NSString *username = [defaults stringForKey: @"twitterUsername"];
+		NSString *password = [defaults stringForKey: @"twitterPassword"];
+		if (username == nil || [username length] == 0 || password == nil || [password length] == 0)
+			return nil;
+	
+		NSString *auth = [self base64Username: username password: password];	
+		[request setValue: [NSString stringWithFormat: @"Basic %@", auth] forHTTPHeaderField: @"Authorization"];
+	}
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
 	return data;
