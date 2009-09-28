@@ -12,9 +12,6 @@
 	[self realTimer: delay];
 }
 
-- (void) beep: (id) something {
-}
-
 - (void) fire {
 	int enabled = [[[NSUserDefaults standardUserDefaults] objectForKey: @"loadEnabled"] intValue];
 	if (!enabled) {
