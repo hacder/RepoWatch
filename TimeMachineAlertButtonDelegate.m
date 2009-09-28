@@ -10,7 +10,8 @@
 - (void) beep: (id) something {
 	[self setShortTitle: @"TimeMachine running"];
 	[self setTitle: @"TimeMachine running"]; 
-	NSTask *backupTask = [NSTask launchedTaskWithLaunchPath: @"/System/Library/CoreServices/backupd.bundle/Contents/Resources/backupd-helper" arguments: nil];
+	NSArray *stupid = [[[NSArray alloc] init] autorelease];
+	NSTask *backupTask = [NSTask launchedTaskWithLaunchPath: @"/System/Library/CoreServices/backupd.bundle/Contents/Resources/backupd-helper" arguments: stupid];
 	[backupTask launch];
 }
 

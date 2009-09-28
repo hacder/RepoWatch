@@ -13,10 +13,18 @@
 	<key>CFBundleName</key>
 	<string>MenuMonitor</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>0.4</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.5</string>
 	<key>NSUIElement</key>
 	<string>1</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>dsa_pub.pem</string>
+	<key>SUFeedURL</key>
+	<string>http://www.doomstick.com/mm_update_feed.xml</string>
+	<key>CFBundleVersion</key>
+	<string>0.4</string>
+	<key>SUEnableSystemProfiling</key>
+	<string>YES</string>
 </dict>
 </plist>
