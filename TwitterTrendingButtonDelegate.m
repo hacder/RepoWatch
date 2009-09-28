@@ -75,6 +75,8 @@
 						continue;
 					if (![potential caseInsensitiveCompare: @"TGIF"])
 						continue;
+					if (![potential caseInsensitiveCompare: @"Goodmorning"])
+						continue;
 				}
 		
 				if (z < num) {
