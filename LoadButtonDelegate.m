@@ -4,7 +4,7 @@
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
-	ignore = NO;
+	ignoreAbove = 100;
 	return self;
 }
 
@@ -14,7 +14,7 @@
 }
 
 - (void) beep: (id) something {
-	ignore = YES;
+	ignoreAbove = priority;
 	[self setHidden: YES];
 }
 
@@ -25,8 +25,6 @@
 		[self setPriority: 1];
 		return;
 	}
-	if (!ignore)
-		[self setHidden: NO];
 	
 	double loads[3];
 	getloadavg(loads, 3);
@@ -39,12 +37,14 @@
 	if (loads[0] < 0.75 && loads[1] < 0.75 && loads[2] < 0.75) {
 		[self setPriority: 6];
 	} else if (loads[0] < 1.0) {
-		ignore = NO;
-		[self setHidden: NO];
 		[self setPriority: 14];
 	} else {
 		[self setPriority: 17];
 	}
+	if (priority < ignoreAbove) {
+		[self setHidden: NO];
+		ignoreAbove = 100;
+	}	
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {

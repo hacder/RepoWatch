@@ -3,7 +3,7 @@
 #import "ButtonDelegate.h"
 
 @interface LoadButtonDelegate : ButtonDelegate {
-	BOOL ignore;
+	int ignoreAbove;
 }
 
 @end
