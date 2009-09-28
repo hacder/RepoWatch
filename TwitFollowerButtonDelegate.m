@@ -24,7 +24,7 @@
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-	if ([defaults integerForKey: @"defollowEnabled"] == 0) {
+	if ([defaults integerForKey: @"defollowEnabled"] == 0 || [defaults integerForKey: @"twitterEnabled"] == 0) {
 		[self setTitle: @""];
 		[self setShortTitle: @""];
 		[self setHidden: YES];
