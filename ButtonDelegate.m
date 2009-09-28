@@ -55,7 +55,6 @@
 - (void) setShortTitle: (NSString *)t {
 	if ([t isEqual: shortTitle])
 		return;
-	ignore = NO;
 	[t retain];
 	[shortTitle release];
 	shortTitle = t;
