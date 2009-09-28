@@ -49,54 +49,60 @@
 		] autorelease];
 	NSURL *url = [[NSURL URLWithString: urlString] autorelease];
 	
-	NSURLRequest *request = [NSURLRequest requestWithURL: url];
-	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
-	if (data == nil) {
-		[self setHidden: YES];
-		[self setPriority: 1];
-		return;
-	}
+	NSURLRequest *request = [[NSURLRequest requestWithURL: url] retain];
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[request autorelease];
+		NSData *data = [[NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil] retain];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[data autorelease];
+			if (data == nil) {
+				[self setHidden: YES];
+				[self setPriority: 1];
+				return;
+			}
 	
-	NSXMLDocument *doc  = [[[NSXMLDocument alloc] initWithData: data options: 0 error: nil] autorelease];
-	int temperature = [self getIntFromDoc: doc withKey: @"//temperature"];
-	int precip = [self getIntFromDoc: doc withKey: @"//probability-of-precipitation"];
-	if (temperature == -1 && precip == -1) {
-		// Something bad happened
-		[self setHidden: YES];
-		[self setPriority: 1];
-		return;
-	}
+		NSXMLDocument *doc  = [[[NSXMLDocument alloc] initWithData: data options: 0 error: nil] autorelease];
+		int temperature = [self getIntFromDoc: doc withKey: @"//temperature"];
+		int precip = [self getIntFromDoc: doc withKey: @"//probability-of-precipitation"];
+		if (temperature == -1 && precip == -1) {
+			// Something bad happened
+			[self setHidden: YES];
+			[self setPriority: 1];
+			return;
+		}
 	
-	NSPredicate *pred = [NSPredicate predicateWithBlock: ^(id evaluatedObject, NSDictionary *bindings) {
-		if ([evaluatedObject stringValue] != nil && [[evaluatedObject stringValue] length] != 0)
-			return YES;
-		return NO;
-	}];
-	NSArray *s = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@phenomena" error: nil] filteredArrayUsingPredicate: pred];
-	NSArray *s2 = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@significance" error: nil] filteredArrayUsingPredicate: pred];
+		NSPredicate *pred = [NSPredicate predicateWithBlock: ^(id evaluatedObject, NSDictionary *bindings) {
+			if ([evaluatedObject stringValue] != nil && [[evaluatedObject stringValue] length] != 0)
+				return YES;
+			return NO;
+		}];
+		NSArray *s = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@phenomena" error: nil] filteredArrayUsingPredicate: pred];
+		NSArray *s2 = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@significance" error: nil] filteredArrayUsingPredicate: pred];
 	
-	NSString *t;
-	if ([s count] == 0) {
-		t = [NSString stringWithFormat: @"Temp: %dF Precip: %d%%", temperature, precip];
-		[self setTitle: t];
-		[self setShortTitle: t];
-		[self setHidden: NO];
-		[self setPriority: 2];
-	} else if ([s count] == 1) {
-		// Pull full info in full title
-		t = [NSString stringWithFormat: @"WARNING: %@ %@", [[s objectAtIndex: 0] stringValue], [[s2 objectAtIndex: 0] stringValue]];
-		[self setTitle: t];
-		[self setShortTitle: t];
-		[self setHidden: NO];
-		[self setPriority: 30];
-	} else {
-		// Put full info, including the multiple warnings in the full title.
-		t = [NSString stringWithFormat: @"WARNING: %d weather events!", [s count]];
-		[self setTitle: t];
-		[self setShortTitle: t];
-		[self setHidden: NO];
-		[self setPriority: 30];
-	}
+		NSString *t;
+		if ([s count] == 0) {
+			t = [NSString stringWithFormat: @"Temp: %dF Precip: %d%%", temperature, precip];
+			[self setTitle: t];
+			[self setShortTitle: t];
+			[self setHidden: NO];
+			[self setPriority: 2];
+		} else if ([s count] == 1) {
+			// Pull full info in full title
+			t = [NSString stringWithFormat: @"WARNING: %@ %@", [[s objectAtIndex: 0] stringValue], [[s2 objectAtIndex: 0] stringValue]];
+			[self setTitle: t];
+			[self setShortTitle: t];
+			[self setHidden: NO];
+			[self setPriority: 30];
+		} else {
+			// Put full info, including the multiple warnings in the full title.
+			t = [NSString stringWithFormat: @"WARNING: %d weather events!", [s count]];
+			[self setTitle: t];
+			[self setShortTitle: t];
+			[self setHidden: NO];
+			[self setPriority: 30];
+		}
+		});
+	});
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {
