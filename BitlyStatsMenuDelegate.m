@@ -19,29 +19,34 @@
 	NSURL *url = [NSURL URLWithString: real_url];
 	NSURLRequest *request = [NSURLRequest requestWithURL: url];
 	
-	NSData *response = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
-
-	NSXMLDocument *doc = [[[NSXMLDocument alloc] initWithData: response options: 0 error: nil] autorelease];
-	NSArray *counts = [doc objectsForXQuery: @"//clicks" error: nil];
-	NSArray *directs = [doc objectsForXQuery: @"//direct" error: nil];
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		NSData *response = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];
+		NSXMLDocument *doc = [[[NSXMLDocument alloc] initWithData: response options: 0 error: nil] autorelease];
+		NSArray *counts = [doc objectsForXQuery: @"//clicks" error: nil];
+		NSArray *directs = [doc objectsForXQuery: @"//direct" error: nil];
 	
-	if (counts == nil)
-		return;
-	if ([counts count] == 0)
-		return;
+		if (counts == nil)
+			return;
+		if ([counts count] == 0)
+			return;
 
-	NSString *objOneString = [[counts objectAtIndex: 0] stringValue];
-	NSString *objTwoString = [[directs objectAtIndex: 0] stringValue];
+		NSString *objOneString = [[counts objectAtIndex: 0] stringValue];
+		NSString *objTwoString = [[directs objectAtIndex: 0] stringValue];
 
-	int clicks = [objTwoString intValue];
-	if (last_clicks != -1 && last_clicks != clicks)
-		if ([[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyBeep"] intValue] == 1)
-			NSBeep();
-	last_clicks = clicks;
+		int clicks = [objTwoString intValue];
+		if (last_clicks != -1 && last_clicks != clicks)
+			if ([[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyBeep"] intValue] == 1)
+				NSBeep();
+		last_clicks = clicks;
 
-	NSString *tit = [[[NSString alloc] initWithFormat: @"Bitly: %@ %@ clicks, %@ direct", hash, objOneString, objTwoString] autorelease];
-	[self setShortTitle: tit];
-	[self setTitle: tit];
+		NSString *tit = [[[NSString alloc] initWithFormat: @"Bitly: %@ %@ clicks, %@ direct", hash, objOneString, objTwoString] autorelease];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setShortTitle: tit];
+			[self setTitle: tit];
+			[self setHidden: NO];
+			[self setPriority: 16];
+		});
+	});
 }
 
 - (void) setupTimer {
@@ -121,54 +126,57 @@
 	
 	int count = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyTwitterHistory"] intValue];
 	NSString *urlString = [[[NSString alloc] initWithFormat: @"http://www.twitter.com/statuses/user_timeline.xml?screen_name=%@&count=%d", username, count] autorelease];
-	NSURL *fireURL = [[[NSURL alloc] initWithString: urlString] autorelease];
-	NSData *data = [self fetchDataForURL: fireURL];
-	if (data == nil) {
-		[self setHidden: YES];
-		[self setTitle: @"Bitly error fetching XML"];
-		[self setPriority: 1];
-		return;
-	}
-	
-	NSXMLDocument *doc  = [self testingStupidGCStuff: data];
-	NSArray *statuses = [doc objectsForXQuery: @"//text" error: nil];
-	NSArray *status_times = [doc objectsForXQuery: @"//status/created_at" error: nil];
-
-	NSCalendar *greg = [self getGregorianInGMT];
-	
-	int i = 0;
-	for (; i < [statuses count]; i++) {
-		NSDateComponents *components = [self getDateComponentsFromString: [[status_times objectAtIndex: i] stringValue]];
-		NSDate *tweetDate = [greg dateFromComponents: components];
-		
-		NSTimeInterval timeSince = [tweetDate timeIntervalSinceNow] * -1;
-		if (timeSince / 3600 >= [defaults integerForKey: @"bitlyTimeout"])
-			continue;
-
-		NSString *tweet = [[statuses objectAtIndex: i] stringValue];
-		NSRange r = [tweet rangeOfString: @"(via"];
-		if (r.location != NSNotFound)
-			continue;
-
-		NSArray *pieces = [tweet componentsSeparatedByString: @"//bit.ly/"];
-		if ([pieces count] == 1)
-			continue;
-
-		if ([pieces count] > 1) {
-			NSString *tmp = [pieces objectAtIndex: 1];
-			NSArray *pieces = [tmp componentsSeparatedByCharactersInSet: [[NSCharacterSet alphanumericCharacterSet] invertedSet]];
-			NSString *hash = [pieces objectAtIndex: 0];
+	NSURL *fireURL = [[NSURL alloc] initWithString: urlString];
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[fireURL autorelease];
+		NSData *data = [self fetchDataForURL: fireURL];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			if (data == nil) {
+				[self setHidden: YES];
+				[self setTitle: @"Bitly error fetching XML"];
+				[self setPriority: 1];
+				return;
+			}
 			
-			[self getBitlyInfoWithHash: hash];
-			[self setPriority: 16];
-			[self setHidden: NO];
-			return;
-		}
-	}
-
-	[self setTitle: @"No bitly links found"];
-	[self setPriority: 0];
-	[self setHidden: YES];
+			NSXMLDocument *doc  = [self testingStupidGCStuff: data];
+			NSArray *statuses = [doc objectsForXQuery: @"//text" error: nil];
+			NSArray *status_times = [doc objectsForXQuery: @"//status/created_at" error: nil];
+		
+			NSCalendar *greg = [self getGregorianInGMT];
+			
+			int i = 0;
+			for (; i < [statuses count]; i++) {
+				NSDateComponents *components = [self getDateComponentsFromString: [[status_times objectAtIndex: i] stringValue]];
+				NSDate *tweetDate = [greg dateFromComponents: components];
+				
+				NSTimeInterval timeSince = [tweetDate timeIntervalSinceNow] * -1;
+				if (timeSince / 3600 >= [defaults integerForKey: @"bitlyTimeout"])
+					continue;
+		
+				NSString *tweet = [[statuses objectAtIndex: i] stringValue];
+				NSRange r = [tweet rangeOfString: @"(via"];
+				if (r.location != NSNotFound)
+					continue;
+		
+				NSArray *pieces = [tweet componentsSeparatedByString: @"//bit.ly/"];
+				if ([pieces count] == 1)
+					continue;
+		
+				if ([pieces count] > 1) {
+					NSString *tmp = [pieces objectAtIndex: 1];
+					NSArray *pieces = [tmp componentsSeparatedByCharactersInSet: [[NSCharacterSet alphanumericCharacterSet] invertedSet]];
+					NSString *hash = [pieces objectAtIndex: 0];
+					
+					[self getBitlyInfoWithHash: hash];
+					return;
+				}
+			}
+		
+			[self setTitle: @"No bitly links found"];
+			[self setPriority: 0];
+			[self setHidden: YES];
+		});
+	});
 }
 
 @end

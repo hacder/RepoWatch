@@ -53,7 +53,7 @@
 			@"1",
 			@"5",
 			@"1",
-			@"60",
+			@"300",
 			@"10",
 			@"600",
 			@"600",
@@ -118,30 +118,32 @@ char *find_execable(const char *filename) {
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
 	if ([contents containsObject: @".git"]) {
 		if (git) {
-			NSLog(@"Found git dir");
 			[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self gitPath: git repository: path]];
 		}
 	} else if ([contents containsObject: @".svn"]) {
 		if (svn) {
-			NSLog(@"Found svn dir");
 			[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self svnPath: svn repository: path]];
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
-			NSLog(@"Found mercurial dir");
 			[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self hgPath: hg repository: path]];
 		}
 	} else {
 		int i;
 		for (i = 0; i < [contents count]; i++) {
-			NSString *s = [NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]];
-			[self searchPath: s forGit: git svn: svn hg: hg];
+			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] retain];
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[self searchPath: s forGit: git svn: svn hg: hg];
+				[s release];
+			});
 		}
 	}
 }
 
 - (void) searchAllPathsForGit: (char *)git svn: (char *)svn hg: (char *)hg {
-	[self searchPath: [@"~" stringByStandardizingPath] forGit: git svn: svn hg: hg];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self searchPath: [@"~" stringByStandardizingPath] forGit: git svn: svn hg: hg];
+	});
 }
 
 - (void) findSupportedSCMS {
@@ -152,7 +154,9 @@ char *find_execable(const char *filename) {
 	NSLog(@"Git: %s Svn: %s Mercurial: %s", git, svn, hg);
 	
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
-	[self searchAllPathsForGit: git svn: svn hg: hg];
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[self searchAllPathsForGit: git svn: svn hg: hg];
+	});
 }
 
 - initWithDirectory: (NSString *)dir {
