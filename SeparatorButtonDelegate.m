@@ -20,10 +20,4 @@
 - (void) beep: (id) something {
 }
 
-- (void) fire {
-}
-
-- (NSString *)runScriptWithArgument: (NSString *)arg {
-}
-
 @end

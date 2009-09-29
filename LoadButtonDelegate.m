@@ -5,12 +5,8 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	ignoreAbove = 100;
+	[self setupTimer];
 	return self;
-}
-
-- (void) setupTimer {
-	int delay = [[[NSUserDefaults standardUserDefaults] stringForKey: @"loadDelay"] intValue];
-	[self realTimer: delay];
 }
 
 - (void) beep: (id) something {
@@ -19,6 +15,7 @@
 }
 
 - (void) fire {
+	timeout = [[[NSUserDefaults standardUserDefaults] stringForKey: @"loadDelay"] intValue];
 	int enabled = [[[NSUserDefaults standardUserDefaults] objectForKey: @"loadEnabled"] intValue];
 	if (!enabled) {
 		[self setHidden: YES];
@@ -44,10 +41,7 @@
 	if (priority < ignoreAbove) {
 		[self setHidden: NO];
 		ignoreAbove = 100;
-	}	
-}
-
-- (NSString *)runScriptWithArgument: (NSString *)arg {
+	}
 }
 
 @end

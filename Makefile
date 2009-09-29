@@ -1,7 +1,7 @@
 .PHONY: release
 
 MenuMonitor:
-	gcc -g -Werror -F./MenuMonitor.app/Contents/Frameworks -framework Foundation -framework AppKit -framework Sparkle -framework ScriptingBridge -framework WebKit -lobjc -lcrypto *.m -o MenuMonitor
+	gcc -g -Wall -Werror -F./MenuMonitor.app/Contents/Frameworks -framework Foundation -framework AppKit -framework Sparkle -framework ScriptingBridge -framework WebKit -lobjc -lcrypto *.m -o MenuMonitor
 	cp MenuMonitor MenuMonitor.app/Contents/MacOS/
 
 release: MenuMonitor

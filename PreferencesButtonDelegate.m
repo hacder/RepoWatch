@@ -5,6 +5,7 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc plugins: (NSArray *)plugins {
 	self = [self initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	_plugins = plugins;
+	[self setTitle: @"Preferences"];
 	[self setPriority: -100];
 	return self;
 }
@@ -12,10 +13,6 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	return self;
-}
-
-- (void) setupTimer {
-	[self realTimer: 120];
 }
 
 - (void) beep: (id) something {
@@ -40,13 +37,6 @@
 	[window makeKeyAndOrderFront: nil];
 	[window makeKeyWindow];
 	[window setDelegate: self];
-}
-
-- (void) fire {
-	[self setTitle: @"Preferences"];
-}
-
-- (NSString *)runScriptWithArgument: (NSString *)arg {
 }
 
 - (BOOL) windowShouldClose: (id) win {

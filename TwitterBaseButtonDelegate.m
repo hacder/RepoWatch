@@ -22,7 +22,9 @@
 	
 	mem = BIO_push(b64, mem);
 	BIO_write(mem, rd, [realData length]);
-	BIO_flush(mem);
+	int fb = BIO_flush(mem);
+	if (fb != 1)
+		return nil;
 	
 	char *base64Pointer;
 	long base64Length = BIO_get_mem_data(mem, &base64Pointer);
@@ -43,8 +45,9 @@
 		if (username == nil || [username length] == 0 || password == nil || [password length] == 0)
 			return nil;
 	
-		NSString *auth = [self base64Username: username password: password];	
-		[request setValue: [NSString stringWithFormat: @"Basic %@", auth] forHTTPHeaderField: @"Authorization"];
+		NSString *auth = [self base64Username: username password: password];
+		if (auth != nil)
+			[request setValue: [NSString stringWithFormat: @"Basic %@", auth] forHTTPHeaderField: @"Authorization"];
 	}
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest: request returningResponse: nil error: nil];

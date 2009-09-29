@@ -10,8 +10,8 @@
 }
 
 - init;
-- initWithDirectory: (NSString *)s;
-- addDir: (NSString *)s;
+- (void) initWithDirectory: (NSString *)dir;
+- (void) addDir: (NSString *)dir;
 - (void) rearrange;
 - (void) reset;
 - (void) maybeRefresh: (ButtonDelegate *)bd;

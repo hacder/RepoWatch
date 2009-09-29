@@ -74,7 +74,6 @@
 	
 	SUUpdater *su = [SUUpdater sharedUpdater];
 	[su checkForUpdatesInBackground];
-	NSLog(@"Got updater %@", su);
 	
 	return self;
 }
@@ -180,7 +179,7 @@ char *find_execable(const char *filename) {
 	});
 }
 
-- initWithDirectory: (NSString *)dir {
+- (void)initWithDirectory: (NSString *)dir {
 	[self init];
 	[plugins addObject: [[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
@@ -194,7 +193,7 @@ char *find_execable(const char *filename) {
 	[self findSupportedSCMS];
 }
 
-- addDir: (NSString *)dir {
+- (void)addDir: (NSString *)dir {
 	DIR *dire = opendir([dir cStringUsingEncoding: NSUTF8StringEncoding]);
 	if (dire == NULL)
 		return;
@@ -204,7 +203,7 @@ char *find_execable(const char *filename) {
 			continue;
 		NSString *dirPart = [[[NSString alloc] initWithCString: dent->d_name encoding: NSUTF8StringEncoding] autorelease];
 		NSString *total = [[[dir stringByAppendingString: @"/"] stringByAppendingString: dirPart] autorelease];
-		ButtonDelegate *bd = [[ButtonDelegate alloc] initWithTitle: total menu: theMenu script: total statusItem: statusItem mainController: self];
+		[[ButtonDelegate alloc] initWithTitle: total menu: theMenu script: total statusItem: statusItem mainController: self];
 	}
 	closedir(dire);
 }
@@ -244,7 +243,6 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 	NSArray *arr = [[theMenu itemArray] sortedArrayUsingFunction: sortMenuItems context: NULL];
 	int i;
 	for (i = 0; i < [arr count]; i++) {
-		ButtonDelegate *bd = [[arr objectAtIndex: i] target];
 		[theMenu removeItem: [arr objectAtIndex: i]];
 		[theMenu insertItem: [arr objectAtIndex: i] atIndex: i];
 		[theMenu itemChanged: [arr objectAtIndex: i]];

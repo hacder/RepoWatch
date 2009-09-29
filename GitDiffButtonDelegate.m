@@ -7,11 +7,9 @@
 	git = gitPath;
 	repository = rep;
 	[repository retain];
+	timeout = 10;
+	[self setupTimer];
 	return self;
-}
-
-- (void) setupTimer {
-	[self realTimer: 10];
 }
 
 - (void) beep: (id) something {
@@ -50,9 +48,6 @@
 			}
 		});
 	});
-}
-
-- (NSString *)runScriptWithArgument: (NSString *)arg {
 }
 
 @end

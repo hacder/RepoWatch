@@ -14,11 +14,11 @@
 	dispatch_source_t timer;
 @public
 	int priority;
+	int timeout;
 	NSString *title;
 }
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc;
-- (NSString *)runScriptWithArgument: (NSString *)arg;
 - (void) fire;
 - (void) setupTimer;
 - (void) addMenuItem;
@@ -27,7 +27,6 @@
 - (void) setShortTitle: (NSString *)t;
 - (void) setTitle: (NSString *)t;
 - (void) setHidden: (BOOL)b;
-- (void) realTimer: (int)t;
 - (void) setPriority: (int) p;
 - (NSView *) preferences;
 

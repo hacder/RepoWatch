@@ -7,11 +7,9 @@
 	hg = hgPath;
 	repository = rep;
 	[repository retain];
+	timeout = 10;
+	[self setupTimer];
 	return self;
-}
-
-- (void) setupTimer {
-	[self realTimer: 10];
 }
 
 - (void) beep: (id) something {
@@ -56,9 +54,6 @@
 		[self setHidden: FALSE];
 		[self setPriority: 10];
 	}
-}
-
-- (NSString *)runScriptWithArgument: (NSString *)arg {
 }
 
 @end

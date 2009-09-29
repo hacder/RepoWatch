@@ -4,13 +4,9 @@
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	timeout = 3610;
+	[self setupTimer];
 	return self;
-}
-
-- (void) setupTimer {
-	// NOAA only updates once per hour.
-	[self realTimer: 3610];
-	[self setHidden: YES];
 }
 
 - (void) beep: (id) something {
@@ -103,9 +99,6 @@
 		}
 		});
 	});
-}
-
-- (NSString *)runScriptWithArgument: (NSString *)arg {
 }
 
 @end

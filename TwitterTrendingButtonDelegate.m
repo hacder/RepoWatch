@@ -6,12 +6,8 @@
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+	[self setupTimer];
 	return self;
-}
-
-- (void) setupTimer {
-	int delay = [[[NSUserDefaults standardUserDefaults] stringForKey: @"trendDelay"] intValue];
-	[self realTimer: delay];
 }
 
 - (void) beep: (id) something {
@@ -32,6 +28,8 @@
 }
 
 - (void) fire {
+	timeout = [[[NSUserDefaults standardUserDefaults] stringForKey: @"trendDelay"] intValue];
+
 	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"trendingEnabled"] == 0) {
 		[self setHidden: YES];
 		[self setPriority: 1];
@@ -105,9 +103,6 @@
 		//	[mainController testpopup];
 		});
 	});
-}
-
-- (NSString *)runScriptWithArgument: (NSString *)arg {
 }
 
 @end

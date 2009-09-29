@@ -6,13 +6,8 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	foll = [NSMutableArray arrayWithCapacity: 10];
+	[self setupTimer];
 	return self;
-}
-
-- (void) setupTimer {
-	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *timerSetting = [defaults stringForKey: @"followerDelay"];
-	[self realTimer: [timerSetting intValue]];
 }
 
 - (void) beep: (id) something {
@@ -23,6 +18,7 @@
 
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	timeout = [defaults integerForKey: @"followerDelay"];
 
 	if ([defaults integerForKey: @"defollowEnabled"] == 0 || [defaults integerForKey: @"twitterEnabled"] == 0) {
 		[self setTitle: @""];

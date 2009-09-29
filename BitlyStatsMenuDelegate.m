@@ -9,6 +9,7 @@
 	greg = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
 	NSTimeZone *tz = [NSTimeZone timeZoneWithName: @"GMT"];
 	[greg setTimeZone: tz];
+	[self setupTimer];
 	return self;
 }
 
@@ -51,11 +52,6 @@
 			[self setPriority: 16];
 		});
 	});
-}
-
-- (void) setupTimer {
-	int delay = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyDelay"] intValue];
-	[self realTimer: delay];
 }
 
 - (void) beep: (id) something {
@@ -113,6 +109,8 @@
 
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	timeout = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyDelay"] intValue];
+
 	if ([defaults integerForKey: @"bitlyEnabled"] == 0 || [defaults integerForKey: @"twitterEnabled"] == 0) {
 		[self setHidden: YES];
 		[self setTitle: @"Bitly disabled"];

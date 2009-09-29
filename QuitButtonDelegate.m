@@ -8,17 +8,8 @@
 	return self;
 }
 
-- (void) setupTimer {
-}
-
 - (void) beep: (id) something {
 	[NSApp terminate: self];
-}
-
-- (void) fire {
-}
-
-- (NSString *)runScriptWithArgument: (NSString *)arg {
 }
 
 @end
