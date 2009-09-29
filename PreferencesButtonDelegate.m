@@ -21,7 +21,7 @@
 - (void) beep: (id) something {
 	[NSApp activateIgnoringOtherApps: YES];
 
-	NSNib *nib = [[NSNib alloc] initWithNibNamed: @"preferences" bundle: nil];
+	NSNib *nib = [[[NSNib alloc] initWithNibNamed: @"preferences" bundle: nil] autorelease];
 	NSArray *arr;
 	[nib instantiateNibWithOwner: nil topLevelObjects: &arr];
 	
