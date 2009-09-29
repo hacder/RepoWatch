@@ -30,7 +30,7 @@
 
 - (void) fire {
 	int zip = [[NSUserDefaults standardUserDefaults] integerForKey: @"zipcode"];
-	if (zip == 0) {
+	if (zip == 0 || [[NSUserDefaults standardUserDefaults] integerForKey: @"weatherEnabled"] == 0) {
 		[self setHidden: YES];
 		[self setPriority: 1];
 		return;
@@ -47,7 +47,7 @@
 			[nowComponents year], [nowComponents month], [nowComponents day], [nowComponents hour],
 			[hourAgoComponents year], [hourAgoComponents month], [hourAgoComponents day], [hourAgoComponents hour]
 		] autorelease];
-	NSURL *url = [[NSURL URLWithString: urlString] autorelease];
+	NSURL *url = [NSURL URLWithString: urlString];
 	
 	NSURLRequest *request = [[NSURLRequest requestWithURL: url] retain];
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
