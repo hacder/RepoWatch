@@ -6,6 +6,7 @@
 @interface BitlyStatsButtonDelegate : TwitterBaseButtonDelegate {
 	int last_clicks;
 	NSString *curHash;
+	NSCalendar *greg;
 }
 
 @end

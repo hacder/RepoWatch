@@ -6,6 +6,9 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	last_clicks = -1;
+	greg = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	NSTimeZone *tz = [NSTimeZone timeZoneWithName: @"GMT"];
+	[greg setTimeZone: tz];
 	return self;
 }
 
@@ -95,13 +98,6 @@
 	return doc;
 }
 
-- (NSCalendar *) getGregorianInGMT {
-	NSCalendar *greg = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-	NSTimeZone *tz = [NSTimeZone timeZoneWithName: @"GMT"];
-	[greg setTimeZone: tz];
-	return greg;
-}
-
 - (NSDateComponents *)getDateComponentsFromString: (NSString *)s {
 	NSDateComponents *components = [[[NSDateComponents alloc] init] autorelease];
 	NSArray *stringPieces = [s componentsSeparatedByString: @" "];
@@ -144,8 +140,6 @@
 			NSArray *statuses = [doc objectsForXQuery: @"//text" error: nil];
 			NSArray *status_times = [doc objectsForXQuery: @"//status/created_at" error: nil];
 		
-			NSCalendar *greg = [self getGregorianInGMT];
-			
 			int i = 0;
 			for (; i < [statuses count]; i++) {
 				NSDateComponents *components = [self getDateComponentsFromString: [[status_times objectAtIndex: i] stringValue]];
