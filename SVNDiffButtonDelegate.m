@@ -16,7 +16,7 @@
 }
 
 - (void) fire {
-	NSTask *t = [[[NSTask alloc] init] autorelease];
+	NSTask *t = [[NSTask alloc] init];
 	NSString *lp = [NSString stringWithFormat: @"%s", svn];
 	[t setLaunchPath: lp];
 	[t setCurrentDirectoryPath: repository];
@@ -25,7 +25,7 @@
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
 	
-	NSTask *t2 = [[[NSTask alloc] init] autorelease];
+	NSTask *t2 = [[NSTask alloc] init];
 	[t2 setLaunchPath: @"/usr/bin/diffstat"];
 	[t2 setStandardInput: pipe];
 	
@@ -34,8 +34,6 @@
 		
 	NSFileHandle *file = [pipe2 fileHandleForReading];
 
-	[t retain];
-	[t2 retain];
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[t autorelease];
 		[t2 autorelease];
