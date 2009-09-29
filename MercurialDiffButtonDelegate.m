@@ -7,7 +7,7 @@
 	hg = hgPath;
 	repository = rep;
 	[repository retain];
-	timeout = 10;
+	timeout = 15;
 	[self setupTimer];
 	return self;
 }
@@ -33,27 +33,40 @@
 	[t2 setStandardOutput: pipe2];
 		
 	NSFileHandle *file = [pipe2 fileHandleForReading];
-		
-	[t launch];
-	[t2 launch];
-		
-	NSData *data = [file readDataToEndOfFile];
-	NSString *string = [[[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	NSArray *arr = [string componentsSeparatedByString: @"\n"];
-	string = [arr objectAtIndex: [arr count] - 1];
-	string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-	if ([string isEqual: @"0 files changed"]) {
-		[self setHidden: TRUE];
-		[self setPriority: 0];
-	} else {
-		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], string];
-	
-		[self setTitle: sTit];
-		[self setShortTitle: sTit];
-		[self setHidden: FALSE];
-		[self setPriority: 10];
-	}
+	[t retain];
+	[t2 retain];
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[t autorelease];
+		[t2 autorelease];
+		
+		[t launch];
+		[t2 launch];
+		
+		NSData *data = [file readDataToEndOfFile];
+		NSString *string = [[[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[string autorelease];
+
+			NSArray *arr = [string componentsSeparatedByString: @"\n"];
+			NSString *s2 = [arr objectAtIndex: [arr count] - 1];
+			s2 = [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		
+			if ([s2 isEqual: @"0 files changed"]) {
+				timeout = 15;
+				[self setHidden: TRUE];
+				[self setPriority: 0];
+			} else {
+				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], s2];
+			
+				timeout = 2;
+				[self setTitle: sTit];
+				[self setShortTitle: sTit];
+				[self setHidden: FALSE];
+				[self setPriority: 10];
+			}
+		});
+	});
 }
 
 @end

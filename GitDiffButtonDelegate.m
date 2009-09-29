@@ -7,7 +7,7 @@
 	git = gitPath;
 	repository = rep;
 	[repository retain];
-	timeout = 10;
+	timeout = 15;
 	[self setupTimer];
 	return self;
 }
@@ -36,11 +36,13 @@
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[string autorelease];
 			if ([string isEqual: @""]) {
+				timeout = 15;
 				[self setHidden: TRUE];
 				[self setPriority: 0];
 			} else {
 				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 	
+				timeout = 2;
 				[self setTitle: sTit];
 				[self setShortTitle: sTit];
 				[self setHidden: FALSE];
