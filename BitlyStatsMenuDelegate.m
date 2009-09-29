@@ -109,7 +109,7 @@
 
 - (void) fire {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	timeout = [[[NSUserDefaults standardUserDefaults] stringForKey: @"bitlyDelay"] intValue];
+	timeout = [[NSUserDefaults standardUserDefaults] integerForKey: @"bitlyDelay"];
 
 	if ([defaults integerForKey: @"bitlyEnabled"] == 0 || [defaults integerForKey: @"twitterEnabled"] == 0) {
 		[self setHidden: YES];
