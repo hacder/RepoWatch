@@ -159,6 +159,9 @@ char *find_execable(const char *filename) {
 }
 
 - (void) searchAllPathsForGit: (char *)git svn: (char *)svn hg: (char *)hg {
+	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"vcsEnabled"] == 0)
+		return;
+
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[self searchPath: [@"~" stringByStandardizingPath] forGit: git svn: svn hg: hg];
 	});
