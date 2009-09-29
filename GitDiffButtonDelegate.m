@@ -28,21 +28,28 @@
 	[t setStandardOutput: pipe];
 		
 	NSFileHandle *file = [pipe fileHandleForReading];
-		
-	[t launch];
-	NSData *data = [file readDataToEndOfFile];
-	NSString *string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
-	if ([string isEqual: @""]) {
-		[self setHidden: TRUE];
-		[self setPriority: 0];
-	} else {
-		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 	
-		[self setTitle: sTit];
-		[self setShortTitle: sTit];
-		[self setHidden: FALSE];
-		[self setPriority: 25];
-	}
+	[t retain];
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[t autorelease];
+		[t launch];
+		NSData *data = [file readDataToEndOfFile];
+		NSString *string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[string autorelease];
+			if ([string isEqual: @""]) {
+				[self setHidden: TRUE];
+				[self setPriority: 0];
+			} else {
+				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+	
+				[self setTitle: sTit];
+				[self setShortTitle: sTit];
+				[self setHidden: FALSE];
+				[self setPriority: 25];
+			}
+		});
+	});
 }
 
 - (NSString *)runScriptWithArgument: (NSString *)arg {
