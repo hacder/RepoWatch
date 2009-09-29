@@ -30,45 +30,27 @@
 	
 	[statusItem setMenu: theMenu];
 	
-	NSArray *defaultKeys = [NSArray arrayWithObjects:
-			@"trendNumber",
-			@"bitlyEnabled",
-			@"bitlyTimeout",
-			@"bitlyTwitterHistory",
-			@"trendMundaneFilter",
-			@"timeMachineEnabled",
-			@"timeMachineOverdueTime",
-			@"defollowEnabled",
-			@"bitlyDelay",
-			@"loadDelay",
-			@"trendDelay",
-			@"followerDelay",
-			@"loadEnabled",
-			@"twitterEnabled",
-			@"trendingEnabled",
-			@"vcsEnabled",
-			@"weatherEnabled",
-			nil];
-	NSArray *defaultValues = [NSArray arrayWithObjects:
-			@"3",
-			@"1",
-			@"2",
-			@"50",
-			@"1",
-			@"1",
-			@"5",
-			@"1",
-			@"300",
-			@"10",
-			@"600",
-			@"600",
-			@"1",
-			@"1",
-			@"1",
-			@"1",
-			@"1",
-			nil];
-	NSDictionary *dict = [NSDictionary dictionaryWithObjects: defaultValues forKeys: defaultKeys];
+	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+		@"3", @"trendNumber",
+		@"1", @"bitlyEnabled",
+		@"2", @"bitlyTimeout",
+		@"50", @"bitlyTwitterHistory",
+		@"1", @"trendMundaneFilter",
+		@"1", @"timeMachineEnabled",
+		@"5", @"timeMachineOverdueTime",
+		@"1", @"defollowEnabled",
+		@"300", @"bitlyDelay",
+		@"10", @"loadDelay",
+		@"600", @"trendDelay",
+		@"600", @"followerDelay",
+		@"1", @"loadEnabled",
+		@"1", @"twitterEnabled",
+		@"1", @"trendingEnabled",
+		@"1", @"vcsEnabled",
+		@"1", @"weatherEnabled",
+		@"0", @"gitTagOnClick",
+		nil];
+	
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
 	
