@@ -3,6 +3,9 @@
 #import "PreferencesButtonDelegate.h"
 
 @interface ODeskButtonDelegate : ButtonDelegate {
+	FILE *f;
+	char *date;
+	int logged_time;
 }
 
 @end
