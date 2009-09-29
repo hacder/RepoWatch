@@ -32,6 +32,12 @@
 }
 
 - (void) fire {
+	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"trendingEnabled"] == 0) {
+		[self setHidden: YES];
+		[self setPriority: 1];
+		return;
+	}
+		
 	NSURL *url = [NSURL URLWithString: @"http://search.twitter.com/trends.json"];
 	NSURLRequest *request = [[NSURLRequest requestWithURL: url] retain];
 
