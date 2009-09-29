@@ -7,6 +7,7 @@
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	foll = [NSMutableArray arrayWithCapacity: 10];
 	[self setupTimer];
+	[self setHidden: YES];
 	return self;
 }
 

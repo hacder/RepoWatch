@@ -9,6 +9,7 @@
 	[repository retain];
 	timeout = 15;
 	
+	[self setHidden: YES];
 	int doTagging = [[NSUserDefaults standardUserDefaults] integerForKey: @"gitTagOnClick"];
 	if (doTagging) {
 		NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"gitTags"];

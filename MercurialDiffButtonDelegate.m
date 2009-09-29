@@ -8,6 +8,7 @@
 	repository = rep;
 	[repository retain];
 	timeout = 15;
+	[self setHidden: YES];
 	[self setupTimer];
 	return self;
 }

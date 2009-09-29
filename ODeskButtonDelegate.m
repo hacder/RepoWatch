@@ -10,6 +10,7 @@
 	start_time = 0;
 	logged_time = 0;
 	date = NULL;
+	[self setHidden: YES];
 	[self setupTimer];
 	return self;
 }

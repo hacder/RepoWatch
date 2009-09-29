@@ -5,6 +5,8 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	ignoreAbove = 100;
+	timeout = 1;
+	[self setHidden: YES];
 	[self setupTimer];
 	return self;
 }
@@ -33,10 +35,13 @@
 
 	if (loads[0] < 0.75 && loads[1] < 0.75) {
 		[self setPriority: 6];
+		timeout = 10;
 	} else if (loads[0] < 1.0) {
 		[self setPriority: 14];
+		timeout = 5;
 	} else {
 		[self setPriority: 17];
+		timeout = 1;
 	}
 	if (priority < ignoreAbove) {
 		[self setHidden: NO];

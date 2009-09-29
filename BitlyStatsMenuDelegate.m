@@ -9,6 +9,7 @@
 	greg = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
 	NSTimeZone *tz = [NSTimeZone timeZoneWithName: @"GMT"];
 	[greg setTimeZone: tz];
+	[self setHidden: YES];
 	[self setupTimer];
 	return self;
 }

@@ -8,6 +8,7 @@
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	[self setPriority: 6];
 	timeout = 30;
+	[self setHidden: YES];
 	[self setupTimer];
 	return self;
 }

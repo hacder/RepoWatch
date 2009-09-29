@@ -8,6 +8,7 @@
 	repository = rep;
 	[repository retain];
 	timeout = 15;
+	[self setHidden: YES];
 	[self setupTimer];
 	return self;
 }
@@ -60,7 +61,7 @@
 				timeout = 2;
 				[self setTitle: sTit];
 				[self setShortTitle: sTit];
-				[self setHidden: FALSE];
+				[self setHidden: NO];
 				[self setPriority: 25];
 			}
 		});
