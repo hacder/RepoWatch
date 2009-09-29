@@ -12,6 +12,7 @@
 #import "GitDiffButtonDelegate.h"
 #import "SVNDiffButtonDelegate.h"
 #import "MercurialDiffButtonDelegate.h"
+#import "ODeskButtonDelegate.h"
 #import <Sparkle/Sparkle.h>
 #import <dirent.h>
 #import <sys/stat.h>
@@ -172,6 +173,7 @@ char *find_execable(const char *filename) {
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TwitFollowerButtonDelegate alloc] initWithTitle: @"Twitter Follower" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[self findSupportedSCMS];
 }
 
