@@ -6,6 +6,7 @@
 	FILE *f;
 	char *date;
 	int logged_time;
+	int start_time;
 }
 
 @end
