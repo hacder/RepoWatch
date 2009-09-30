@@ -13,6 +13,7 @@
 #import "SVNDiffButtonDelegate.h"
 #import "MercurialDiffButtonDelegate.h"
 #import "ODeskButtonDelegate.h"
+#import "TimeButtonDelegate.h"
 #import <Sparkle/Sparkle.h>
 #import <dirent.h>
 #import <sys/stat.h>
@@ -165,6 +166,7 @@ char *find_execable(const char *filename) {
 - (void)initWithDirectory: (NSString *)dir {
 	[self init];
 	[plugins addObject: [[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[TimeButtonDelegate alloc] initWithTitle: @"Time" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
 	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];

@@ -78,46 +78,69 @@
 	}
 }
 
-- (void) fire {
+- (NSTask *)taskFromArguments: (NSArray *)args {
 	NSTask *t = [[NSTask alloc] init];
 	NSString *lp = [NSString stringWithFormat: @"%s", git];
 	[t setLaunchPath: lp];
 	[t setCurrentDirectoryPath: repository];
-	if (watchHash)
-		[t setArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", watchHash, nil]];
-	else
-		[t setArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
+	[t setArguments: args];
 
+	return t;
+}
+
+- (NSFileHandle *)pipeForTask: (NSTask *)t {
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
-		
 	NSFileHandle *file = [pipe fileHandleForReading];
-	
+	return file;
+}
+
+- (NSString *)stringFromFile: (NSFileHandle *)file {
+	NSData *data = [file readDataToEndOfFile];
+	NSString *string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
+	return string;
+}
+
+- (void) fire {
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
+	NSFileHandle *file = [self pipeForTask: t];
+
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[t autorelease];
 		[t launch];
-		NSData *data = [file readDataToEndOfFile];
-		NSString *string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[string autorelease];
-			if ([string isEqual: @""]) {
+		NSString *string = [self stringFromFile: file];
+		
+		if ([string isEqual: @""] && !watchHash) {
+			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 15;
 				[self setHidden: TRUE];
-				[self setPriority: 0];
+				[self setPriority: 1];
+			});
+		} else {
+			if ([string isEqual: @""]) {
+				NSTask *t2 = [[self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", watchHash, nil]] autorelease];
+				NSFileHandle *f2 = [self pipeForTask: t];
+				dispatch_async(dispatch_get_main_queue(), ^{
+					[t2 autorelease];
+					[t2 launch];
+				
+					NSString *s2 = [self stringFromFile: f2];
+					[self setShortTitle: s2];
+					[self setTitle: s2];
+					[self setHidden: NO];
+					[self setPriority: 15];
+				});
 			} else {
-				NSString *sTit;
-				if (watchHash)
-					sTit = [NSString stringWithFormat: @"%@ (%@): %@", [repository lastPathComponent], watchHash, [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]];
-				else
-					sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]];
-	
-				timeout = 2;
-				[self setTitle: sTit];
-				[self setShortTitle: sTit];
-				[self setHidden: FALSE];
-				[self setPriority: 25];
+				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+				dispatch_async(dispatch_get_main_queue(), ^{
+					timeout = 2;
+					[self setTitle: sTit];
+					[self setShortTitle: sTit];
+					[self setHidden: NO];
+					[self setPriority: 25];
+				});
 			}
-		});
+		}
 	});
 }
 

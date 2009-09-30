@@ -4,7 +4,7 @@ SRC = icons.m BitlyStatsMenuDelegate.m TwitterBaseButtonDelegate.m TwitterBaseBu
 	MainController.m WeatherButtonDelegate.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
 	TimeMachineAlertButtonDelegate.m TwitterTrendingButtonDelegate.m QuitButtonDelegate.m LoadButtonDelegate.m \
 	TwitFollowerButtonDelegate.m SeparatorButtonDelegate.m SVNDiffButtonDelegate.m PreferencesButtonDelegate.m \
-	ODeskButtonDelegate.m
+	ODeskButtonDelegate.m TimeButtonDelegate.m
 
 CFLAGS=-F./MenuMonitor.app/Contents/Frameworks -Wall -Werror -g
 OBJ = $(addsuffix .o, $(basename $(SRC)))
