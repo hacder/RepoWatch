@@ -128,8 +128,9 @@
 					timeout = 2;
 				
 					NSString *s2 = [self stringFromFile: f2];
-					[self setShortTitle: s2];
-					[self setTitle: s2];
+					NSString *st = [NSString stringWithFormat: @"%@ (%@): %@", [repository lastPathComponent], [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+					[self setShortTitle: st];
+					[self setTitle: st];
 					[self setHidden: NO];
 					[self setPriority: 15];
 				});
