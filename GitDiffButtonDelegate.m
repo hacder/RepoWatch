@@ -97,7 +97,8 @@
 
 - (NSString *)stringFromFile: (NSFileHandle *)file {
 	NSData *data = [file readDataToEndOfFile];
-	NSString *string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
+	NSString *string = [[[NSString alloc] initWithData: data
+			encoding: NSUTF8StringEncoding] autorelease];
 	return string;
 }
 
@@ -106,8 +107,8 @@
 	NSFileHandle *file = [self pipeForTask: t];
 
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[t autorelease];
 		[t launch];
+		[t autorelease];
 		NSString *string = [self stringFromFile: file];
 		
 		if ([string isEqual: @""] && !watchHash) {
