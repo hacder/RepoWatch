@@ -61,9 +61,7 @@
 			for (i = 0; i < [res count]; i++) {
 				NSRange ra = [[res objectAtIndex: i] rangeOfString: @"\""];
 				NSString *potential =
-					[NSString stringWithUTF8String: 
-						[[[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: cs] UTF8String]
-					];
+					[[[res objectAtIndex: i] substringToIndex: ra.location] stringByTrimmingCharactersInSet: cs];
 		
 				if ([[NSUserDefaults standardUserDefaults] integerForKey: @"trendMundaneFilter"]) {
 					if (![potential caseInsensitiveCompare: @"musicmonday"])
@@ -81,6 +79,8 @@
 					if (![potential caseInsensitiveCompare: @"TGIF"])
 						continue;
 					if (![potential caseInsensitiveCompare: @"Goodmorning"])
+						continue;
+					if (![potential caseInsensitiveCompare: @"why"])
 						continue;
 				}
 		

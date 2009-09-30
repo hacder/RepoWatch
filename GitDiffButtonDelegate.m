@@ -27,16 +27,18 @@
 		}
 	}
 	
+	NSMenu *sm = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
+	NSMenuItem *mi = [[[NSMenuItem alloc] initWithTitle: @"Tag This Version"
+			action: @selector(tag:) keyEquivalent: @""] autorelease];
+	[mi setTarget: self];
+	[sm addItem: mi];
+	[menuItem setSubmenu: sm];
+	
 	[self setupTimer];
 	return self;
 }
 
-- (void) beep: (id) something {
-	int doTagging = [[NSUserDefaults standardUserDefaults]
-			integerForKey: @"gitTagOnClick"];
-	if (!doTagging)
-		return;
-	
+- (void) tag: (id) something {
 	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 	[dict addEntriesFromDictionary: [[NSUserDefaults standardUserDefaults]
 			dictionaryForKey: @"gitTags"]];
@@ -44,47 +46,42 @@
 	if (watchHash) {
 		[watchHash release];
 		watchHash = nil;
-		if (dict) {
-			[dict removeObjectForKey: repository];
-			[dict autorelease];
-		}
-		[self fire];
-	} else {
-		NSTask *t = [[NSTask alloc] init];
-		NSString *lp = [NSString stringWithFormat: @"%s", git];
-		[t setLaunchPath: lp];
-		[t setCurrentDirectoryPath: repository];
-		[t setArguments: [NSArray arrayWithObjects: @"log", @"--max-count=1",
-				@"--pretty=format:%h", nil]];
-		
-		NSPipe *pipe = [NSPipe pipe];
-		[t setStandardOutput: pipe];
-	
-		dispatch_async(dispatch_get_global_queue(0, 0), ^{
-			[dict autorelease];
-			[t autorelease];
-			[t launch];
-		
-			NSFileHandle *file = [pipe fileHandleForReading];
-			NSData *data = [file readDataToEndOfFile];
-	
-			NSString *string = [[NSString alloc] initWithData: data
-					encoding: NSUTF8StringEncoding];
-	
-			// Otherwise, there is a race condition with fire, when it's
-			// reading this value. Poor man's locking.
-			[dict setObject: string forKey: repository];
-			[[NSUserDefaults standardUserDefaults] setObject: dict
-					forKey: @"gitTags"];
-			[[NSUserDefaults standardUserDefaults] synchronize];
-			dispatch_async(dispatch_get_main_queue(), ^{
-				if (watchHash)
-					[watchHash release];
-				watchHash = string;
-				[self fire];
-			});
-		});
 	}
+
+	NSTask *t = [[NSTask alloc] init];
+	NSString *lp = [NSString stringWithFormat: @"%s", git];
+	[t setLaunchPath: lp];
+	[t setCurrentDirectoryPath: repository];
+	[t setArguments: [NSArray arrayWithObjects: @"log", @"--max-count=1",
+			@"--pretty=format:%h", nil]];
+	
+	NSPipe *pipe = [NSPipe pipe];
+	[t setStandardOutput: pipe];
+
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[dict autorelease];
+		[t autorelease];
+		[t launch];
+	
+		NSFileHandle *file = [pipe fileHandleForReading];
+		NSData *data = [file readDataToEndOfFile];
+
+		NSString *string = [[NSString alloc] initWithData: data
+				encoding: NSUTF8StringEncoding];
+
+		// Otherwise, there is a race condition with fire, when it's
+		// reading this value. Poor man's locking.
+		[dict setObject: string forKey: repository];
+		[[NSUserDefaults standardUserDefaults] setObject: dict
+				forKey: @"gitTags"];
+		[[NSUserDefaults standardUserDefaults] synchronize];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			if (watchHash)
+				[watchHash release];
+			watchHash = string;
+			[self fire];
+		});
+	});
 }
 
 - (NSTask *)taskFromArguments: (NSArray *)args {

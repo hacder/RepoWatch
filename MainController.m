@@ -165,7 +165,7 @@ char *find_execable(const char *filename) {
 
 - (void)initWithDirectory: (NSString *)dir {
 	[self init];
-//	[plugins addObject: [[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeButtonDelegate alloc] initWithTitle: @"Time" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
 	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
@@ -175,7 +175,7 @@ char *find_execable(const char *filename) {
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TwitFollowerButtonDelegate alloc] initWithTitle: @"Twitter Follower" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-//	[plugins addObject: [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[self findSupportedSCMS];
 }
 
