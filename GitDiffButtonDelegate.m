@@ -103,10 +103,10 @@
 }
 
 - (void) fire {
-	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
-	NSFileHandle *file = [self pipeForTask: t];
-
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
+		NSFileHandle *file = [self pipeForTask: t];
+
 		[t launch];
 		[t autorelease];
 		NSString *string = [self stringFromFile: file];
@@ -124,6 +124,7 @@
 				dispatch_async(dispatch_get_main_queue(), ^{
 					[t2 autorelease];
 					[t2 launch];
+					timeout = 2;
 				
 					NSString *s2 = [self stringFromFile: f2];
 					[self setShortTitle: s2];
