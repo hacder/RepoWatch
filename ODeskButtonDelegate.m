@@ -9,6 +9,8 @@
 	timeout = 10;
 	start_time = 0;
 	logged_time = 0;
+	running = 0;
+	logging = 0;
 	date = NULL;
 	[self setHidden: YES];
 	[self setupTimer];
@@ -45,12 +47,12 @@
 	
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{	
 		int cur_time = 0;
-		int running = 0;
-		int logging = 0;
 		BOOL today = NO;
 		char *line = (char *)malloc(1024);
+		BOOL found_one = NO;
 
 		while (fgets(line, 1000, f) != 0) {
+			found_one = YES;
 			today = NO;
 			if (strncmp(date, line, strlen(date)) == 0)
 				today = YES;
@@ -93,8 +95,9 @@
 		time (&now);
 		localtime_r(&now, &curtime);
 		int seconds = curtime.tm_sec + curtime.tm_min * 60 + curtime.tm_hour * 3600;
+		int displayed_time = logged_time;
 		if (logging) {
-			logged_time += (seconds - start_time);
+			displayed_time += (seconds - start_time);
 			timeout = 1;
 		} else {
 			timeout = 10;
@@ -102,9 +105,9 @@
 		
 		dispatch_async(dispatch_get_main_queue(), ^{
 			NSString *status = [NSString stringWithFormat: @"%s: Logged %02d:%02d", logging ? "Working" : "Idle", 
-					(int)floor(logged_time / 3600.0),
-					(int)floor((logged_time -
-						(floor(logged_time / 3600.0) * 3600)
+					(int)floor(displayed_time / 3600.0),
+					(int)floor((displayed_time -
+						(floor(displayed_time / 3600.0) * 3600)
 					) / 60.0)];
 			[self setShortTitle: status];
 			[self setTitle: status];
