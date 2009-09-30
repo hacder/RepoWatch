@@ -113,7 +113,7 @@
 		if ([string isEqual: @""] && !watchHash) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 15;
-				[self setHidden: TRUE];
+				[self setHidden: YES];
 				[self setPriority: 1];
 			});
 		} else {
