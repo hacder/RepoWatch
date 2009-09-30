@@ -123,7 +123,11 @@
 		if ([string isEqual: @""] && !watchHash) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 15;
-				[self setHidden: YES];
+				NSString *s3 = [NSString stringWithFormat: @"git: %@",
+						[repository lastPathComponent]];
+				[self setTitle: s3];
+				[self setShortTitle: s3];
+				[self setHidden: NO];
 				[self setPriority: 1];
 			});
 		} else {
@@ -139,6 +143,7 @@
 					NSString *s2 = [self stringFromFile: f2];
 					NSString *st = [NSString stringWithFormat: @"%@ (%@): %@",
 							[repository lastPathComponent], watchHash,
+							[s2 isEqual: @""] ? @"no changes" :
 							[s2 stringByTrimmingCharactersInSet:
 							[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 					[self setShortTitle: st];
