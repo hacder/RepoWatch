@@ -94,6 +94,7 @@
 	return t;
 }
 
+// Crashed somewhere in this function without debug info.
 - (NSFileHandle *)pipeForTask: (NSTask *)t {
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
