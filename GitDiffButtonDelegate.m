@@ -111,6 +111,7 @@
 		NSString *string = [self stringFromFile: file];
 		
 		if ([string isEqual: @""] && !watchHash) {
+			NSLog(@"%@: Branch 1", repository);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 15;
 				[self setHidden: YES];
@@ -120,6 +121,7 @@
 			if ([string isEqual: @""]) {
 				NSTask *t2 = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", watchHash, nil]];
 				NSFileHandle *f2 = [self pipeForTask: t2];
+				NSLog(@"%@: Branch 2", repository);
 				dispatch_async(dispatch_get_main_queue(), ^{
 					[t2 autorelease];
 					[t2 launch];
@@ -133,6 +135,7 @@
 				});
 			} else {
 				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+				NSLog(@"%@: Branch 3", repository);
 				dispatch_async(dispatch_get_main_queue(), ^{
 					timeout = 2;
 					[self setTitle: sTit];
