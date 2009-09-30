@@ -119,7 +119,7 @@
 		} else {
 			if ([string isEqual: @""]) {
 				NSTask *t2 = [[self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", watchHash, nil]] autorelease];
-				NSFileHandle *f2 = [self pipeForTask: t];
+				NSFileHandle *f2 = [self pipeForTask: t2];
 				dispatch_async(dispatch_get_main_queue(), ^{
 					[t2 autorelease];
 					[t2 launch];
