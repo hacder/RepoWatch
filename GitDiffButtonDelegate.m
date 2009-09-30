@@ -104,11 +104,10 @@
 
 - (void) fire {
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
+		NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]] autorelease];
 		NSFileHandle *file = [self pipeForTask: t];
 
 		[t launch];
-		[t autorelease];
 		NSString *string = [self stringFromFile: file];
 		
 		if ([string isEqual: @""] && !watchHash) {
@@ -119,7 +118,7 @@
 			});
 		} else {
 			if ([string isEqual: @""]) {
-				NSTask *t2 = [[self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", watchHash, nil]] autorelease];
+				NSTask *t2 = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", watchHash, nil]];
 				NSFileHandle *f2 = [self pipeForTask: t2];
 				dispatch_async(dispatch_get_main_queue(), ^{
 					[t2 autorelease];
