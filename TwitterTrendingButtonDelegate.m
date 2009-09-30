@@ -97,6 +97,7 @@
 					[r2 appendString: @", "];
 			}
 			
+			[self setHidden: NO];
 			[self setShortTitle: r];
 			[self setTitle: r2];
 			[self setPriority: 15];
