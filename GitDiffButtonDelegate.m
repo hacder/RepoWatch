@@ -118,6 +118,7 @@
 
 		[t launch];
 		NSString *string = [self stringFromFile: file];
+		[file closeFile];
 		
 		if ([string isEqual: @""] && !watchHash) {
 			dispatch_async(dispatch_get_main_queue(), ^{
@@ -140,6 +141,7 @@
 					timeout = 2;
 				
 					NSString *s2 = [self stringFromFile: f2];
+					[f2 closeFile];
 					NSString *st = [NSString stringWithFormat: @"%@ (%@): %@",
 							[repository lastPathComponent], watchHash,
 							[s2 isEqual: @""] ? @"no changes" :
