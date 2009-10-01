@@ -96,6 +96,7 @@
 
 // Crashed somewhere in this function without debug info.	
 - (NSFileHandle *)pipeForTask: (NSTask *)t {
+	// This sometimes returns nil?!
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
 	NSFileHandle *file = [pipe fileHandleForReading];
