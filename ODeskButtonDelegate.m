@@ -51,6 +51,7 @@
 		char *line = (char *)malloc(1024);
 		BOOL found_one = NO;
 
+		NSLog(@"Odesk starting loop");
 		while (fgets(line, 1000, f) != 0) {
 			found_one = YES;
 			today = NO;
@@ -62,26 +63,34 @@
 					(atoi(line + 14) * 60) +
 					(atoi(line + 17));
 			}
-			if (strstr(line, "is launched"))
+			if (strstr(line, "is launched")) {
 				running = 1;
-			if (strstr(line, "is terminating"))
+				NSLog(@"Running now");
+			}
+			if (strstr(line, "is terminating")) {
 				running = 0;
+				NSLog(@"Not running");
+			}
 			if (strstr(line, "requested state [")) {
 				char *state = strstr(line, "requested state [") + 17;
 	
 				if (logging == 0 && strncmp("CS_NORMAL", state, strlen("CS_NORMAL")) == 0) {
+					NSLog(@"Logging yes");
 					logging = 1;
 					if (today)
 						start_time = cur_time;
 				} else if (logging == 0 && strncmp("CS_RESUME", state, strlen("CS_RESUME")) == 0) {
+					NSLog(@"Logging yes");
 					logging = 1;
 					if (today)
 						start_time = cur_time;
 				} else if (logging == 1 && strncmp("CS_SUSPENDED", state, strlen("CS_SUSPENDED")) == 0) {
+					NSLog(@"Logging no");
 					logging = 0;
 					if (today)
 						logged_time += (cur_time - start_time);
 				} else if (logging == 1 && strncmp("CS_DISCONNECTED", state, strlen("CS_DISCONNECTED")) == 0) {
+					NSLog(@"Logging no");
 					logging = 0;
 					if (today)
 						logged_time += (cur_time - start_time);
@@ -89,6 +98,7 @@
 			}
 		}
 		free(line);
+		NSLog(@"Done in loop");
 	
 		struct tm curtime;
 		time_t now;
