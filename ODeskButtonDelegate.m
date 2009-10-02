@@ -51,6 +51,7 @@
 		char *line = (char *)malloc(1024);
 		BOOL found_one = NO;
 
+		clearerr(f);
 		while (fgets(line, 1000, f) != 0) {
 			found_one = YES;
 			today = NO;
