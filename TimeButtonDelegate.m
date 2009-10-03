@@ -19,8 +19,12 @@
 	NSDate *date = [NSDate date];
 	NSString *formattedString = [dateFormatter stringFromDate: date];
 	
+	NSDateFormatter *longDF = [[[NSDateFormatter alloc] init] autorelease];
+	[longDF setDateFormat: @"EEEE',' MMMM d yyyy"];
+	NSString *longFS = [longDF stringFromDate: date];
+	
 	[self setShortTitle: formattedString];
-	[self setTitle: formattedString];
+	[self setTitle: longFS];
 	[self setHidden: NO];
 	[self setPriority: 20];
 }
