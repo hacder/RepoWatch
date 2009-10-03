@@ -45,7 +45,7 @@
 		[self setHidden: YES];
 		return;
 	}
-	[self setHidden: NO];
+	
 	NSDate *backupDate = [dict objectForKey: @"BACKUP_COMPLETED_DATE"];
 	int interval = (int)fabs([backupDate timeIntervalSinceNow]);
 	int intMinutes = (interval / 60) % 60;
@@ -56,11 +56,13 @@
 		titular = [NSString stringWithFormat: @"TimeMachine Overdue!: %02dh:%02dm", intHours, intMinutes];
 		[self setShortTitle: titular];
 		[self setTitle: titular];
+		[self setHidden: NO];
 		[self setPriority: 26];
 	} else {
 		titular = [NSString stringWithFormat: @"TimeMachine last backup: %02dh:%02dm", intHours, intMinutes];
 		[self setShortTitle: titular];
 		[self setTitle: titular];
+		[self setHidden: NO];
 		[self setPriority: 3];
 	}
 }
