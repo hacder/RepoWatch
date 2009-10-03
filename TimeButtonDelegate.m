@@ -20,7 +20,7 @@
 	NSString *formattedString = [dateFormatter stringFromDate: date];
 	
 	NSDateFormatter *longDF = [[[NSDateFormatter alloc] init] autorelease];
-	[longDF setDateFormat: @"EEEE',' MMMM d yyyy"];
+	[longDF setDateFormat: @"EEEE',' MMMM d yyyy '@' h:mm a"];
 	NSString *longFS = [longDF stringFromDate: date];
 	
 	[self setShortTitle: formattedString];
