@@ -109,7 +109,7 @@
 					(int)floor(displayed_time / 3600.0),
 					(int)floor((displayed_time -
 						(floor(displayed_time / 3600.0) * 3600)
-					) / 60.0), ((displayed_time / 3600.0) * 21)];
+					) / 60.0), ((displayed_time / 3600.0) * 22)];
 			[self setShortTitle: status];
 			[self setTitle: status];
 			[self setHidden: NO];
