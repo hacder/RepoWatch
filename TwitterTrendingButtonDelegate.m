@@ -82,6 +82,8 @@
 						continue;
 					if (![potential caseInsensitiveCompare: @"why"])
 						continue;
+					if (![potential caseInsensitiveCompare: @"mm"])
+						continue;
 				}
 		
 				if (z < num) {
