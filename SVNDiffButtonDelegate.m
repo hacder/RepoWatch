@@ -43,7 +43,8 @@
 		[t2 launch];
 
 		NSData *data = [file readDataToEndOfFile];
-		NSString *string = [[[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		NSString *string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
+		string = [[string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]] retain];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[string autorelease];
 			
