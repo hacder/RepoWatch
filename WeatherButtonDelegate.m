@@ -6,11 +6,20 @@
 	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
 	timeout = 3610;
 	[self setHidden: YES];
+	cheapIgnore = @"";
 	[self setupTimer];
 	return self;
 }
 
 - (void) beep: (id) something {
+	[cheapIgnore autorelease];
+	cheapIgnore = nil;
+	
+	if (priority != 2) {
+		cheapIgnore = [self shortTitle];
+		[cheapIgnore retain];
+		[self setHidden: YES];
+	}
 }
 
 - (int) getIntFromDoc: (NSXMLDocument *)doc withKey: (NSString *)key {
@@ -58,46 +67,52 @@
 				return;
 			}
 	
-		NSXMLDocument *doc  = [[[NSXMLDocument alloc] initWithData: data options: 0 error: nil] autorelease];
-		int temperature = [self getIntFromDoc: doc withKey: @"//temperature"];
-		int precip = [self getIntFromDoc: doc withKey: @"//probability-of-precipitation"];
-		if (temperature == -1 && precip == -1) {
-			// Something bad happened
-			[self setHidden: YES];
-			[self setPriority: 1];
-			return;
-		}
-	
-		NSPredicate *pred = [NSPredicate predicateWithBlock: ^(id evaluatedObject, NSDictionary *bindings) {
-			if ([evaluatedObject stringValue] != nil && [[evaluatedObject stringValue] length] != 0)
-				return YES;
-			return NO;
-		}];
-		NSArray *s = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@phenomena" error: nil] filteredArrayUsingPredicate: pred];
-		NSArray *s2 = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@significance" error: nil] filteredArrayUsingPredicate: pred];
-	
-		NSString *t;
-		if ([s count] == 0) {
-			t = [NSString stringWithFormat: @"Temp: %dF Precip: %d%%", temperature, precip];
-			[self setTitle: t];
-			[self setShortTitle: t];
-			[self setHidden: NO];
-			[self setPriority: 2];
-		} else if ([s count] == 1) {
-			// Pull full info in full title
-			t = [NSString stringWithFormat: @"WARNING: %@ %@", [[s objectAtIndex: 0] stringValue], [[s2 objectAtIndex: 0] stringValue]];
-			[self setTitle: t];
-			[self setShortTitle: t];
-			[self setHidden: NO];
-			[self setPriority: 30];
-		} else {
-			// Put full info, including the multiple warnings in the full title.
-			t = [NSString stringWithFormat: @"WARNING: %d weather events!", [s count]];
-			[self setTitle: t];
-			[self setShortTitle: t];
-			[self setHidden: NO];
-			[self setPriority: 30];
-		}
+			NSXMLDocument *doc  = [[[NSXMLDocument alloc] initWithData: data options: 0 error: nil] autorelease];
+			int temperature = [self getIntFromDoc: doc withKey: @"//temperature"];
+			int precip = [self getIntFromDoc: doc withKey: @"//probability-of-precipitation"];
+			if (temperature == -1 && precip == -1) {
+				// Something bad happened
+				[self setHidden: YES];
+				[self setPriority: 1];
+				return;
+			}
+		
+			NSPredicate *pred = [NSPredicate predicateWithBlock: ^(id evaluatedObject, NSDictionary *bindings) {
+				if ([evaluatedObject stringValue] != nil && [[evaluatedObject stringValue] length] != 0)
+					return YES;
+				return NO;
+			}];
+			NSArray *s = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@phenomena" error: nil] filteredArrayUsingPredicate: pred];
+			NSArray *s2 = [[doc nodesForXPath: @"//hazards/hazard-conditions/hazard/@significance" error: nil] filteredArrayUsingPredicate: pred];
+		
+			NSString *t;
+			if ([s count] == 0) {
+				t = [NSString stringWithFormat: @"Temp: %dF Precip: %d%%", temperature, precip];
+				[self setTitle: t];
+				[self setShortTitle: t];
+				if (cheapIgnore != nil && ![t isEqual: cheapIgnore]) {
+					[self setHidden: NO];
+					[self setPriority: 2];
+				}
+			} else if ([s count] == 1) {
+				// Pull full info in full title
+				t = [NSString stringWithFormat: @"WARNING: %@ %@", [[s objectAtIndex: 0] stringValue], [[s2 objectAtIndex: 0] stringValue]];
+				[self setTitle: t];
+				[self setShortTitle: t];
+				if (cheapIgnore != nil && ![t isEqual: cheapIgnore]) {
+					[self setHidden: NO];
+					[self setPriority: 30];
+				}
+			} else {
+				// Put full info, including the multiple warnings in the full title.
+				t = [NSString stringWithFormat: @"WARNING: %d weather events!", [s count]];
+				[self setTitle: t];
+				[self setShortTitle: t];
+				if (cheapIgnore != nil && ![t isEqual: cheapIgnore]) {
+					[self setHidden: NO];
+					[self setPriority: 30];
+				}
+			}
 		});
 	});
 }

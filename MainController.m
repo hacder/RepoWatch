@@ -84,6 +84,7 @@ char *concat_path_file(const char *path, const char *filename) {
 
 char *find_execable(const char *filename) {
 	char *path, *p, *n;
+	struct stat s;
 	
 	p = path = strdup(getenv("PATH"));
 	while (p) {
@@ -92,7 +93,6 @@ char *find_execable(const char *filename) {
 			*n++ = '\0';
 		if (*p != '\0') {
 			p = concat_path_file(p, filename);
-			struct stat s;
 			if (!access(p, X_OK) && !stat(p, &s) && S_ISREG(s.st_mode)) {
 				free(path);
 				return p;
@@ -101,6 +101,34 @@ char *find_execable(const char *filename) {
 		}
 		p = n;
 	}
+	
+	// Because the mac is odd sometimes, let's look in a few places that may not
+	// be in the path.
+	
+	n = concat_path_file("/opt/local/bin/", filename);
+	if (!access(n, X_OK) && !stat(n, &s) && S_ISREG(s.st_mode))
+		return n;
+	free(n);
+
+	n = concat_path_file("/sw/bin/", filename);
+	if (!access(n, X_OK) && !stat(n, &s) && S_ISREG(s.st_mode))
+		return n;
+	free(n);
+
+	n = concat_path_file("/usr/local/bin/", filename);
+	if (!access(n, X_OK) && !stat(n, &s) && S_ISREG(s.st_mode))
+		return n;
+	free(n);
+	
+	n = concat_path_file("/usr/local/", filename);
+	p = concat_path_file(n, "/bin/");
+	free(n);
+	n = concat_path_file(p, filename);
+	free(p);
+	if (!access(n, X_OK) && !stat(n, &s) && S_ISREG(s.st_mode))
+		return n;
+	free(n);
+
 	free(path);
 	return NULL;
 }
@@ -115,14 +143,16 @@ char *find_execable(const char *filename) {
 		return;
 	if ([path isEqual: [@"~/Movies" stringByStandardizingPath]])
 		return;
-
+	
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
 	if ([contents containsObject: @".git"]) {
 		if (git) {
+			NSLog(@"Adding git to %@", path);
 			[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self gitPath: git repository: path]];
 		}
-	} else if ([contents containsObject: @".svn"]) {
+	} else if ([contents containsObject: @".svn"] && ![path isEqual: [@"~" stringByStandardizingPath]]) {
 		if (svn) {
+			NSLog(@"Adding svn to %@", path);
 			[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self svnPath: svn repository: path]];
 		}
 	} else if ([contents containsObject: @".hg"]) {
@@ -155,7 +185,7 @@ char *find_execable(const char *filename) {
 	char *svn = find_execable("svn");
 	char *hg = find_execable("hg");
 	
-//	NSLog(@"Git: %s Svn: %s Mercurial: %s", git, svn, hg);
+	NSLog(@"Git: %s Svn: %s Mercurial: %s", git, svn, hg);
 	
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
@@ -168,7 +198,7 @@ char *find_execable(const char *filename) {
 	[plugins addObject: [[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeButtonDelegate alloc] initWithTitle: @"Time" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
-	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+//	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[BitlyStatsButtonDelegate alloc] initWithTitle: @"Bitly" menu: theMenu script: nil statusItem: statusItem mainController: self]];

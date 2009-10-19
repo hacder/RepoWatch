@@ -3,6 +3,7 @@
 #import "ButtonDelegate.h"
 
 @interface WeatherButtonDelegate : ButtonDelegate {
+	NSString *cheapIgnore;
 }
 
 @end
