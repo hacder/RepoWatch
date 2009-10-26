@@ -1,7 +1,6 @@
 #import "MainController.h"
 #import "ButtonDelegate.h"
 #import "LoadButtonDelegate.h"
-#import "TwitterTrendingButtonDelegate.h"
 #import "PreferencesButtonDelegate.h"
 #import "SeparatorButtonDelegate.h"
 #import "QuitButtonDelegate.h"
