@@ -1,6 +1,6 @@
 .PHONY: release clean
 
-SRC = icons.m BitlyStatsMenuDelegate.m TwitterBaseButtonDelegate.m TwitterBaseButtonDelegate.m ButtonDelegate.m \
+SRC = icons.m TwitterBaseButtonDelegate.m TwitterBaseButtonDelegate.m ButtonDelegate.m \
 	MainController.m WeatherButtonDelegate.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
 	TimeMachineAlertButtonDelegate.m TwitterTrendingButtonDelegate.m QuitButtonDelegate.m LoadButtonDelegate.m \
 	TwitFollowerButtonDelegate.m SeparatorButtonDelegate.m SVNDiffButtonDelegate.m PreferencesButtonDelegate.m \
