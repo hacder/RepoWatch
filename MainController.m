@@ -6,8 +6,6 @@
 #import "SeparatorButtonDelegate.h"
 #import "QuitButtonDelegate.h"
 #import "TimeMachineAlertButtonDelegate.h"
-#import "TwitFollowerButtonDelegate.h"
-#import "WeatherButtonDelegate.h"
 #import "GitDiffButtonDelegate.h"
 #import "SVNDiffButtonDelegate.h"
 #import "MercurialDiffButtonDelegate.h"
@@ -32,20 +30,11 @@
 	[statusItem setMenu: theMenu];
 	
 	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-		@"3", @"trendNumber",
-		@"1", @"trendMundaneFilter",
 		@"1", @"timeMachineEnabled",
 		@"5", @"timeMachineOverdueTime",
-		@"1", @"defollowEnabled",
-		@"300", @"bitlyDelay",
 		@"10", @"loadDelay",
-		@"600", @"trendDelay",
-		@"600", @"followerDelay",
 		@"1", @"loadEnabled",
-		@"1", @"twitterEnabled",
-		@"1", @"trendingEnabled",
 		@"1", @"vcsEnabled",
-		@"1", @"weatherEnabled",
 		@"0", @"gitTagOnClick",
 		nil];
 	
@@ -198,8 +187,6 @@ char *find_execable(const char *filename) {
 	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-	[plugins addObject: [[WeatherButtonDelegate alloc] initWithTitle: @"Weather" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-	[plugins addObject: [[TwitFollowerButtonDelegate alloc] initWithTitle: @"Twitter Follower" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[self findSupportedSCMS];
 }

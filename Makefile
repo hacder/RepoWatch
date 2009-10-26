@@ -1,9 +1,9 @@
 .PHONY: release clean
 
-SRC = icons.m TwitterBaseButtonDelegate.m TwitterBaseButtonDelegate.m ButtonDelegate.m \
-	MainController.m WeatherButtonDelegate.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
-	TimeMachineAlertButtonDelegate.m TwitterTrendingButtonDelegate.m QuitButtonDelegate.m LoadButtonDelegate.m \
-	TwitFollowerButtonDelegate.m SeparatorButtonDelegate.m SVNDiffButtonDelegate.m PreferencesButtonDelegate.m \
+SRC = icons.m ButtonDelegate.m \
+	MainController.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
+	TimeMachineAlertButtonDelegate.m QuitButtonDelegate.m LoadButtonDelegate.m \
+	SeparatorButtonDelegate.m SVNDiffButtonDelegate.m PreferencesButtonDelegate.m \
 	ODeskButtonDelegate.m TimeButtonDelegate.m
 
 CFLAGS=-F./MenuMonitor.app/Contents/Frameworks -Wall -Werror -g
