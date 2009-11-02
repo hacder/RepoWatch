@@ -138,7 +138,7 @@
 				dispatch_async(dispatch_get_main_queue(), ^{
 					[t2 autorelease];
 					[t2 launch];
-					timeout = 2;
+					timeout = 15;
 				
 					NSString *s2 = [self stringFromFile: f2];
 					[f2 closeFile];
@@ -158,7 +158,7 @@
 						[string stringByTrimmingCharactersInSet:
 						[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 				dispatch_async(dispatch_get_main_queue(), ^{
-					timeout = 2;
+					timeout = 5;
 					[self setTitle: sTit];
 					[self setShortTitle: sTit];
 					[self setHidden: NO];
