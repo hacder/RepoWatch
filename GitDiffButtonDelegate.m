@@ -80,10 +80,13 @@
 			int i;
 			for (i = 0; i < [branches count]; i++) {
 				NSString *tmp = [branches objectAtIndex: i];
-				if (tmp && [tmp length] > 0)
-					NSLog(@"%c is at 0", [[branches objectAtIndex: i] characterAtIndex: 0]);
-				tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
-				NSLog(@"Branch: (%@) %@", repository, tmp);
+				if (tmp && [tmp length] > 0) {
+					NSLog(@"%@", tmp);
+					if ('*' == [tmp characterAtIndex: 0])
+						NSLog(@"Yes!");
+					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
+					NSLog(@"Branch: (%@) %@", repository, tmp);
+				}
 			}
 			
 			[file closeFile];
