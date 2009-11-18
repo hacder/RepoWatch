@@ -127,6 +127,8 @@ char *find_execable(const char *filename) {
 		return;
 	if ([path isEqual: [@"~/Movies" stringByStandardizingPath]])
 		return;
+	if ([path isEqual: [@"~/.Trash" stringByStandardizingPath]])
+		return;
 	
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
 	if ([contents containsObject: @".git"]) {

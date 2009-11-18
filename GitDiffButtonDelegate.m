@@ -79,7 +79,7 @@
 			
 			int i;
 			for (i = 0; i < [branches count]; i++) {
-				NSString *tmp = [[branches objectAtIndex: i] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+				NSString *tmp = [[branches objectAtIndex: i] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
 				NSLog(@"Branch: (%@) %@", repository, tmp);
 			}
 			
