@@ -28,9 +28,7 @@
 	return t;
 }
 
-// Crashed somewhere in this function without debug info.	
 - (NSFileHandle *)pipeForTask: (NSTask *)t {
-	// This sometimes returns nil?!
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
 	NSFileHandle *file = [pipe fileHandleForReading];
@@ -71,10 +69,18 @@
 			return;
 
 		if ([string isEqual: @""]) {
+			NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"branch", nil]] autorelease];
+			NSFileHandle *file = [self pipeForTask: t];
+			// TODO: Wrap in try/catch
+			[t launch];
+			
+			NSString *string = [self stringFromFile: file];
+			[file closeFile];
+
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 15;
-				NSString *s3 = [NSString stringWithFormat: @"git: %@",
-						[repository lastPathComponent]];
+				NSString *s3 = [NSString stringWithFormat: @"git: %@ (%@)",
+						repository, string];
 				[self setTitle: s3];
 				[self setShortTitle: s3];
 				[self setHidden: NO];
