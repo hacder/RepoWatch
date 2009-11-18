@@ -71,7 +71,8 @@
 	if (msec > 500)
 		NSLog(@"[%@ fire] took %ld msec", self, msec);
 	
-	[NSTimer scheduledTimerWithTimeInterval: timeout target: self selector: @selector(setupTimer) userInfo: nil repeats: NO];
+	if (timeout >= 0)
+		[NSTimer scheduledTimerWithTimeInterval: timeout target: self selector: @selector(setupTimer) userInfo: nil repeats: NO];
 }
 
 - (void) beep: (id) something {

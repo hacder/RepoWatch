@@ -116,7 +116,15 @@
 				@"diff", @"--shortstat", nil]] autorelease];
 		NSFileHandle *file = [self pipeForTask: t];
 
-		[t launch];
+		@try {
+			[t launch];
+		} @catch (NSException *e) {
+			timeout = -1;
+			[self setTitle: @"Errored"];
+			[self setHidden: YES];
+			[self setPriority: 1];
+			return;
+		}
 		NSString *string = [self stringFromFile: file];
 		[file closeFile];
 		
