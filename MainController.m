@@ -132,25 +132,29 @@ char *find_execable(const char *filename) {
 	if ([contents containsObject: @".git"]) {
 		if (git) {
 			NSLog(@"Adding git to %@", path);
-			[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self gitPath: git repository: path]];
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self gitPath: git repository: path]];
+			});
 		}
 	} else if ([contents containsObject: @".svn"] && ![path isEqual: [@"~" stringByStandardizingPath]]) {
 		if (svn) {
 			NSLog(@"Adding svn to %@", path);
-			[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self svnPath: svn repository: path]];
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self svnPath: svn repository: path]];
+			});
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
-			[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self hgPath: hg repository: path]];
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path menu: theMenu script: nil statusItem: statusItem mainController: self hgPath: hg repository: path]];
+			});
 		}
 	} else {
 		int i;
 		for (i = 0; i < [contents count]; i++) {
 			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] retain];
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[self searchPath: s forGit: git svn: svn hg: hg];
-				[s release];
-			});
+			[self searchPath: s forGit: git svn: svn hg: hg];
+			[s release];
 		}
 	}
 }
@@ -159,9 +163,7 @@ char *find_execable(const char *filename) {
 	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"vcsEnabled"] == 0)
 		return;
 
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[self searchPath: [@"~" stringByStandardizingPath] forGit: git svn: svn hg: hg];
-	});
+	[self searchPath: [@"~" stringByStandardizingPath] forGit: git svn: svn hg: hg];
 }
 
 - (void) findSupportedSCMS {
