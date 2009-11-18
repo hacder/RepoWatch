@@ -75,7 +75,13 @@
 			[t launch];
 			
 			NSString *string = [self stringFromFile: file];
-			NSLog(@"String: %@", string);
+			NSArray *branches = [string componentsSeparatedByString: @"\n"];
+			
+			int i;
+			for (i = 0; i < [branches count]; i++) {
+				NSLog(@"Branch: (%@) %@", repository, [branches objectAtIndex: i]);
+			}
+			
 			[file closeFile];
 
 			dispatch_async(dispatch_get_main_queue(), ^{
