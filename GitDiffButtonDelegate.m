@@ -68,43 +68,46 @@
 		if (string == nil && priority == -1)
 			return;
 
-		if ([string isEqual: @""]) {
-			NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"branch", nil]] autorelease];
-			NSFileHandle *file = [self pipeForTask: t];
-			// TODO: Wrap in try/catch
-			[t launch];
-			
-			NSString *string = [self stringFromFile: file];
-			NSArray *branches = [string componentsSeparatedByString: @"\n"];
-			
-			int i;
-			for (i = 0; i < [branches count]; i++) {
-				NSString *tmp = [branches objectAtIndex: i];
-				if (tmp && [tmp length] > 0) {
-					NSLog(@"%@", tmp);
-					if ('*' == [tmp characterAtIndex: 0])
-						NSLog(@"Yes!");
+		NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"branch", nil]] autorelease];
+		NSFileHandle *file = [self pipeForTask: t];
+		// TODO: Wrap in try/catch
+		[t launch];
+		
+		NSString *string2 = [self stringFromFile: file];
+		NSArray *branches = [string2 componentsSeparatedByString: @"\n"];
+		
+		int i;
+		for (i = 0; i < [branches count]; i++) {
+			NSString *tmp = [branches objectAtIndex: i];
+			if (tmp && [tmp length] > 0) {
+				if ('*' == [tmp characterAtIndex: 0]) {
 					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
-					NSLog(@"Branch: (%@) %@", repository, tmp);
+					[currentBranch autorelease];
+					currentBranch = tmp;
+					[currentBranch retain];
+				} else {
+					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
 				}
 			}
-			
-			[file closeFile];
+		}
+		
+		[file closeFile];
 
+		if ([string isEqual: @""]) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 15;
-				NSString *s3 = [NSString stringWithFormat: @"git: %@ (%@)",
-						repository, string];
+				NSString *s3 = [NSString stringWithFormat: @"git: %@ (%@) (%@)",
+						repository, string, currentBranch];
 				[self setTitle: s3];
 				[self setShortTitle: s3];
 				[self setHidden: NO];
 				[self setPriority: 1];
 			});
 		} else {
-			NSString *sTit = [NSString stringWithFormat: @"%@: %@",
+			NSString *sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
 					[repository lastPathComponent],
 					[string stringByTrimmingCharactersInSet:
-					[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+					[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 5;
 				[self setTitle: sTit];
