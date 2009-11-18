@@ -96,8 +96,8 @@
 		if ([string isEqual: @""]) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 15;
-				NSString *s3 = [NSString stringWithFormat: @"git: %@ (%@) (%@)",
-						repository, string, currentBranch];
+				NSString *s3 = [NSString stringWithFormat: @"git: %@ (%@)",
+						[repository lastPathComponent], currentBranch];
 				[self setTitle: s3];
 				[self setShortTitle: s3];
 				[self setHidden: NO];
