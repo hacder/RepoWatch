@@ -79,7 +79,8 @@
 			
 			int i;
 			for (i = 0; i < [branches count]; i++) {
-				NSLog(@"Branch: (%@) %@", repository, [branches objectAtIndex: i]);
+				NSString *tmp = [[branches objectAtIndex: i] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+				NSLog(@"Branch: (%@) %@", repository, tmp);
 			}
 			
 			[file closeFile];
