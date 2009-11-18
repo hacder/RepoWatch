@@ -79,6 +79,7 @@
 			
 			int i;
 			for (i = 0; i < [branches count]; i++) {
+				NSLog(@"%c is at 0", [[branches objectAtIndex: i] characterAtIndex: 0]);
 				NSString *tmp = [[branches objectAtIndex: i] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
 				NSLog(@"Branch: (%@) %@", repository, tmp);
 			}
