@@ -75,6 +75,7 @@
 			[t launch];
 			
 			NSString *string = [self stringFromFile: file];
+			NSLog(@"String: %@", string);
 			[file closeFile];
 
 			dispatch_async(dispatch_get_main_queue(), ^{
