@@ -1,6 +1,5 @@
 #import "MainController.h"
 #import "ButtonDelegate.h"
-#import "LoadButtonDelegate.h"
 #import "PreferencesButtonDelegate.h"
 #import "SeparatorButtonDelegate.h"
 #import "QuitButtonDelegate.h"
@@ -31,8 +30,6 @@
 	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
 		@"1", @"timeMachineEnabled",
 		@"5", @"timeMachineOverdueTime",
-		@"10", @"loadDelay",
-		@"1", @"loadEnabled",
 		@"1", @"vcsEnabled",
 		@"0", @"gitTagOnClick",
 		nil];
@@ -189,7 +186,6 @@ char *find_execable(const char *filename) {
 
 - (void)initWithDirectory: (NSString *)dir {
 	[self init];
-	[plugins addObject: [[LoadButtonDelegate alloc] initWithTitle: @"System Load" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeButtonDelegate alloc] initWithTitle: @"Time" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
 //	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
