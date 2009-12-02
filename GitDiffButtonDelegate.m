@@ -97,7 +97,7 @@
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 15;
 				NSString *s3;
-				if (currentBranch == nil) {
+				if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 					s3 = [NSString stringWithFormat: @"git: %@",
 						[repository lastPathComponent]];
 				} else {
@@ -110,10 +110,18 @@
 				[self setPriority: 1];
 			});
 		} else {
-			NSString *sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
+			NSString *sTit;
+			if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
+				sTit = [NSString stringWithFormat: @"%@: %@",
+					[repository lastPathComponent],
+					[string stringByTrimmingCharactersInSet:
+						[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+			} else {
+				sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
 					[repository lastPathComponent],
 					[string stringByTrimmingCharactersInSet:
 					[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
+			}
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 5;
 				[self setTitle: sTit];
