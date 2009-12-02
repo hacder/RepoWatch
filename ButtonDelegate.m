@@ -85,7 +85,6 @@
 	if (priority == p)
 		return;
 	priority = p;
-	[mainController rearrange];
 }
 
 @end

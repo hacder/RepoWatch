@@ -3,12 +3,11 @@
 #import "PreferencesButtonDelegate.h"
 #import "SeparatorButtonDelegate.h"
 #import "QuitButtonDelegate.h"
-#import "TimeMachineAlertButtonDelegate.h"
 #import "GitDiffButtonDelegate.h"
 #import "SVNDiffButtonDelegate.h"
 #import "MercurialDiffButtonDelegate.h"
 #import "ODeskButtonDelegate.h"
-#import "TimeButtonDelegate.h"
+#import "TimeMachineAlertButtonDelegate.h"
 #import <Sparkle/Sparkle.h>
 #import <dirent.h>
 #import <sys/stat.h>
@@ -21,7 +20,7 @@
 	statusItem = [bar statusItemWithLength: NSVariableStatusItemLength];
 	[statusItem retain];
 	
-	[statusItem setTitle: NSLocalizedString(@"Initializing...", @"")];
+	[statusItem setTitle: NSLocalizedString(@"RepoWatch", @"")];
 	[statusItem setHighlightMode: YES];
 	theMenu = [[[NSMenu alloc] initWithTitle: @"Testing"] retain];
 	
@@ -181,18 +180,32 @@ char *find_execable(const char *filename) {
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self searchAllPathsForGit: git svn: svn hg: hg];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+			[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
+			[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+		});
 	});
 }
 
 - (void)initWithDirectory: (NSString *)dir {
 	[self init];
-	[plugins addObject: [[TimeButtonDelegate alloc] initWithTitle: @"Time" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-	[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
-//	[plugins addObject: [[TwitterTrendingButtonDelegate alloc] initWithTitle: @"Twitter Trending" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
 	[plugins addObject: [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+
+	[theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+
+	[theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	
+	[theMenu insertItemWithTitle: @"Upstream Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	
 	[self findSupportedSCMS];
 }
 
@@ -230,34 +243,12 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 		ButtonDelegate *bd = [[arr objectAtIndex: i] target];
 		[bd forceRefresh];
 	}
-	[self rearrange];
 }
 
 - (void) maybeRefresh: (ButtonDelegate *)bd {
 	NSArray *arr = [theMenu itemArray];
 	if ([arr count] == 0)
 		return;
-	ButtonDelegate *bd2 = [[arr objectAtIndex: 0] target];
-	if (bd2 == bd)
-		[self rearrange];
-}
-
-- (void) rearrange {
-	NSArray *arr = [[theMenu itemArray] sortedArrayUsingFunction: sortMenuItems context: NULL];
-	int i;
-	for (i = 0; i < [arr count]; i++) {
-		[theMenu removeItem: [arr objectAtIndex: i]];
-		[theMenu insertItem: [arr objectAtIndex: i] atIndex: i];
-		[theMenu itemChanged: [arr objectAtIndex: i]];
-	}
-	for (i = 0; i < [arr count]; i++) {
-		if ([[arr objectAtIndex: i] isHidden] == NO) {
-			ButtonDelegate *bd2 = [[arr objectAtIndex: i] target];
-			NSString *sh = [bd2 shortTitle];
-			[statusItem setTitle: sh];
-			break;
-		}
-	}
 }
 
 @end
