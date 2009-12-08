@@ -7,6 +7,9 @@
 	NSStatusItem *statusItem;
 	NSMenu *theMenu;
 	NSMutableArray *plugins;
+	ButtonDelegate *changedSeparator;
+	ButtonDelegate *upstreamSeparator;
+	ButtonDelegate *normalSeparator;
 }
 
 - init;

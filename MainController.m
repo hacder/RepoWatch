@@ -8,6 +8,7 @@
 #import "MercurialDiffButtonDelegate.h"
 #import "ODeskButtonDelegate.h"
 #import "TimeMachineAlertButtonDelegate.h"
+#import "RepoButtonDelegate.h"
 #import <Sparkle/Sparkle.h>
 #import <dirent.h>
 #import <sys/stat.h>
@@ -192,39 +193,44 @@ char *find_execable(const char *filename) {
 	[self init];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu statusItem: statusItem mainController: self]];
 	[plugins addObject: [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu statusItem: statusItem mainController: self]];
-	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+//	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 
-	[theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
-	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-
+	// TODO: Make the headers "active" even with nothing clickable.
 	[theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
+	changedSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Changed" menu: theMenu statusItem: statusItem mainController: self];
+	[plugins addObject: changedSeparator];
+	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+
+	[theMenu insertItemWithTitle: @"Upstream Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	upstreamSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Upstream" menu: theMenu statusItem: statusItem mainController: self];
+	[plugins addObject: upstreamSeparator];
 	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	
-	[theMenu insertItemWithTitle: @"Upstream Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
+	[theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	normalSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Up To Date" menu: theMenu statusItem: statusItem mainController: self];
+	[plugins addObject: normalSeparator];
 	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	
 	[self findSupportedSCMS];
 }
 
-NSInteger sortMenuItems(id item1, id item2, void *context) {
-	ButtonDelegate *bd1 = [item1 target];
-	ButtonDelegate *bd2 = [item2 target];
-	if (bd1 == nil || bd2 == nil)
-		return NSOrderedSame;
-//	if (bd1->priority < bd2->priority)
-//		return NSOrderedDescending;
-//	if (bd1->priority > bd2->priority)
-//		return NSOrderedAscending;
-	return NSOrderedSame;
-}
-
 - (void) maybeRefresh: (ButtonDelegate *)bd {
-	NSArray *arr = [theMenu itemArray];
-	if ([arr count] == 0)
-		return;
+	if ([bd isKindOfClass: [RepoButtonDelegate class]]) {
+		RepoButtonDelegate *bd2 = (RepoButtonDelegate *)bd;
+		if ([theMenu indexOfItem: [bd2 getMenuItem]] == -1)
+			return;
+		[theMenu removeItem: [bd2 getMenuItem]];
+		NSInteger index = 0;
+		
+		if (bd2->localMod) {
+			index = [theMenu indexOfItem: [changedSeparator getMenuItem]];
+		} else if (bd2->upstreamMod) {
+			index = [theMenu indexOfItem: [upstreamSeparator getMenuItem]];
+		} else {
+			index = [theMenu indexOfItem: [normalSeparator getMenuItem]];
+		}
+		[theMenu insertItem: [bd2 getMenuItem] atIndex: index + 1];
+	}
 }
 
 @end

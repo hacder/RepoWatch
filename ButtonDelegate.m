@@ -49,6 +49,10 @@
 	[self fire];
 }
 
+- (NSMenuItem *)getMenuItem {
+	return menuItem;
+}
+
 - (void) addMenuItem {
 	menuItem = [menu insertItemWithTitle: title action: @selector(beep:) keyEquivalent: @"" atIndex: [menu numberOfItems]];
 	[menuItem retain];

@@ -49,7 +49,6 @@
 		timeout = -1;
 		[self setTitle: @"Errored"];
 		[self setHidden: YES];
-		[self setPriority: -1];
 		return nil;
 	}
 	
@@ -62,7 +61,7 @@
 - (void) fire {
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		NSString *string = [self getDiff];
-		if (string == nil && priority == -1)
+		if (string == nil)
 			return;
 
 		NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"branch", nil]] autorelease];
@@ -91,6 +90,7 @@
 		[file closeFile];
 
 		if ([string isEqual: @""]) {
+			localMod = NO;
 			dispatch_async(dispatch_get_main_queue(), ^{
 				timeout = 15;
 				NSString *s3;
@@ -104,10 +104,10 @@
 				[self setTitle: s3];
 				[self setShortTitle: s3];
 				[self setHidden: NO];
-				[self setPriority: 1];
 			});
 		} else {
 			NSString *sTit;
+			localMod = YES;
 			if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 				sTit = [NSString stringWithFormat: @"%@: %@",
 					[repository lastPathComponent],
@@ -124,7 +124,6 @@
 				[self setTitle: sTit];
 				[self setShortTitle: sTit];
 				[self setHidden: NO];
-				[self setPriority: 25];
 			});
 		}
 	});

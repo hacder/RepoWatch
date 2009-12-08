@@ -5,10 +5,10 @@
 
 @interface RepoButtonDelegate : ButtonDelegate {
 @public
-	int priority;
+	BOOL localMod;
+	BOOL upstreamMod;
 }
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc;
-- (void) setPriority: (int) p;
 
 @end

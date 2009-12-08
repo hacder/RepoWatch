@@ -6,7 +6,8 @@
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
-	[self setPriority: 0];
+	localMod = NO;
+	upstreamMod = NO;
 	return self;
 }
 
@@ -14,12 +15,6 @@
 }
 
 - (void) fire {
-}
-
-- (void) setPriority: (int) p {
-	if (priority == p)
-		return;
-	priority = p;
 }
 
 @end

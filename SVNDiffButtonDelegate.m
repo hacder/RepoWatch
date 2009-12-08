@@ -55,7 +55,6 @@
 			if ([s2 isEqual: @"0 files changed"]) {
 				timeout = 15;
 				[self setHidden: TRUE];
-				[self setPriority: 0];
 			} else {
 				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], s2];
 			
@@ -63,7 +62,6 @@
 				[self setTitle: sTit];
 				[self setShortTitle: sTit];
 				[self setHidden: NO];
-				[self setPriority: 25];
 			}
 		});
 	});
