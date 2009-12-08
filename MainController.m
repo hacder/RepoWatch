@@ -233,6 +233,7 @@ char *find_execable(const char *filename) {
 		[theMenu insertItem: [bd2 getMenuItem] atIndex: index + 1];
 	}
 	
+	// The below could be done on a timer.
 	if (odb && odb->running) {
 		[statusItem setTitle: odb->title];
 	} else {
