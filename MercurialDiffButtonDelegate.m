@@ -3,12 +3,9 @@
 @implementation MercurialDiffButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc hgPath: (char *)hgPath repository: (NSString *)rep {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mc repository: rep];
 	hg = hgPath;
-	repository = rep;
-	[repository retain];
 	[self setHidden: YES];
-	[self setupTimer];
 	return self;
 }
 

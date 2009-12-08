@@ -5,7 +5,6 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
 	[self setHidden: YES];
-	[self setupTimer];
 	return self;
 }
 

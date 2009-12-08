@@ -12,6 +12,7 @@
 	ButtonDelegate *upstreamSeparator;
 	ButtonDelegate *normalSeparator;
 	ODeskButtonDelegate *odb;
+	NSTimer *timer;
 }
 
 - init;

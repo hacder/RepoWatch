@@ -3,12 +3,9 @@
 @implementation SVNDiffButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc svnPath: (char *)svnPath repository: (NSString *)rep {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mc repository: rep];
 	svn = svnPath;
-	repository = rep;
-	[repository retain];
 	[self setHidden: YES];
-	[self setupTimer];
 	return self;
 }
 

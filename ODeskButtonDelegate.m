@@ -12,7 +12,6 @@
 	logging = 0;
 	date = NULL;
 	[self setHidden: YES];
-	[self setupTimer];
 	return self;
 }
 

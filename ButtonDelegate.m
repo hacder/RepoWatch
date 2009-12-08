@@ -59,22 +59,6 @@
 	[menuItem setAction: @selector(beep:)];
 }
 
-- (void) setupTimer {
-	struct timeval tv_start;
-	struct timeval tv_end;
-	
-	gettimeofday(&tv_start, NULL);
-	[self fire];
-	gettimeofday(&tv_end, NULL);
-	
-	long msec = ((tv_end.tv_sec - tv_start.tv_sec) * 1000 + (tv_end.tv_usec - tv_start.tv_usec) / 1000.0) + 0.5;
-	if (msec > 500)
-		NSLog(@"[%@ fire] took %ld msec", self, msec);
-	
-//	if (timeout >= 0)
-//		[NSTimer scheduledTimerWithTimeInterval: timeout target: self selector: @selector(setupTimer) userInfo: nil repeats: NO];
-}
-
 - (void) beep: (id) something {
 }
 

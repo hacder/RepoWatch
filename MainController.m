@@ -195,7 +195,7 @@ char *find_execable(const char *filename) {
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu statusItem: statusItem mainController: self]];
 	odb = [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu statusItem: statusItem mainController: self];
 	[plugins addObject: odb];
-	[[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
+//	[[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
 
 	// TODO: Make the headers "active" even with nothing clickable.
 	[[theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
@@ -213,6 +213,8 @@ char *find_execable(const char *filename) {
 	[plugins addObject: normalSeparator];
 	
 	[self findSupportedSCMS];
+	
+	timer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(ping) userInfo: nil repeats: YES];
 }
 
 - (void) maybeRefresh: (ButtonDelegate *)bd {
@@ -232,8 +234,9 @@ char *find_execable(const char *filename) {
 		}
 		[theMenu insertItem: [bd2 getMenuItem] atIndex: index + 1];
 	}
-	
-	// The below could be done on a timer.
+}
+
+- (void) ping {
 	if (odb && odb->running) {
 		[statusItem setTitle: odb->title];
 	} else {
