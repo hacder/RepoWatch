@@ -242,7 +242,7 @@ char *find_execable(const char *filename) {
 		} else {
 			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 			[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
-			[dateFormatter setDateStyle: NSDateFormatterNoStyle];
+			[dateFormatter setDateStyle: NSDateFormatterShortStyle];
 			
 			NSDate *date = [NSDate date];
 			[statusItem setTitle: [dateFormatter stringFromDate: date]];
