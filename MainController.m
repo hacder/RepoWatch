@@ -240,7 +240,12 @@ char *find_execable(const char *filename) {
 		if (modded) {
 			[statusItem setTitle: [NSString stringWithFormat: @"%d repositories are out of date!", modded]];
 		} else {
-			[statusItem setTitle: @"No mod"];
+			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+			[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
+			[dateFormatter setDateStyle: NSDateFormatterNoStyle];
+			
+			NSDate *date = [NSDate date];
+			[statusItem setTitle: [dateFormatter stringFromDate: date]];
 		}
 	}
 }
