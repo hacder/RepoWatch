@@ -1,12 +1,12 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ButtonDelegate.h"
+#import "RepoButtonDelegate.h"
 
-@interface SVNDiffButtonDelegate : ButtonDelegate {
+@interface SVNDiffButtonDelegate : RepoButtonDelegate {
 	char *svn;
 	NSString *repository;
 }
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc svnPath: (char *)svnPath repository: (NSString *)rep;
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc svnPath: (char *)svnPath repository: (NSString *)rep;
 
 @end

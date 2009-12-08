@@ -3,8 +3,8 @@
 
 @implementation ODeskButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
-	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
 	f = NULL;
 	timeout = 10;
 	start_time = 0;
@@ -39,7 +39,6 @@
 		NSString *filePath = [@"~/Library/Logs/oDesk Team.log" stringByStandardizingPath];
 		f = fopen([filePath UTF8String], "r");
 		if (f == 0) {
-			[self setPriority: 1];
 			[self setHidden: YES];
 			return;
 		}
@@ -109,14 +108,10 @@
 					(int)floor(displayed_time / 3600.0),
 					(int)floor((displayed_time -
 						(floor(displayed_time / 3600.0) * 3600)
-					) / 60.0), ((displayed_time / 3600.0) * 22)];
+					) / 60.0), ((displayed_time / 3600.0) * 21)];
 			[self setShortTitle: status];
 			[self setTitle: status];
-			[self setHidden: NO];
-			if (logging)
-				[self setPriority: 30];
-			else
-				[self setPriority: 1];
+			[self setHidden: YES];
 		});
 	});
 }

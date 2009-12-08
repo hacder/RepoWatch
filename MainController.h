@@ -11,8 +11,6 @@
 
 - init;
 - (void) initWithDirectory: (NSString *)dir;
-- (void) addDir: (NSString *)dir;
-- (void) reset;
 - (void) maybeRefresh: (ButtonDelegate *)bd;
 
 @end

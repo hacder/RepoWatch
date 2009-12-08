@@ -2,8 +2,8 @@
 
 @implementation TimeMachineAlertButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
-	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
 	timeout = 30;
 	[self setHidden: YES];
 	[self setupTimer];
@@ -24,7 +24,6 @@
 		[self setTitle: @""];
 		[self setShortTitle: @""];
 		[self setHidden: YES];
-		[self setPriority: 1];
 		return;
 	}
 	
@@ -56,14 +55,12 @@
 		titular = [NSString stringWithFormat: @"TimeMachine Overdue!: %02dh:%02dm", intHours, intMinutes];
 		[self setShortTitle: titular];
 		[self setTitle: titular];
-		[self setHidden: NO];
-		[self setPriority: 26];
+		[self setHidden: YES];
 	} else {
 		titular = [NSString stringWithFormat: @"TimeMachine last backup: %02dh:%02dm", intHours, intMinutes];
 		[self setShortTitle: titular];
 		[self setTitle: titular];
-		[self setHidden: NO];
-		[self setPriority: 3];
+		[self setHidden: YES];
 	}
 }
 

@@ -7,7 +7,7 @@
 	NSArray *_plugins;
 }
 
-- initWithTitle: (NSString *)t menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc plugins: (NSArray *)plugins;
+- initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc plugins: (NSArray *)plugins;
 
 
 @end

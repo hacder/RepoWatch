@@ -4,17 +4,14 @@
 
 @implementation ButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super init];
-	script = sc;
-	[script retain];
 	mainController = mc;
 	statusItem = si;
 	menu = m;
 	timeout = 1000;
 	[self setTitle: s];
 	[self setShortTitle: s];
-	[self setPriority: 0];
 	[self addMenuItem];
 	return self;
 }
@@ -79,12 +76,6 @@
 }
 
 - (void) fire {
-}
-
-- (void) setPriority: (int) p {
-	if (priority == p)
-		return;
-	priority = p;
 }
 
 @end

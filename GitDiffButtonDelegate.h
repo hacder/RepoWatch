@@ -1,13 +1,13 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ButtonDelegate.h"
+#import "RepoButtonDelegate.h"
 
-@interface GitDiffButtonDelegate : ButtonDelegate {
+@interface GitDiffButtonDelegate : RepoButtonDelegate {
 	char *git;
 	NSString *repository;
 	NSString *currentBranch;
 }
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep;
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep;
 
 @end

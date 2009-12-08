@@ -1,12 +1,12 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ButtonDelegate.h"
+#import "RepoButtonDelegate.h"
 
-@interface MercurialDiffButtonDelegate : ButtonDelegate {
+@interface MercurialDiffButtonDelegate : RepoButtonDelegate {
 	char *hg;
 	NSString *repository;
 }
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc hgPath: (char *)hgPath repository: (NSString *)rep;
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc hgPath: (char *)hgPath repository: (NSString *)rep;
 
 @end

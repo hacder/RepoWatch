@@ -2,16 +2,15 @@
 
 @implementation PreferencesButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc plugins: (NSArray *)plugins {
-	self = [self initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc plugins: (NSArray *)plugins {
+	self = [self initWithTitle: s menu: m statusItem: si mainController: mc];
 	_plugins = plugins;
 	[self setTitle: @"Preferences"];
-	[self setPriority: -100];
 	return self;
 }
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
-	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
 	return self;
 }
 
@@ -42,9 +41,6 @@
 - (BOOL) windowShouldClose: (id) win {
 	window = nil;
 	[[NSUserDefaultsController sharedUserDefaultsController] save: self];
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[mainController reset];
-	});
 	return YES;
 }
 

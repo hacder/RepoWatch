@@ -2,8 +2,8 @@
 
 @implementation SVNDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m script: (NSString *)sc statusItem: (NSStatusItem *)si mainController: (MainController *)mc svnPath: (char *)svnPath repository: (NSString *)rep {
-	self = [super initWithTitle: s menu: m script: sc statusItem: si mainController: mc];
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc svnPath: (char *)svnPath repository: (NSString *)rep {
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
 	svn = svnPath;
 	repository = rep;
 	[repository retain];

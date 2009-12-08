@@ -132,7 +132,7 @@ char *find_execable(const char *filename) {
 			NSLog(@"Adding git to %@", path);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
-					menu: theMenu script: nil statusItem: statusItem mainController: self
+					menu: theMenu statusItem: statusItem mainController: self
 					gitPath: git repository: path]];
 			});
 		}
@@ -141,7 +141,7 @@ char *find_execable(const char *filename) {
 			NSLog(@"Adding svn to %@", path);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path
-					menu: theMenu script: nil statusItem: statusItem mainController: self
+					menu: theMenu statusItem: statusItem mainController: self
 					svnPath: svn repository: path]];
 			});
 		}
@@ -149,7 +149,7 @@ char *find_execable(const char *filename) {
 		if (hg) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
-					menu: theMenu script: nil statusItem: statusItem mainController: self
+					menu: theMenu statusItem: statusItem mainController: self
 					hgPath: hg repository: path]];
 			});
 		}
@@ -181,47 +181,32 @@ char *find_execable(const char *filename) {
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self searchAllPathsForGit: git svn: svn hg: hg];
 		dispatch_async(dispatch_get_main_queue(), ^{
-			[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-			[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu script: nil statusItem: statusItem mainController: self plugins: plugins]];
-			[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+			[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
+			[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu statusItem: statusItem mainController: self plugins: plugins]];
+			[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self]];
 		});
 	});
 }
 
 - (void)initWithDirectory: (NSString *)dir {
 	[self init];
-	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu script: nil statusItem: statusItem mainController: self]];
-	[plugins addObject: [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu statusItem: statusItem mainController: self]];
+	[plugins addObject: [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu statusItem: statusItem mainController: self]];
 	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 
 	[theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
 	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 
 	[theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
 	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	
 	[theMenu insertItemWithTitle: @"Upstream Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu script: nil statusItem: statusItem mainController: self]];
+	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
 	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	
 	[self findSupportedSCMS];
-}
-
-- (void)addDir: (NSString *)dir {
-	DIR *dire = opendir([dir cStringUsingEncoding: NSUTF8StringEncoding]);
-	if (dire == NULL)
-		return;
-	struct dirent *dent;
-	while ((dent = readdir(dire)) != NULL) {
-		if (dent->d_name[0] == '.')
-			continue;
-		NSString *dirPart = [[[NSString alloc] initWithCString: dent->d_name encoding: NSUTF8StringEncoding] autorelease];
-		NSString *total = [[[dir stringByAppendingString: @"/"] stringByAppendingString: dirPart] autorelease];
-		[[ButtonDelegate alloc] initWithTitle: total menu: theMenu script: total statusItem: statusItem mainController: self];
-	}
-	closedir(dire);
 }
 
 NSInteger sortMenuItems(id item1, id item2, void *context) {
@@ -229,20 +214,11 @@ NSInteger sortMenuItems(id item1, id item2, void *context) {
 	ButtonDelegate *bd2 = [item2 target];
 	if (bd1 == nil || bd2 == nil)
 		return NSOrderedSame;
-	if (bd1->priority < bd2->priority)
-		return NSOrderedDescending;
-	if (bd1->priority > bd2->priority)
-		return NSOrderedAscending;
+//	if (bd1->priority < bd2->priority)
+//		return NSOrderedDescending;
+//	if (bd1->priority > bd2->priority)
+//		return NSOrderedAscending;
 	return NSOrderedSame;
-}
-
-- (void) reset {
-	NSArray *arr = [theMenu itemArray];
-	int i;
-	for (i = 0; i < [arr count]; i++) {
-		ButtonDelegate *bd = [[arr objectAtIndex: i] target];
-		[bd forceRefresh];
-	}
 }
 
 - (void) maybeRefresh: (ButtonDelegate *)bd {
