@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "PreferencesButtonDelegate.h"
+#import "ButtonDelegate.h"
 
 @interface ODeskButtonDelegate : ButtonDelegate {
 	FILE *f;
