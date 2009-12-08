@@ -24,5 +24,6 @@
 - (void) setTitle: (NSString *)t;
 - (void) setHidden: (BOOL)b;
 - (NSMenuItem *) getMenuItem;
+- (void) beep: (id) something;
 
 @end

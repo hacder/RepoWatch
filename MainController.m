@@ -24,6 +24,7 @@
 	[statusItem setTitle: NSLocalizedString(@"RepoWatch", @"")];
 	[statusItem setHighlightMode: YES];
 	theMenu = [[[NSMenu alloc] initWithTitle: @"Testing"] retain];
+	[theMenu setAutoenablesItems: NO];
 	
 	[statusItem setMenu: theMenu];
 	
@@ -192,11 +193,12 @@ char *find_execable(const char *filename) {
 - (void)initWithDirectory: (NSString *)dir {
 	[self init];
 	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu statusItem: statusItem mainController: self]];
-	[plugins addObject: [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu statusItem: statusItem mainController: self]];
+	odb = [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu statusItem: statusItem mainController: self];
+	[plugins addObject: odb];
 //	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 
 	// TODO: Make the headers "active" even with nothing clickable.
-	[theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[[theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
 	changedSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Changed" menu: theMenu statusItem: statusItem mainController: self];
 	[plugins addObject: changedSeparator];
 	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
@@ -209,7 +211,6 @@ char *find_execable(const char *filename) {
 	[theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	normalSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Up To Date" menu: theMenu statusItem: statusItem mainController: self];
 	[plugins addObject: normalSeparator];
-	[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	
 	[self findSupportedSCMS];
 }
@@ -230,6 +231,17 @@ char *find_execable(const char *filename) {
 			index = [theMenu indexOfItem: [normalSeparator getMenuItem]];
 		}
 		[theMenu insertItem: [bd2 getMenuItem] atIndex: index + 1];
+	}
+	
+	if (odb && odb->running) {
+		[statusItem setTitle: odb->title];
+	} else {
+		NSUInteger modded = [RepoButtonDelegate numModified];
+		if (modded) {
+			[statusItem setTitle: [NSString stringWithFormat: @"%d repositories are out of date!", modded]];
+		} else {
+			[statusItem setTitle: @"No mod"];
+		}
 	}
 }
 

@@ -64,8 +64,10 @@
 			}
 			if (strstr(line, "is launched"))
 				running = 1;
-			if (strstr(line, "is terminating"))
+			if (strstr(line, "is terminating")) {
 				running = 0;
+				logging = 0;
+			}
 			if (strstr(line, "requested state [")) {
 				char *state = strstr(line, "requested state [") + 17;
 	
@@ -111,7 +113,8 @@
 					) / 60.0), ((displayed_time / 3600.0) * 21)];
 			[self setShortTitle: status];
 			[self setTitle: status];
-			[self setHidden: YES];
+			[self setHidden: NO];
+			[mainController maybeRefresh: self];
 		});
 	});
 }

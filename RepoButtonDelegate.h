@@ -10,5 +10,6 @@
 }
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc;
++ (NSUInteger)numModified;
 
 @end

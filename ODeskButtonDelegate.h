@@ -7,6 +7,7 @@
 	char *date;
 	int logged_time;
 	int start_time;
+@public
 	int running;
 	int logging;
 }

@@ -2,6 +2,7 @@
 #import <AppKit/AppKit.h>
 
 @class ButtonDelegate;
+@class ODeskButtonDelegate;
 
 @interface MainController : NSObject {
 	NSStatusItem *statusItem;
@@ -10,6 +11,7 @@
 	ButtonDelegate *changedSeparator;
 	ButtonDelegate *upstreamSeparator;
 	ButtonDelegate *normalSeparator;
+	ODeskButtonDelegate *odb;
 }
 
 - init;

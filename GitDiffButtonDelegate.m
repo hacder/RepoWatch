@@ -12,6 +12,7 @@
 	[self setHidden: YES];
 	
 	[self setupTimer];
+	
 	return self;
 }
 
