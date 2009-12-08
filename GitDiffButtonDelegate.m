@@ -3,10 +3,8 @@
 @implementation GitDiffButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mc repository: rep];
 	git = gitPath;
-	repository = rep;
-	[repository retain];
 	
 	[self setHidden: YES];
 	

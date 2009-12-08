@@ -4,7 +4,6 @@
 
 @interface GitDiffButtonDelegate : RepoButtonDelegate {
 	char *git;
-	NSString *repository;
 	NSString *currentBranch;
 }
 
