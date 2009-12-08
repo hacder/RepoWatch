@@ -16,6 +16,11 @@
 	return self;
 }
 
+- (void) addMenuItem {
+	[super addMenuItem];
+	[menuItem setToolTip: repository];
+}
+
 - (NSTask *)taskFromArguments: (NSArray *)args {
 	NSTask *t = [[NSTask alloc] init];
 	NSString *lp = [NSString stringWithFormat: @"%s", git];
@@ -50,6 +55,8 @@
 		timeout = -1;
 		[self setTitle: @"Errored"];
 		[self setHidden: YES];
+		localMod = NO;
+		upstreamMod = NO;
 		return nil;
 	}
 	
