@@ -241,8 +241,8 @@ char *find_execable(const char *filename) {
 			[statusItem setTitle: [NSString stringWithFormat: @"%d repositories are out of date!", modded]];
 		} else {
 			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-			[dateFormatter setTimeStyle: NSDateFormatterMediumStyle];
-			[dateFormatter setDateStyle: NSDateFormatterShortStyle];
+			[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
+			[dateFormatter setDateStyle: NSDateFormatterNoStyle];
 			
 			NSDate *date = [NSDate date];
 			[statusItem setTitle: [dateFormatter stringFromDate: date]];
