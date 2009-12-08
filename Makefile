@@ -3,7 +3,7 @@
 SRC = icons.m ButtonDelegate.m RepoButtonDelegate.m \
 	MainController.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
 	TimeMachineAlertButtonDelegate.m QuitButtonDelegate.m SeparatorButtonDelegate.m \
-	SVNDiffButtonDelegate.m PreferencesButtonDelegate.m ODeskButtonDelegate.m
+	SVNDiffButtonDelegate.m ODeskButtonDelegate.m
 
 CFLAGS=-F./MenuMonitor.app/Contents/Frameworks -Wall -Werror -g
 OBJ = $(addsuffix .o, $(basename $(SRC)))

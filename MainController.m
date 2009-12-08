@@ -1,6 +1,5 @@
 #import "MainController.h"
 #import "ButtonDelegate.h"
-#import "PreferencesButtonDelegate.h"
 #import "SeparatorButtonDelegate.h"
 #import "QuitButtonDelegate.h"
 #import "GitDiffButtonDelegate.h"
@@ -184,7 +183,6 @@ char *find_execable(const char *filename) {
 		[self searchAllPathsForGit: git svn: svn hg: hg];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
-			[plugins addObject: [[PreferencesButtonDelegate alloc] initWithTitle: @"Preferences" menu: theMenu statusItem: statusItem mainController: self plugins: plugins]];
 			[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self]];
 		});
 	});
