@@ -7,7 +7,6 @@
 	git = gitPath;
 	repository = rep;
 	[repository retain];
-	timeout = 15;
 	
 	[self setHidden: YES];
 	
@@ -52,7 +51,6 @@
 	@try {
 		[t launch];
 	} @catch (NSException *e) {
-		timeout = -1;
 		[self setTitle: @"Errored"];
 		[self setHidden: YES];
 		localMod = NO;
@@ -100,7 +98,6 @@
 		if ([string isEqual: @""]) {
 			localMod = NO;
 			dispatch_async(dispatch_get_main_queue(), ^{
-				timeout = 15;
 				NSString *s3;
 				if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 					s3 = [NSString stringWithFormat: @"git: %@",
@@ -128,7 +125,6 @@
 					[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
 			}
 			dispatch_async(dispatch_get_main_queue(), ^{
-				timeout = 5;
 				[self setTitle: sTit];
 				[self setShortTitle: sTit];
 				[self setHidden: NO];

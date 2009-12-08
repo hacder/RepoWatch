@@ -6,7 +6,6 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
 	f = NULL;
-	timeout = 10;
 	start_time = 0;
 	logged_time = 0;
 	running = 0;
@@ -100,9 +99,6 @@
 		int displayed_time = logged_time;
 		if (logging) {
 			displayed_time += (seconds - start_time);
-			timeout = 1;
-		} else {
-			timeout = 10;
 		}
 		
 		dispatch_async(dispatch_get_main_queue(), ^{

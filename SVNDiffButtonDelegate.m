@@ -7,7 +7,6 @@
 	svn = svnPath;
 	repository = rep;
 	[repository retain];
-	timeout = 15;
 	[self setHidden: YES];
 	[self setupTimer];
 	return self;
@@ -53,12 +52,10 @@
 			s2 = [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	
 			if ([s2 isEqual: @"0 files changed"]) {
-				timeout = 15;
 				[self setHidden: TRUE];
 			} else {
 				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], s2];
 			
-				timeout = 2;
 				[self setTitle: sTit];
 				[self setShortTitle: sTit];
 				[self setHidden: NO];
