@@ -242,12 +242,14 @@ char *find_execable(const char *filename) {
 		if (modded) {
 			[statusItem setTitle: [RepoButtonDelegate getModText]];
 		} else {
-			NSDictionary *dict = [[NSUserDefaults standardUserDefaults] persistentDomainForName: @"com.apple.menuextra.clock.plist"];
-			NSLog(@"Dict: %@", dict);
+			NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:
+				[@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath]];
+			NSString *format = [dict objectForKey: @"DateFormat"];
 
 			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-			[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
-			[dateFormatter setDateStyle: NSDateFormatterNoStyle];
+			[dateFormatter setDateFormat: format];
+//			[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
+//			[dateFormatter setDateStyle: NSDateFormatterNoStyle];
 			
 			NSDate *date = [NSDate date];
 			[statusItem setTitle: [dateFormatter stringFromDate: date]];
