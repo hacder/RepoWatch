@@ -12,5 +12,6 @@
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc repository: (NSString *)repo;
 + (NSUInteger)numModified;
++ (NSString *)getModText;
 
 @end

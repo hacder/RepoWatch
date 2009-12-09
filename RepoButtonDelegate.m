@@ -63,4 +63,14 @@ void callbackFunction(ConstFSEventStreamRef streamRef, void *clientCallBackInfo,
 	return ret;
 }
 
++ (NSString *) getModText {
+	int i = 0;
+	for (i = 0; i < [repos count]; i++) {
+		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
+		if (rbd->localMod || rbd->upstreamMod)
+			return rbd->title;
+	}
+	return nil;
+}
+
 @end

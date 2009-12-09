@@ -240,7 +240,7 @@ char *find_execable(const char *filename) {
 	} else {
 		NSUInteger modded = [RepoButtonDelegate numModified];
 		if (modded) {
-			[statusItem setTitle: [NSString stringWithFormat: @"%d repositories are out of date!", modded]];
+			[statusItem setTitle: [RepoButtonDelegate getModText]];
 		} else {
 			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 			[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
