@@ -52,6 +52,7 @@ void callbackFunction(
 }
 
 - (void) beep: (id) something {
+	NSLog(@"Beep!");
 }
 
 - (void) fire {
