@@ -6,9 +6,14 @@
 
 static NSMutableArray *repos;
 
-void callbackFunction(ConstFSEventStreamRef streamRef, void *clientCallBackInfo, size_t numEvents, void *eventPaths, const FSEventStreamEventFlags eventFlags[], const FSEventStreamEventId eventIds[]) {
+void callbackFunction(
+		ConstFSEventStreamRef streamRef,
+		void *clientCallBackInfo,
+		size_t numEvents,
+		void *eventPaths,
+		const FSEventStreamEventFlags eventFlags[],
+		const FSEventStreamEventId eventIds[]) {
 	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
-	NSLog(@"Firing");
 	[rbd fire];
 }
 
