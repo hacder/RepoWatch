@@ -13,6 +13,7 @@
 	butt = butt2;
 	[butt retain];
 	window = commitWindow;
+	[window retain];
 	[self fire];
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]];
 	[t launch];
@@ -83,7 +84,7 @@
 - (void) commit: (id) menuItem {
 	[tv autorelease];
 	
-	[window setTitle: [repository lastPathComponent]];	
+	[window setTitle: repository];
 	[window makeFirstResponder: tv];
 
 	if (localMod) {	
@@ -240,6 +241,7 @@
 			NSString *sTit;
 			localMod = NO;
 			upstreamMod = YES;
+			[[m insertItemWithTitle: @"Update from origin" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 			if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 				sTit = [NSString stringWithFormat: @"%@: %@",
 					[repository lastPathComponent],
