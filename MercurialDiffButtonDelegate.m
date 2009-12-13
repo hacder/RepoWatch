@@ -96,6 +96,29 @@
 	
 	NSFileHandle *file = [pipe2 fileHandleForReading];
 
+	NSArray *branches = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"branches", nil]];
+
+	NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];
+	[m insertItemWithTitle: @"Branches" action: @selector(branch:) keyEquivalent: @"" atIndex: 0];
+	[m insertItem: [NSMenuItem separatorItem] atIndex: 1];
+
+	int i;
+	int the_index = 2;
+	for (i = 0; i < [branches count]; i++) {
+		NSString *tmp = [branches objectAtIndex: i];
+		if (tmp && [tmp length] > 0) {
+			[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
+			if ('*' == [tmp characterAtIndex: 0]) {
+				tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
+//				[currentBranch autorelease];
+//				currentBranch = tmp;
+//				[currentBranch retain];
+			} else {
+				tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
+			}
+		}
+	}
+
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[lock lock];
 		[t autorelease];
@@ -132,6 +155,11 @@
 			}
 			[lock unlock];
 		});
+		[lock unlock];
+	});
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[lock lock];
+		[menuItem setSubmenu: m];
 		[lock unlock];
 	});
 	[lock unlock];

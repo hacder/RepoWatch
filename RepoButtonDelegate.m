@@ -17,11 +17,27 @@ void callbackFunction(
 	[rbd fire];
 }
 
+- (NSTask *)taskFromArguments: (NSArray *)args {
+	return nil;
+}
+
 - (NSString *)stringFromFile: (NSFileHandle *)file {
 	NSData *data = [file readDataToEndOfFile];
 	NSString *string = [[[NSString alloc] initWithData: data
 			encoding: NSUTF8StringEncoding] autorelease];
 	return string;
+}
+
+- (NSArray *)arrayFromResultOfArgs: (NSArray *)args {
+	NSTask *t = [[self taskFromArguments: args] autorelease];
+	NSFileHandle *file = [self pipeForTask: t];
+	// TODO: Wrap in try/catch
+	[t launch];
+	
+	NSString *string = [self stringFromFile: file];
+	NSArray *result = [string componentsSeparatedByString: @"\n"];
+	[file closeFile];
+	return result;
 }
 
 - (NSFileHandle *)pipeForTask: (NSTask *)t {

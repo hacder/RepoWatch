@@ -54,18 +54,6 @@
 	return string;
 }
 
-- (NSArray *)arrayFromResultOfArgs: (NSArray *)args {
-	NSTask *t = [[self taskFromArguments: args] autorelease];
-	NSFileHandle *file = [self pipeForTask: t];
-	// TODO: Wrap in try/catch
-	[t launch];
-	
-	NSString *string = [self stringFromFile: file];
-	NSArray *result = [string componentsSeparatedByString: @"\n"];
-	[file closeFile];
-	return result;
-}
-
 - (void) commit: (id) menuItem {
 	[window setTitle: repository];
 	[window makeFirstResponder: tv];

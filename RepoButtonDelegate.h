@@ -19,6 +19,9 @@
 - (void) clickUpdate: (id) button;
 - (NSFileHandle *)pipeForTask: (NSTask *)t;
 - (NSString *)stringFromFile: (NSFileHandle *)file;
+- (NSTask *)taskFromArguments: (NSArray *)args;
+- (NSArray *)arrayFromResultOfArgs: (NSArray *)args;
+
 + (NSUInteger)numModified;
 + (NSUInteger)numLocalEdit;
 + (NSUInteger)numRemoteEdit;
