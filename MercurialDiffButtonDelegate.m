@@ -110,14 +110,27 @@
 			[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
 			if ('*' == [tmp characterAtIndex: 0]) {
 				tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
-//				[currentBranch autorelease];
-//				currentBranch = tmp;
-//				[currentBranch retain];
 			} else {
 				tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
 			}
 		}
 	}
+
+	[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
+	[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
+	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
+	
+	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"--template", @"{node|short} {desc}\n", nil]];
+	for (i = 0; i < [logs count]; i++) {
+		NSString *tmp = [logs objectAtIndex: i];
+		if (tmp && [tmp length] > 0) {
+			[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
+		}
+	}
+	
+	[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
+	[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
+	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[lock lock];
