@@ -17,6 +17,20 @@ void callbackFunction(
 	[rbd fire];
 }
 
+- (NSString *)stringFromFile: (NSFileHandle *)file {
+	NSData *data = [file readDataToEndOfFile];
+	NSString *string = [[[NSString alloc] initWithData: data
+			encoding: NSUTF8StringEncoding] autorelease];
+	return string;
+}
+
+- (NSFileHandle *)pipeForTask: (NSTask *)t {
+	NSPipe *pipe = [NSPipe pipe];
+	[t setStandardOutput: pipe];
+	NSFileHandle *file = [pipe fileHandleForReading];
+	return file;
+}
+
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc repository: (NSString *)repo {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
 	lock = [[NSLock alloc] init];

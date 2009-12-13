@@ -2,14 +2,67 @@
 
 @implementation MercurialDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc hgPath: (char *)hgPath repository: (NSString *)rep {
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc hgPath: (char *)hgPath repository: (NSString *)rep window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 button: (NSButton *)butt2{
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc repository: rep];
 	hg = hgPath;
+	tv = tv2;
+	[tv retain];
+	butt = butt2;
+	[butt retain];
+	window = commitWindow;
+	[window retain];
 	[self fire];
 	return self;
 }
 
+- (NSTask *)taskFromArguments: (NSArray *)args {
+	NSTask *t = [[NSTask alloc] init];
+	NSString *lp = [NSString stringWithFormat: @"%s", hg];
+	[t setLaunchPath: lp];
+	[t setCurrentDirectoryPath: repository];
+	[t setArguments: args];
+
+	return t;
+}	
+
 - (void) beep: (id) something {
+}
+
+- (void) commit: (id) something {
+	[window setTitle: repository];
+	[window makeFirstResponder: tv];
+
+	if (localMod) {	
+		[butt setTitle: @"Do Commit"];
+		[butt setTarget: self];
+		[butt setAction: @selector(clickUpdate:)];
+	} else if (upstreamMod) {
+		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
+		NSTask *t = [[self taskFromArguments: arr] autorelease];
+		NSFileHandle *file = [self pipeForTask: t];
+		
+		[butt setTitle: @"Update from upstream"];
+		[butt setTarget: self];
+		[butt setAction: @selector(upstreamUpdate:)];
+		@try {
+			[t launch];
+		} @catch (NSException *e) {
+			[self setTitle: @"Errored"];
+			[self setHidden: YES];
+			localMod = NO;
+			upstreamMod = NO;
+			return;
+		}
+		
+		NSString *string = [self stringFromFile: file];
+		[file closeFile];
+		[tv insertText: string];
+		[tv setEditable: NO];
+	}
+	[window center];
+	[NSApp activateIgnoringOtherApps: YES];
+	[window makeKeyAndOrderFront: NSApp];
+	[window makeFirstResponder: tv];
 }
 
 - (void) fire {

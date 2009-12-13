@@ -29,20 +29,6 @@
 	return t;
 }
 	
-- (NSFileHandle *)pipeForTask: (NSTask *)t {
-	NSPipe *pipe = [NSPipe pipe];
-	[t setStandardOutput: pipe];
-	NSFileHandle *file = [pipe fileHandleForReading];
-	return file;
-}
-
-- (NSString *)stringFromFile: (NSFileHandle *)file {
-	NSData *data = [file readDataToEndOfFile];
-	NSString *string = [[[NSString alloc] initWithData: data
-			encoding: NSUTF8StringEncoding] autorelease];
-	return string;
-}
-
 - (NSString *) getDiffRemote: (BOOL)remote {
 	NSArray *arr;
 	if (remote)
@@ -81,8 +67,6 @@
 }
 
 - (void) commit: (id) menuItem {
-	[tv autorelease];
-	
 	[window setTitle: repository];
 	[window makeFirstResponder: tv];
 

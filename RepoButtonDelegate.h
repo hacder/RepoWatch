@@ -6,6 +6,9 @@
 @interface RepoButtonDelegate : ButtonDelegate {
 	NSString *repository;
 	NSLock *lock;
+	NSButton *butt;
+	NSTextView *tv;
+	NSWindow *window;
 @public
 	BOOL localMod;
 	BOOL upstreamMod;
@@ -14,6 +17,8 @@
 - initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc repository: (NSString *)repo;
 - (void) commit: (id) menuItem;
 - (void) clickUpdate: (id) button;
+- (NSFileHandle *)pipeForTask: (NSTask *)t;
+- (NSString *)stringFromFile: (NSFileHandle *)file;
 + (NSUInteger)numModified;
 + (NSUInteger)numLocalEdit;
 + (NSUInteger)numRemoteEdit;
