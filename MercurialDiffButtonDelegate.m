@@ -154,6 +154,7 @@
 		
 			if (![s2 isEqual: @"0 files changed"]) {
 				localMod = YES;
+				[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index + 1] setTarget: self];
 				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], s2];
 			
 				[self setTitle: sTit];
