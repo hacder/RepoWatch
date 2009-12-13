@@ -11,8 +11,18 @@
 #import <Sparkle/Sparkle.h>
 #import <dirent.h>
 #import <sys/stat.h>
+#import <Carbon/Carbon.h>
+
+OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData);
 
 @implementation MainController
+
+OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
+	RepoButtonDelegate *rbd = [RepoButtonDelegate getModded];
+	if (rbd)
+		[rbd commit: nil];
+	return noErr;
+}
 
 - init {
 	self = [super init];
@@ -37,10 +47,20 @@
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
 	
-//	SUUpdater *su = [SUUpdater sharedUpdater];
-//	[su checkForUpdatesInBackground];
+	// Drop into Carbon in order to setup global hotkeys.
+	EventHotKeyRef myHotKeyRef;
+	EventHotKeyID myHotKeyID;
+	EventTypeSpec eventType;
 	
-	return self;
+	eventType.eventClass = kEventClassKeyboard;
+	eventType.eventKind = kEventHotKeyPressed;
+	InstallApplicationEventHandler(&myHotKeyHandler, 1, &eventType, NULL, NULL);
+	myHotKeyID.signature = 'mhk1';
+	myHotKeyID.id = 1;
+	RegisterEventHotKey(36, cmdKey + optionKey, myHotKeyID, GetApplicationEventTarget(), 0, &myHotKeyRef);
+	
+
+    return self;
 }
 
 char *concat_path_file(const char *path, const char *filename) {

@@ -9,7 +9,7 @@ CFLAGS=-F./MenuMonitor.app/Contents/Frameworks -Wall -Werror -g
 OBJ = $(addsuffix .o, $(basename $(SRC)))
 
 MenuMonitor: $(OBJ)
-	gcc -F./MenuMonitor.app/Contents/Frameworks -framework Foundation -framework AppKit -framework Sparkle -framework ScriptingBridge -framework WebKit -lobjc -lcrypto *.o -o MenuMonitor
+	gcc -F./MenuMonitor.app/Contents/Frameworks -framework Carbon -framework Foundation -framework AppKit -lobjc *.o -o MenuMonitor
 	cp MenuMonitor MenuMonitor.app/Contents/MacOS/
 
 release: MenuMonitor

@@ -70,13 +70,27 @@ void callbackFunction(
 }
 
 + (NSString *) getModText {
+	RepoButtonDelegate *rbd = [RepoButtonDelegate getModded];
+	if (rbd)
+		return rbd->title;
+	return nil;
+}
+
++ (RepoButtonDelegate *) getModded {
 	int i = 0;
 	for (i = 0; i < [repos count]; i++) {
 		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
 		if (rbd->localMod || rbd->upstreamMod)
-			return rbd->title;
+			return rbd;
 	}
 	return nil;
 }
+
+- (void) commit: (id) menuItem {
+}
+
+- (void) clickUpdate: (id) button {
+}
+
 
 @end

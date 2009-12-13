@@ -73,10 +73,12 @@
 - (void) commit: (id) menuItem {
 	[tv autorelease];
 	[window autorelease];
+	
 	NSRect frame = NSMakeRect(0, 0, 200, 200);
 	NSUInteger styleMask = NSTitledWindowMask | NSClosableWindowMask;
 	NSRect rect = [NSWindow contentRectForFrameRect: frame styleMask: styleMask];
 	window  = [[NSWindow alloc] initWithContentRect: rect styleMask: styleMask backing: NSBackingStoreBuffered defer: NO];
+	[window setTitle: repository];
 	NSRect rect2;
 	rect2.origin.x = [[window contentView] frame].origin.x + 5;
 	rect2.origin.y = [[window contentView] frame].origin.y + 40;
