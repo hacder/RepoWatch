@@ -37,8 +37,8 @@
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
 	
-	SUUpdater *su = [SUUpdater sharedUpdater];
-	[su checkForUpdatesInBackground];
+//	SUUpdater *su = [SUUpdater sharedUpdater];
+//	[su checkForUpdatesInBackground];
 	
 	return self;
 }

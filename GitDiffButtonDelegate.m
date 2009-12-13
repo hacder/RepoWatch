@@ -9,6 +9,8 @@
 	[self fire];
 	lock = [[NSLock alloc] init];
 	[menuItem setAction: nil];
+	tv = nil;
+	window = nil;
 	return self;
 }
 
@@ -69,8 +71,44 @@
 }
 
 - (void) commit: (id) menuItem {
-	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", @"testing auto commit of messages, especially with spaces", nil]] autorelease];
+	[tv autorelease];
+	[window autorelease];
+	NSRect frame = NSMakeRect(0, 0, 200, 200);
+	NSUInteger styleMask = NSTitledWindowMask | NSClosableWindowMask;
+	NSRect rect = [NSWindow contentRectForFrameRect: frame styleMask: styleMask];
+	window  = [[NSWindow alloc] initWithContentRect: rect styleMask: styleMask backing: NSBackingStoreBuffered defer: NO];
+	NSRect rect2;
+	rect2.origin.x = [[window contentView] frame].origin.x + 5;
+	rect2.origin.y = [[window contentView] frame].origin.y + 40;
+	rect2.size.width = [[window contentView] frame].size.width - 10;
+	rect2.size.height = [[window contentView] frame].size.height - 45;
+	tv = [[NSTextView alloc] initWithFrame: rect2];
+	[[window contentView] addSubview: tv];
+
+	rect2.origin.y = 5;
+	rect2.size.height = 30;
+	NSButton *butt = [[NSButton alloc] initWithFrame: rect2];
+	[butt setBezelStyle: NSRoundedBezelStyle];
+	[butt setTitle: @"Do Commit"];
+	[[window contentView] addSubview: butt];
+	[butt setTarget: self];
+	[butt setAction: @selector(clickUpdate:)];
+	[window center];
+	[window makeKeyAndOrderFront: NSApp];
+	
+	
+//	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", @"testing auto commit of messages, especially with spaces", nil]] autorelease];
+//	[t launch];
+}
+
+- (void) clickUpdate: (id) button {
+	if (tv == nil)
+		return;
+	
+	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[tv textStorage] mutableString], nil]] autorelease];
 	[t launch];
+	if (window)
+		[window close];
 }
 
 - (void) fire {
