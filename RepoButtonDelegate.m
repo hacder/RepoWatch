@@ -120,6 +120,7 @@ void callbackFunction(
 }
 
 - (void) commit: (id) menuItem {
+	NSLog(@"Here…");
 }
 
 - (void) clickUpdate: (id) button {
