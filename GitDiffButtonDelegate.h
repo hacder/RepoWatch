@@ -5,7 +5,6 @@
 @interface GitDiffButtonDelegate : RepoButtonDelegate {
 	char *git;
 	NSString *currentBranch;
-	NSLock *lock;
 	NSButton *butt;
 	NSTextView *tv;
 	NSWindow *window;

@@ -19,6 +19,7 @@ void callbackFunction(
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc repository: (NSString *)repo {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
+	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;
 
@@ -124,7 +125,7 @@ void callbackFunction(
 }
 
 - (void) clickUpdate: (id) button {
-	NSLog(@"Here...");
+	NSLog(@"Here…");
 }
 
 

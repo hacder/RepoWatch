@@ -13,6 +13,7 @@
 }
 
 - (void) fire {
+	[lock lock];
 	NSTask *t = [[NSTask alloc] init];
 	NSString *lp = [NSString stringWithFormat: @"%s", hg];
 	[t setLaunchPath: lp];
@@ -28,10 +29,11 @@
 	
 	NSPipe *pipe2 = [NSPipe pipe];
 	[t2 setStandardOutput: pipe2];
-		
+	
 	NSFileHandle *file = [pipe2 fileHandleForReading];
 
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[lock lock];
 		[t autorelease];
 		[t2 autorelease];
 		
@@ -39,8 +41,11 @@
 		[t2 launch];
 		
 		NSData *data = [file readDataToEndOfFile];
-		NSString *string = [[[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		NSCharacterSet *cs = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+		NSString *utf8String = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+		NSString *string = [[utf8String stringByTrimmingCharactersInSet: cs] retain];
 		dispatch_async(dispatch_get_main_queue(), ^{
+			[lock lock];
 			[string autorelease];
 
 			NSArray *arr = [string componentsSeparatedByString: @"\n"];
@@ -57,8 +62,11 @@
 				localMod = NO;
 				NSLog(@"In else: %@", s2);
 			}
+			[lock unlock];
 		});
+		[lock unlock];
 	});
+	[lock unlock];
 }
 
 @end

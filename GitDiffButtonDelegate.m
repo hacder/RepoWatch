@@ -6,7 +6,6 @@
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc repository: rep];
 	git = gitPath;
 	[self setHidden: YES];
-	lock = [[NSLock alloc] init];
 	[menuItem setAction: nil];
 	tv = tv2;
 	[tv retain];

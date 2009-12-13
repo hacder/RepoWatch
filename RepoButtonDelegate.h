@@ -5,6 +5,7 @@
 
 @interface RepoButtonDelegate : ButtonDelegate {
 	NSString *repository;
+	NSLock *lock;
 @public
 	BOOL localMod;
 	BOOL upstreamMod;
