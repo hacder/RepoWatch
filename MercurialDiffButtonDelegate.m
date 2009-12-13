@@ -124,7 +124,11 @@
 				[self setShortTitle: sTit];
 			} else {
 				localMod = NO;
-				NSLog(@"In else: %@", s2);
+				NSString *sTit = [NSString stringWithFormat: @"hg: %@",
+					[repository lastPathComponent]];
+
+				[self setTitle: sTit];
+				[self setShortTitle: sTit];
 			}
 			[lock unlock];
 		});
