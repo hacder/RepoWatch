@@ -16,7 +16,7 @@
 }
 
 - init;
-- (void) initWithDirectory: (NSString *)dir;
 - (void) maybeRefresh: (ButtonDelegate *)bd;
+- (void) findSupportedSCMS;
 
 @end

@@ -11,7 +11,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.busmetsoftware.MenuMonitor</string>
 	<key>CFBundleName</key>
-	<string>MenuMonitor</string>
+	<string>RepoWatch</string>
 	<key>CFBundleShortVersionString</key>
 	<string>0.4</string>
 	<key>LSMinimumSystemVersion</key>
