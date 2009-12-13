@@ -5,7 +5,7 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc hgPath: (char *)hgPath repository: (NSString *)rep {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc repository: rep];
 	hg = hgPath;
-	[self setHidden: YES];
+	[self fire];
 	return self;
 }
 
@@ -47,14 +47,15 @@
 			NSString *s2 = [arr objectAtIndex: [arr count] - 1];
 			s2 = [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		
-			if ([s2 isEqual: @"0 files changed"]) {
-				[self setHidden: TRUE];
-			} else {
+			if (![s2 isEqual: @"0 files changed"]) {
+				localMod = YES;
 				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], s2];
 			
 				[self setTitle: sTit];
 				[self setShortTitle: sTit];
-				[self setHidden: FALSE];
+			} else {
+				localMod = NO;
+				NSLog(@"In else: %@", s2);
 			}
 		});
 	});

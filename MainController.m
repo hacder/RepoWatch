@@ -195,6 +195,7 @@ char *find_execable(const char *filename) {
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
+			NSLog(@"Adding hg to %@", path);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
 					menu: theMenu statusItem: statusItem mainController: self
