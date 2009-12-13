@@ -91,6 +91,8 @@
 	rect2.origin.y = 5;
 	rect2.size.height = 30;
 	NSButton *butt = [[NSButton alloc] initWithFrame: rect2];
+	[butt setKeyEquivalent: @"\r"];
+	[butt setKeyEquivalentModifierMask: NSCommandKeyMask];
 	[butt setBezelStyle: NSRoundedBezelStyle];
 	[butt setTitle: @"Do Commit"];
 	[[window contentView] addSubview: butt];
