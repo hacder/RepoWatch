@@ -99,7 +99,7 @@
 	[window center];
 	[NSApp activateIgnoringOtherApps: YES];
 	[window makeKeyAndOrderFront: NSApp];
-//	[window becomeMainWindow];
+	NSLog(@"First responder attempt: %d", [window makeFirstResponder: tv]);
 }
 
 - (void) clickUpdate: (id) button {

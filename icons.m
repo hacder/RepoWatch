@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString *scriptPath = [NSString stringWithFormat: @"%@/scripts", [[NSBundle mainBundle] resourcePath]];
 	[[MainController alloc] initWithDirectory: scriptPath];
-	[NSApp run];
+	NSApplicationMain(argc, (const char **)argv);
 
 	[pool release];
 	return 0;
