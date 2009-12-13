@@ -185,22 +185,22 @@ char *find_execable(const char *filename) {
 			});
 		}
 	} else if ([contents containsObject: @".svn"] && ![path isEqual: [@"~" stringByStandardizingPath]]) {
-//		if (svn) {
-//			NSLog(@"Adding svn to %@", path);
-//			dispatch_async(dispatch_get_main_queue(), ^{
-//				[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path
-//					menu: theMenu statusItem: statusItem mainController: self
-//					svnPath: svn repository: path]];
-//			});
-//		}
+		if (svn) {
+			NSLog(@"Adding svn to %@", path);
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path
+					menu: theMenu statusItem: statusItem mainController: self
+					svnPath: svn repository: path]];
+			});
+		}
 	} else if ([contents containsObject: @".hg"]) {
-//		if (hg) {
-//			dispatch_async(dispatch_get_main_queue(), ^{
-//				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
-//					menu: theMenu statusItem: statusItem mainController: self
-//					hgPath: hg repository: path]];
-//			});
-//		}
+		if (hg) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
+					menu: theMenu statusItem: statusItem mainController: self
+					hgPath: hg repository: path]];
+			});
+		}
 	} else {
 		int i;
 		for (i = 0; i < [contents count]; i++) {
