@@ -104,12 +104,10 @@
 	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[tv textStorage] mutableString], nil]] autorelease];
 	[t launch];
 	if (window) {
-		[window autorelease];
 		[window close];
 		window = nil;
 	}
 	
-	[tv autorelease];
 	tv = nil;
 }
 
