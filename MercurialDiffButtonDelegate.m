@@ -65,6 +65,15 @@
 	[window makeFirstResponder: tv];
 }
 
+- (void) clickUpdate: (id) button {
+	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-m", [[tv textStorage] mutableString], nil]] autorelease];
+	[t launch];
+	if (window)
+		[window close];
+	
+	[NSApp hide: self];
+}
+
 - (void) fire {
 	[lock lock];
 	NSTask *t = [[NSTask alloc] init];
