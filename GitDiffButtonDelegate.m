@@ -7,6 +7,7 @@
 	git = gitPath;
 	[self setHidden: YES];
 	[self fire];
+	lock = [[NSLock alloc] init];
 	return self;
 }
 
@@ -61,9 +62,12 @@
 
 - (void) fire {
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[lock lock];
 		NSString *string = [self getDiff];
-		if (string == nil)
+		if (string == nil) {
+			[lock unlock];
 			return;
+		}
 
 		NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"branch", nil]] autorelease];
 		NSFileHandle *file = [self pipeForTask: t];
@@ -93,6 +97,7 @@
 		if ([string isEqual: @""]) {
 			localMod = NO;
 			dispatch_async(dispatch_get_main_queue(), ^{
+				[lock lock];
 				NSString *s3;
 				if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 					s3 = [NSString stringWithFormat: @"git: %@",
@@ -104,6 +109,7 @@
 				[self setTitle: s3];
 				[self setShortTitle: s3];
 				[self setHidden: NO];
+				[lock unlock];
 			});
 		} else {
 			NSString *sTit;
@@ -120,11 +126,14 @@
 					[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
 			}
 			dispatch_async(dispatch_get_main_queue(), ^{
+				[lock lock];
 				[self setTitle: sTit];
 				[self setShortTitle: sTit];
 				[self setHidden: NO];
+				[lock unlock];
 			});
 		}
+		[lock unlock];
 	});
 }
 
