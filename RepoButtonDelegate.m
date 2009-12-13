@@ -69,6 +69,39 @@ void callbackFunction(
 	return ret;
 }
 
++ (NSUInteger)numLocalEdit {
+	NSUInteger ret = 0;
+	int i = 0;
+	for (i = 0; i < [repos count]; i++) {
+		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
+		if (rbd->localMod)
+			ret++;
+	}
+	return ret;
+}
+
++ (NSUInteger)numRemoteEdit {
+	NSUInteger ret = 0;
+	int i = 0;
+	for (i = 0; i < [repos count]; i++) {
+		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
+		if (rbd->upstreamMod)
+			ret++;
+	}
+	return ret;
+}
+
++ (NSUInteger)numUpToDate {
+	NSUInteger ret = 0;
+	int i = 0;
+	for (i = 0; i < [repos count]; i++) {
+		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
+		if (!rbd->upstreamMod && !rbd->localMod)
+			ret++;
+	}
+	return ret;
+}
+
 + (NSString *) getModText {
 	RepoButtonDelegate *rbd = [RepoButtonDelegate getModded];
 	if (rbd)

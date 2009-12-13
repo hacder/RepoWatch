@@ -14,6 +14,9 @@
 - (void) commit: (id) menuItem;
 - (void) clickUpdate: (id) button;
 + (NSUInteger)numModified;
++ (NSUInteger)numLocalEdit;
++ (NSUInteger)numRemoteEdit;
++ (NSUInteger)numUpToDate;
 + (NSString *)getModText;
 + (RepoButtonDelegate *) getModded;
 

@@ -65,17 +65,21 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 //	[[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
 
 	// TODO: Make the headers "active" even with nothing clickable.
-	[[theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
-	changedSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Changed" menu: theMenu statusItem: statusItem mainController: self];
-	[plugins addObject: changedSeparator];
-	[[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
+	localTitle = [theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[localTitle setEnabled: NO];
+	localSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Changed" menu: theMenu statusItem: statusItem mainController: self];
+	[plugins addObject: localSeparator];
+	localSpace = [theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[localSpace setEnabled: NO];
 
-	[[theMenu insertItemWithTitle: @"Upstream Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
+	upstreamTitle = [theMenu insertItemWithTitle: @"Upstream Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[upstreamTitle setEnabled: NO];
 	upstreamSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Upstream" menu: theMenu statusItem: statusItem mainController: self];
 	[plugins addObject: upstreamSeparator];
-	[[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
+	upstreamSpace = [theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	
-	[[theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
+	normalTitle = [theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[normalTitle setEnabled: NO];
 	normalSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Up To Date" menu: theMenu statusItem: statusItem mainController: self];
 	[plugins addObject: normalSeparator];
 	
@@ -240,13 +244,40 @@ char *find_execable(const char *filename) {
 		NSInteger index = 0;
 		
 		if (bd2->localMod) {
-			index = [theMenu indexOfItem: [changedSeparator getMenuItem]];
+			index = [theMenu indexOfItem: [localSeparator getMenuItem]];
 		} else if (bd2->upstreamMod) {
 			index = [theMenu indexOfItem: [upstreamSeparator getMenuItem]];
 		} else {
 			index = [theMenu indexOfItem: [normalSeparator getMenuItem]];
 		}
 		[theMenu insertItem: [bd2 getMenuItem] atIndex: index + 1];
+		if ([RepoButtonDelegate numLocalEdit] == 0) {
+			[localSeparator setHidden: YES];
+			[localTitle setHidden: YES];
+			[localSpace setHidden: YES];
+		} else {
+			[localSeparator setHidden: NO];
+			[localTitle setHidden: NO];
+			[localSpace setHidden: NO];
+		}
+		if ([RepoButtonDelegate numRemoteEdit] == 0) {
+			[upstreamSeparator setHidden: YES];
+			[upstreamTitle setHidden: YES];
+			[upstreamSpace setHidden: YES];
+		} else {
+			[upstreamSeparator setHidden: NO];
+			[upstreamTitle setHidden: NO];
+			[upstreamSpace setHidden: NO];
+		}
+		if ([RepoButtonDelegate numUpToDate] == 0) {
+			[normalSeparator setHidden: YES];
+			[normalTitle setHidden: YES];
+			[normalSpace setHidden: YES];
+		} else {
+			[normalSeparator setHidden: NO];
+			[normalTitle setHidden: NO];
+			[normalSpace setHidden: NO];
+		}
 	}
 }
 

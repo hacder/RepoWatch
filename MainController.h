@@ -8,9 +8,19 @@
 	NSStatusItem *statusItem;
 	NSMenu *theMenu;
 	NSMutableArray *plugins;
-	ButtonDelegate *changedSeparator;
-	ButtonDelegate *upstreamSeparator;
+
+	NSMenuItem *normalTitle;
 	ButtonDelegate *normalSeparator;
+	NSMenuItem *normalSpace;
+
+	NSMenuItem *upstreamTitle;
+	ButtonDelegate *upstreamSeparator;
+	NSMenuItem *upstreamSpace;
+	
+	NSMenuItem *localTitle;
+	ButtonDelegate *localSeparator;
+	NSMenuItem *localSpace;
+	
 	ODeskButtonDelegate *odb;
 	NSTimer *timer;
 }
