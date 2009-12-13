@@ -32,6 +32,8 @@
 	[window setTitle: repository];
 	[window makeFirstResponder: tv];
 
+	[tv setString: @""];
+	[tv setNeedsDisplay: YES];
 	if (localMod) {	
 		[butt setTitle: @"Do Commit"];
 		[butt setTarget: self];
