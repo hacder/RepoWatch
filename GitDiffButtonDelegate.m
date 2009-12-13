@@ -116,6 +116,7 @@
 	}
 	
 	tv = nil;
+	[NSApp deactivate];
 }
 
 - (void) fire {
