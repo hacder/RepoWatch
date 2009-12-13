@@ -95,10 +95,6 @@
 	[butt setAction: @selector(clickUpdate:)];
 	[window center];
 	[window makeKeyAndOrderFront: NSApp];
-	
-	
-//	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", @"testing auto commit of messages, especially with spaces", nil]] autorelease];
-//	[t launch];
 }
 
 - (void) clickUpdate: (id) button {
