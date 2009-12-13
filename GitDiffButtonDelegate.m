@@ -116,7 +116,7 @@
 	}
 	
 	tv = nil;
-	[NSApp deactivate];
+	[NSApp hide: self];
 }
 
 - (void) fire {
