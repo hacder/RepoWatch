@@ -2,15 +2,20 @@
 
 @implementation GitDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep {
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 button: (NSButton *)butt2 {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc repository: rep];
 	git = gitPath;
 	[self setHidden: YES];
-	[self fire];
 	lock = [[NSLock alloc] init];
 	[menuItem setAction: nil];
-	tv = nil;
-	window = nil;
+	tv = tv2;
+	[tv retain];
+	butt = butt2;
+	[butt retain];
+	window = commitWindow;
+	[self fire];
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]];
+	[t launch];
 	return self;
 }
 
@@ -38,8 +43,13 @@
 	return string;
 }
 
-- (NSString *) getDiff {
-	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]] autorelease];
+- (NSString *) getDiffRemote: (BOOL)remote {
+	NSArray *arr;
+	if (remote)
+		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", @"HEAD...origin", nil];
+	else
+		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", nil];
+	NSTask *t = [[self taskFromArguments: arr] autorelease];
 	NSFileHandle *file = [self pipeForTask: t];
 	
 	@try {
@@ -72,50 +82,58 @@
 
 - (void) commit: (id) menuItem {
 	[tv autorelease];
-	[window autorelease];
 	
-	NSRect frame = NSMakeRect(0, 0, 200, 200);
-	NSUInteger styleMask = NSTitledWindowMask | NSClosableWindowMask;
-	NSRect rect = [NSWindow contentRectForFrameRect: frame styleMask: styleMask];
-	window  = [[NSWindow alloc] initWithContentRect: rect styleMask: styleMask backing: NSBackingStoreBuffered defer: NO];
-	[window setTitle: [repository lastPathComponent]];
-	NSRect rect2;
-	rect2.origin.x = [[window contentView] frame].origin.x + 5;
-	rect2.origin.y = [[window contentView] frame].origin.y + 40;
-	rect2.size.width = [[window contentView] frame].size.width - 10;
-	rect2.size.height = [[window contentView] frame].size.height - 45;
-	tv = [[NSTextView alloc] initWithFrame: rect2];
-	[[window contentView] addSubview: tv];
+	[window setTitle: [repository lastPathComponent]];	
 	[window makeFirstResponder: tv];
 
-	rect2.origin.y = 5;
-	rect2.size.height = 30;
-	NSButton *butt = [[NSButton alloc] initWithFrame: rect2];
-	[butt setKeyEquivalent: @"\r"];
-	[butt setKeyEquivalentModifierMask: NSCommandKeyMask];
-	[butt setBezelStyle: NSRoundedBezelStyle];
-	[butt setTitle: @"Do Commit"];
-	[[window contentView] addSubview: butt];
-	[butt setTarget: self];
-	[butt setAction: @selector(clickUpdate:)];
+	if (localMod) {	
+		[butt setTitle: @"Do Commit"];
+		[butt setTarget: self];
+		[butt setAction: @selector(clickUpdate:)];
+	} else if (upstreamMod) {
+		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
+		NSTask *t = [[self taskFromArguments: arr] autorelease];
+		NSFileHandle *file = [self pipeForTask: t];
+		
+		[butt setTitle: @"Update from upstream"];
+		[butt setTarget: self];
+		[butt setAction: @selector(upstreamUpdate:)];
+		@try {
+			[t launch];
+		} @catch (NSException *e) {
+			[self setTitle: @"Errored"];
+			[self setHidden: YES];
+			localMod = NO;
+			upstreamMod = NO;
+			return;
+		}
+		
+		NSString *string = [self stringFromFile: file];
+		[file closeFile];
+		[tv insertText: string];
+		[tv setEditable: NO];
+	}
 	[window center];
 	[NSApp activateIgnoringOtherApps: YES];
 	[window makeKeyAndOrderFront: NSApp];
-	NSLog(@"First responder attempt: %d", [window makeFirstResponder: tv]);
+	[window makeFirstResponder: tv];
+}
+
+- (void) upstreamUpdate: (id) sender {
+	[sender setEnabled: NO];
+	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"rebase", @"origin", nil]] autorelease];
+	NSFileHandle *pipe = [self pipeForTask: t];
+	[t launch];
+	NSString *result = [self stringFromFile: pipe];
+	NSLog(@"Got here: %@", result);
 }
 
 - (void) clickUpdate: (id) button {
-	if (tv == nil)
-		return;
-	
 	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[tv textStorage] mutableString], nil]] autorelease];
 	[t launch];
-	if (window) {
+	if (window)
 		[window close];
-		window = nil;
-	}
 	
-	tv = nil;
 	[NSApp hide: self];
 }
 
@@ -124,7 +142,13 @@
 		int the_index = 0;
 		
 		[lock lock];
-		NSString *string = [self getDiff];
+		NSString *remoteString = [self getDiffRemote: YES];
+		if (remoteString == nil) {
+			[lock unlock];
+			return;
+		}
+		
+		NSString *string = [self getDiffRemote: NO];
 		if (string == nil) {
 			[lock unlock];
 			return;
@@ -169,36 +193,62 @@
 		[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
-		if ([string isEqual: @""]) {
-			localMod = NO;
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[lock lock];
-				NSString *s3;
+		if ([remoteString isEqual: @""]) {
+			if ([string isEqual: @""]) {
+				localMod = NO;
+				upstreamMod = NO;
+				dispatch_async(dispatch_get_main_queue(), ^{
+					[lock lock];
+					NSString *s3;
+					if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
+						s3 = [NSString stringWithFormat: @"git: %@",
+							[repository lastPathComponent]];
+					} else {
+						s3 = [NSString stringWithFormat: @"git: %@ (%@)",
+								[repository lastPathComponent], currentBranch];
+					}
+					[self setTitle: s3];
+					[self setShortTitle: s3];
+					[self setHidden: NO];
+					[lock unlock];
+				});
+			} else {
+				NSString *sTit;
+				localMod = YES;
+				upstreamMod = NO;
+				[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 				if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-					s3 = [NSString stringWithFormat: @"git: %@",
-						[repository lastPathComponent]];
+					sTit = [NSString stringWithFormat: @"%@: %@",
+						[repository lastPathComponent],
+						[string stringByTrimmingCharactersInSet:
+							[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 				} else {
-					s3 = [NSString stringWithFormat: @"git: %@ (%@)",
-							[repository lastPathComponent], currentBranch];
+					sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
+						[repository lastPathComponent],
+						[string stringByTrimmingCharactersInSet:
+						[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
 				}
-				[self setTitle: s3];
-				[self setShortTitle: s3];
-				[self setHidden: NO];
-				[lock unlock];
-			});
+				dispatch_async(dispatch_get_main_queue(), ^{
+					[lock lock];
+					[self setTitle: sTit];
+					[self setShortTitle: sTit];
+					[self setHidden: NO];
+					[lock unlock];
+				});
+			}
 		} else {
 			NSString *sTit;
-			localMod = YES;
-			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+			localMod = NO;
+			upstreamMod = YES;
 			if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 				sTit = [NSString stringWithFormat: @"%@: %@",
 					[repository lastPathComponent],
-					[string stringByTrimmingCharactersInSet:
+					[remoteString stringByTrimmingCharactersInSet:
 						[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 			} else {
 				sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
 					[repository lastPathComponent],
-					[string stringByTrimmingCharactersInSet:
+					[remoteString stringByTrimmingCharactersInSet:
 					[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
 			}
 			dispatch_async(dispatch_get_main_queue(), ^{

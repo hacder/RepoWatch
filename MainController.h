@@ -23,6 +23,10 @@
 	
 	ODeskButtonDelegate *odb;
 	NSTimer *timer;
+	
+	IBOutlet NSWindow *commitWindow;
+	IBOutlet NSTextView *tv;
+	IBOutlet NSButton *butt;
 }
 
 - init;
