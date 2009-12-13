@@ -8,12 +8,8 @@
 	[self setHidden: YES];
 	[self fire];
 	lock = [[NSLock alloc] init];
+	[menuItem setAction: nil];
 	return self;
-}
-
-- (void) addMenuItem {
-	[super addMenuItem];
-	[menuItem setToolTip: repository];
 }
 
 - (NSTask *)taskFromArguments: (NSArray *)args {
@@ -60,27 +56,46 @@
 	return string;
 }
 
+- (NSArray *)arrayFromResultOfArgs: (NSArray *)args {
+	NSTask *t = [[self taskFromArguments: args] autorelease];
+	NSFileHandle *file = [self pipeForTask: t];
+	// TODO: Wrap in try/catch
+	[t launch];
+	
+	NSString *string = [self stringFromFile: file];
+	NSArray *result = [string componentsSeparatedByString: @"\n"];
+	[file closeFile];
+	return result;
+}
+
+- (void) commit: (id) menuItem {
+	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", @"testing auto commit of messages, especially with spaces", nil]] autorelease];
+	[t launch];
+}
+
 - (void) fire {
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		int the_index = 0;
+		
 		[lock lock];
 		NSString *string = [self getDiff];
 		if (string == nil) {
 			[lock unlock];
 			return;
 		}
+		
+		NSArray *branches = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"branch", nil]];
 
-		NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"branch", nil]] autorelease];
-		NSFileHandle *file = [self pipeForTask: t];
-		// TODO: Wrap in try/catch
-		[t launch];
-		
-		NSString *string2 = [self stringFromFile: file];
-		NSArray *branches = [string2 componentsSeparatedByString: @"\n"];
-		
+		NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];
+		[m insertItemWithTitle: @"Branches" action: @selector(branch:) keyEquivalent: @"" atIndex: 0];
+		[m insertItem: [NSMenuItem separatorItem] atIndex: 1];
+
 		int i;
+		the_index = 2;
 		for (i = 0; i < [branches count]; i++) {
 			NSString *tmp = [branches objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
+				[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
 				if ('*' == [tmp characterAtIndex: 0]) {
 					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
 					[currentBranch autorelease];
@@ -92,7 +107,21 @@
 			}
 		}
 		
-		[file closeFile];
+		[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
+		[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
+		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
+		
+		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"5", @"--pretty=oneline", @"--abbrev-commit", nil]];
+		for (i = 0; i < [logs count]; i++) {
+			NSString *tmp = [logs objectAtIndex: i];
+			if (tmp && [tmp length] > 0) {
+				[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
+			}
+		}
+		
+		[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
+		[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
+		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
 		if ([string isEqual: @""]) {
 			localMod = NO;
@@ -114,6 +143,7 @@
 		} else {
 			NSString *sTit;
 			localMod = YES;
+			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 			if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 				sTit = [NSString stringWithFormat: @"%@: %@",
 					[repository lastPathComponent],
@@ -133,6 +163,11 @@
 				[lock unlock];
 			});
 		}
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[lock lock];
+			[menuItem setSubmenu: m];
+			[lock unlock];
+		});
 		[lock unlock];
 	});
 }
