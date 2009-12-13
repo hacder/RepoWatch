@@ -23,7 +23,7 @@
 
 	return t;
 }
-
+	
 - (NSFileHandle *)pipeForTask: (NSTask *)t {
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
@@ -86,6 +86,7 @@
 	rect2.size.height = [[window contentView] frame].size.height - 45;
 	tv = [[NSTextView alloc] initWithFrame: rect2];
 	[[window contentView] addSubview: tv];
+	[window makeFirstResponder: tv];
 
 	rect2.origin.y = 5;
 	rect2.size.height = 30;
@@ -96,7 +97,9 @@
 	[butt setTarget: self];
 	[butt setAction: @selector(clickUpdate:)];
 	[window center];
+	[NSApp activateIgnoringOtherApps: YES];
 	[window makeKeyAndOrderFront: NSApp];
+//	[window becomeMainWindow];
 }
 
 - (void) clickUpdate: (id) button {
