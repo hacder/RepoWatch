@@ -175,7 +175,6 @@
 		[lock unlock];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[lock lock];
-			NSLog(@"Got here");
 			[menuItem setSubmenu: m];
 			[lock unlock];
 		});

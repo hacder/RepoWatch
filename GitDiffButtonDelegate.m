@@ -96,10 +96,7 @@
 - (void) upstreamUpdate: (id) sender {
 	[sender setEnabled: NO];
 	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"rebase", @"origin", nil]] autorelease];
-	NSFileHandle *pipe = [self pipeForTask: t];
 	[t launch];
-	NSString *result = [self stringFromFile: pipe];
-	NSLog(@"Got here: %@", result);
 }
 
 - (void) clickUpdate: (id) button {
