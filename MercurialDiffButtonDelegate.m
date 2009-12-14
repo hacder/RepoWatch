@@ -132,7 +132,7 @@
 		[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 		
-		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"--template", @"{node|short} {desc}\n", nil]];
+		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"5", @"--template", @"{node|short} {desc}\n", nil]];
 		for (i = 0; i < [logs count]; i++) {
 			NSString *tmp = [logs objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
