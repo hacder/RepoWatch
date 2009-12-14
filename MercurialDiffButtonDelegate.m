@@ -144,7 +144,6 @@
 		[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
-		[lock lock];
 		[t autorelease];
 		[t2 autorelease];
 		
@@ -162,7 +161,7 @@
 	
 		if (![s2 isEqual: @"0 files changed"]) {
 			localMod = YES;
-			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index + 1] setTarget: self];
+			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index] setTarget: self];
 			NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], s2];
 		
 			[self setAllTitles: sTit];
@@ -176,6 +175,7 @@
 		[lock unlock];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[lock lock];
+			NSLog(@"Got here");
 			[menuItem setSubmenu: m];
 			[lock unlock];
 		});
