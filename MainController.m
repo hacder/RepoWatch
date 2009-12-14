@@ -177,7 +177,6 @@ char *find_execable(const char *filename) {
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
 	if ([contents containsObject: @".git"]) {
 		if (git) {
-			NSLog(@"Adding git to %@", path);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
 					menu: theMenu statusItem: statusItem mainController: self
@@ -213,9 +212,6 @@ char *find_execable(const char *filename) {
 }
 
 - (void) searchAllPathsForGit: (char *)git svn: (char *)svn hg: (char *)hg {
-	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"vcsEnabled"] == 0)
-		return;
-
 	[self searchPath: [@"~" stringByStandardizingPath] forGit: git svn: svn hg: hg];
 }
 
