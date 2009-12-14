@@ -19,10 +19,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
 	RepoButtonDelegate *rbd = [RepoButtonDelegate getModded];
-	if (rbd) {
-		NSLog(@"Going here...");
+	if (rbd)
 		[rbd commit: nil];
-	}
 	return noErr;
 }
 
