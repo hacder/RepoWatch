@@ -14,8 +14,7 @@
 	window = commitWindow;
 	[window retain];
 	[self fire];
-	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]];
-	[t launch];
+	[self updateRemote];
 	return self;
 }
 
@@ -28,27 +27,54 @@
 
 	return t;
 }
+
+- (void) updateRemote {
+	NSTask *t;
+	NSFileHandle *file;
+	NSString *string;
+	NSArray *arr;
+	
+	arr = [NSArray arrayWithObjects: @"remote", nil];
+	t = [[self taskFromArguments: arr] autorelease];
+	file = [self pipeForTask: t];
+	[t launch];
+	
+	string = [self stringFromFile: file];
+	string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	if (![string length])
+		return;
+	
+	t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]];
+	[t launch];
+	[t autorelease];
+}
 	
 - (NSString *) getDiffRemote: (BOOL)remote {
 	NSArray *arr;
-	if (remote)
-		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", @"HEAD...origin", nil];
-	else
-		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", nil];
-	NSTask *t = [[self taskFromArguments: arr] autorelease];
-	NSFileHandle *file = [self pipeForTask: t];
+	NSTask *t;
+	NSFileHandle *file;
+	NSString *string;
 	
-	@try {
+	if (remote) {
+		arr = [NSArray arrayWithObjects: @"remote", nil];
+		t = [[self taskFromArguments: arr] autorelease];
+		file = [self pipeForTask: t];
 		[t launch];
-	} @catch (NSException *e) {
-		[self setTitle: @"Errored"];
-		[self setHidden: YES];
-		localMod = NO;
-		upstreamMod = NO;
-		return nil;
+		string = [self stringFromFile: file];
+		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		if (![string length]) {
+			upstreamMod = NO;
+			return nil;
+		}
+		string = [NSString stringWithFormat: @"HEAD...%@", string];
+		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string, nil];
+	} else {
+		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", nil];
 	}
-	
-	NSString *string = [self stringFromFile: file];
+	t = [[self taskFromArguments: arr] autorelease];
+	file = [self pipeForTask: t];	
+	[t launch];
+	string = [self stringFromFile: file];
 	[file closeFile];
 	
 	return string;
@@ -72,15 +98,7 @@
 		[butt setTitle: @"Update from upstream"];
 		[butt setTarget: self];
 		[butt setAction: @selector(upstreamUpdate:)];
-		@try {
-			[t launch];
-		} @catch (NSException *e) {
-			[self setTitle: @"Errored"];
-			[self setHidden: YES];
-			localMod = NO;
-			upstreamMod = NO;
-			return;
-		}
+		[t launch];
 		
 		NSString *string = [self stringFromFile: file];
 		[file closeFile];
@@ -113,12 +131,7 @@
 		int the_index = 0;
 		
 		[lock lock];
-		NSString *remoteString = [self getDiffRemote: YES];
-		if (remoteString == nil) {
-			[lock unlock];
-			return;
-		}
-		
+		NSString *remoteString = [self getDiffRemote: YES];		
 		NSString *string = [self getDiffRemote: NO];
 		if (string == nil) {
 			[lock unlock];
@@ -164,7 +177,7 @@
 		[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
-		if ([remoteString isEqual: @""]) {
+		if (!remoteString || [remoteString isEqual: @""]) {
 			if ([string isEqual: @""]) {
 				localMod = NO;
 				upstreamMod = NO;
