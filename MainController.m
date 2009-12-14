@@ -289,6 +289,8 @@ char *find_execable(const char *filename) {
 			NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:
 				[@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath]];
 			NSString *format = [dict objectForKey: @"DateFormat"];
+			if (!format || [format isEqual: @""])
+				format = @"E h:mm a";
 
 			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 			[dateFormatter setDateFormat: format];
