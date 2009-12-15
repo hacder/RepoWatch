@@ -1,4 +1,4 @@
-#import <Foundation/Foundation.h>
+	#import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
 @class ButtonDelegate;
@@ -27,6 +27,9 @@
 	IBOutlet NSWindow *commitWindow;
 	IBOutlet NSTextView *tv;
 	IBOutlet NSButton *butt;
+	
+	char *date;
+	char *time;
 }
 
 - init;

@@ -26,6 +26,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 - init {
 	self = [super init];
+	date = __DATE__;
+	time = __TIME__;
 	NSStatusBar *bar = [NSStatusBar systemStatusBar];
 	statusItem = [bar statusItemWithLength: NSVariableStatusItemLength];
 	[statusItem retain];
@@ -295,8 +297,8 @@ char *find_execable(const char *filename) {
 			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 			[dateFormatter setDateFormat: format];
 			
-			NSDate *date = [NSDate date];
-			[statusItem setTitle: [dateFormatter stringFromDate: date]];
+			NSDate *date2 = [NSDate date];
+			[statusItem setTitle: [dateFormatter stringFromDate: date2]];
 		}
 	}
 }
