@@ -170,9 +170,12 @@
 			return;
 		}
 		
-		NSArray *branches = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"branch", nil]];
+		// Leaking branches
+		NSArray *arguments = [NSArray arrayWithObjects: @"branch", nil];
+		NSArray *branches = [self arrayFromResultOfArgs: arguments];
 
 		NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];
+		// Leaking NSMenuItem here
 		[m insertItemWithTitle: @"Branches" action: @selector(branch:) keyEquivalent: @"" atIndex: 0];
 		[m insertItem: [NSMenuItem separatorItem] atIndex: 1];
 
@@ -181,6 +184,7 @@
 		for (i = 0; i < [branches count]; i++) {
 			NSString *tmp = [branches objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
+				// Leaking NSMenuItem here
 				[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
 				if ('*' == [tmp characterAtIndex: 0]) {
 					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
@@ -197,10 +201,12 @@
 		[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 		
+		// Leaking these logs.
 		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"5", @"--pretty=oneline", @"--abbrev-commit", nil]];
 		for (i = 0; i < [logs count]; i++) {
 			NSString *tmp = [logs objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
+				// Leak: NSMenuItem
 				NSMenuItem *item = [m insertItemWithTitle: tmp action: @selector(clickLog:) keyEquivalent: @"" atIndex: the_index++];
 				[item setTarget: self];
 			}
