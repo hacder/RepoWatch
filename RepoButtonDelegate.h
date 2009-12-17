@@ -9,6 +9,9 @@
 	NSButton *butt;
 	NSTextView *tv;
 	NSWindow *window;
+	
+	NSWindow *diffCommitWindow;
+	NSTextView *diffCommitTV;
 @public
 	BOOL localMod;
 	BOOL upstreamMod;

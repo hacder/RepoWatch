@@ -2,17 +2,28 @@
 
 @implementation GitDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 button: (NSButton *)butt2 {
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep
+		window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 button: (NSButton *)butt2
+		window2: (NSWindow *)window2 textView2: (NSTextView *)tv3 {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mc repository: rep];
 	git = gitPath;
 	[self setHidden: YES];
 	[menuItem setAction: nil];
 	tv = tv2;
 	[tv retain];
+	
+	diffCommitTV = tv3;
+	[diffCommitTV retain];
+	
 	butt = butt2;
 	[butt retain];
+
 	window = commitWindow;
 	[window retain];
+	
+	diffCommitWindow = window2;
+	[diffCommitWindow retain];
+	
 	[self fire];
 	[self updateRemote];
 	return self;
@@ -126,6 +137,27 @@
 	[NSApp hide: self];
 }
 
+- (void) clickLog: (id) clicker {
+	[diffCommitWindow setTitle: repository];
+	[diffCommitWindow makeFirstResponder: diffCommitTV];
+	
+	NSArray *parts = [[clicker title] componentsSeparatedByString: @" "];
+	NSString *revisionID = [parts objectAtIndex: 0];
+
+	NSArray *arr = [NSArray arrayWithObjects: @"diff", revisionID, [NSString stringWithFormat: @"%@^", revisionID], nil];
+	NSTask *t = [[self taskFromArguments: arr] autorelease];
+	NSFileHandle *file = [self pipeForTask: t];
+	[t launch];
+	NSString *result = [self stringFromFile: file];
+	[file closeFile];
+	[diffCommitTV setString: result];
+	
+	[diffCommitWindow center];
+	[NSApp activateIgnoringOtherApps: YES];
+	[diffCommitWindow makeKeyAndOrderFront: NSApp];
+	[diffCommitWindow makeFirstResponder: diffCommitTV];
+}
+
 - (void) fire {
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		int the_index = 0;
@@ -169,7 +201,7 @@
 		for (i = 0; i < [logs count]; i++) {
 			NSString *tmp = [logs objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
-				[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
+				[[m insertItemWithTitle: tmp action: @selector(clickLog:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 			}
 		}
 		

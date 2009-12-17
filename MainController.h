@@ -28,6 +28,12 @@
 	IBOutlet NSTextView *tv;
 	IBOutlet NSButton *butt;
 	
+	IBOutlet NSWindow *diffCommitWindow;
+	IBOutlet NSButton *undoSingleButton;
+	IBOutlet NSButton *changeCommitButton;
+	IBOutlet NSButton *goBackToHereButton;
+	IBOutlet NSTextView *diffCommitTextView;
+	
 	char *date;
 	char *time;
 }

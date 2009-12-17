@@ -182,7 +182,7 @@ char *find_execable(const char *filename) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
 					menu: theMenu statusItem: statusItem mainController: self
-					gitPath: git repository: path window: commitWindow textView: tv button: butt]];
+					gitPath: git repository: path window: commitWindow textView: tv button: butt window2: diffCommitWindow textView2: diffCommitTextView]];
 			});
 		}
 	} else if ([contents containsObject: @".svn"] && ![path isEqual: [@"~" stringByStandardizingPath]]) {
