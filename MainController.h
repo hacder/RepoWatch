@@ -36,6 +36,8 @@
 	
 	char *date;
 	char *time;
+	
+	NSTimer *demoTimer;
 }
 
 - init;

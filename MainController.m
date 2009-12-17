@@ -28,6 +28,16 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	self = [super init];
 	date = __DATE__;
 	time = __TIME__;
+	
+	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
+	
+	// 30 days from compilation.
+	expires = [NSDate dateWithTimeInterval: 3600 * 24 * 30 sinceDate: expires];
+	demoTimer = [[NSTimer alloc] initWithFireDate: expires interval: 10 target: self selector: @selector(timeout:) userInfo: nil repeats: NO];
+	[demoTimer retain];
+	[[NSRunLoop currentRunLoop] addTimer: demoTimer forMode: NSDefaultRunLoopMode];
+	
+	NSLog(@"Expires at: %@\n", expires);
 	NSStatusBar *bar = [NSStatusBar systemStatusBar];
 	statusItem = [bar statusItemWithLength: NSVariableStatusItemLength];
 	[statusItem retain];
@@ -292,6 +302,10 @@ char *find_execable(const char *filename) {
 			[normalSpace setHidden: NO];
 		}
 	}
+}
+
+- (void) timeout: (id) sender {
+	[NSApp terminate: self];
 }
 
 - (void) ping {
