@@ -95,9 +95,9 @@
 	[window setTitle: repository];
 	[window makeFirstResponder: tv];
 
-	[tv setString: @""];
 	[tv setNeedsDisplay: YES];
 	if (localMod) {	
+		[tv setString: @""];
 		[butt setTitle: @"Do Commit"];
 		[butt setTarget: self];
 		[butt setAction: @selector(clickUpdate:)];
@@ -113,7 +113,7 @@
 		
 		NSString *string = [self stringFromFile: file];
 		[file closeFile];
-		[tv insertText: string];
+		[tv setString: string];
 		[tv setEditable: NO];
 	}
 	[window center];
