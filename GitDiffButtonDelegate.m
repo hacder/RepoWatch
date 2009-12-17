@@ -174,7 +174,7 @@
 		NSArray *arguments = [NSArray arrayWithObjects: @"branch", nil];
 		NSArray *branches = [self arrayFromResultOfArgs: arguments];
 
-		NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];
+		NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
 		// Leaking NSMenuItem here
 		[m insertItemWithTitle: @"Branches" action: @selector(branch:) keyEquivalent: @"" atIndex: 0];
 		[m insertItem: [NSMenuItem separatorItem] atIndex: 1];
