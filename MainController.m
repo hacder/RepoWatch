@@ -49,6 +49,17 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
 	
+	if ([[NSUserDefaults standardUserDefaults] stringForKey: @"UUID"] == nil) {
+		CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+		CFStringRef strRef = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+		NSString *uuidString = [NSString stringWithString:(NSString*)strRef];
+		CFRelease(strRef);
+		CFRelease(uuidRef);
+		
+		[[NSUserDefaults standardUserDefaults] setObject: uuidString forKey: @"UUID"];
+	}
+	[[NSUserDefaults standardUserDefaults] synchronize];
+	
 	// Drop into Carbon in order to setup global hotkeys.
 	EventHotKeyRef myHotKeyRef;
 	EventHotKeyID myHotKeyID;
@@ -66,7 +77,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[plugins addObject: odb];
 //	[[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
 
-	// TODO: Make the headers "active" even with nothing clickable.
 	localTitle = [theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	[localTitle setEnabled: NO];
 	localSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Changed" menu: theMenu statusItem: statusItem mainController: self];
@@ -89,6 +99,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	
 	timer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(ping) userInfo: nil repeats: YES];
 	
+	SUUpdater *updater = [SUUpdater sharedUpdater];
+	[updater setFeedURL: [NSURL URLWithString: [NSString stringWithFormat: @"http://www.doomstick.com/mm_update_feed.xml?uuid=%@", [[NSUserDefaults standardUserDefaults] stringForKey: @"UUID"]]]];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
 
     return self;
