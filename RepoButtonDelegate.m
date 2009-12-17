@@ -35,7 +35,7 @@ void callbackFunction(
 	[t launch];
 	
 	NSString *string = [self stringFromFile: file];
-	NSArray *result = [string componentsSeparatedByString: @"\n"];
+	NSArray *result = [[string componentsSeparatedByString: @"\n"] autorelease];
 	[file closeFile];
 	return result;
 }

@@ -324,6 +324,7 @@ char *find_execable(const char *filename) {
 
 			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 			[dateFormatter setDateFormat: format];
+			[dateFormatter autorelease];
 			
 			NSDate *date2 = [NSDate date];
 			[statusItem setTitle: [dateFormatter stringFromDate: date2]];
