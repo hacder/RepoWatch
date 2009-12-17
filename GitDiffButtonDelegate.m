@@ -201,7 +201,8 @@
 		for (i = 0; i < [logs count]; i++) {
 			NSString *tmp = [logs objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
-				[[m insertItemWithTitle: tmp action: @selector(clickLog:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+				NSMenuItem *item = [m insertItemWithTitle: tmp action: @selector(clickLog:) keyEquivalent: @"" atIndex: the_index++];
+				[item setTarget: self];
 			}
 		}
 		
