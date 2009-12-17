@@ -89,7 +89,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	
 	timer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(ping) userInfo: nil repeats: YES];
 	
-	[SUUpdater sharedUpdater];
+	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
 
     return self;
 }
