@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>SUFeedURL</key>
+	<string>http://www.doomstick.com/mm_update_feed.xml</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>dsa_pub.pem</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
@@ -9,7 +15,7 @@
 	<key>CFBundleIconFile</key>
 	<string>app</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.busmetsoftware.MenuMonitor</string>
+	<string>com.doomstick.RepoWatch</string>
 	<key>CFBundleName</key>
 	<string>RepoWatch</string>
 	<key>CFBundleShortVersionString</key>

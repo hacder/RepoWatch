@@ -88,6 +88,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[self findSupportedSCMS];
 	
 	timer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(ping) userInfo: nil repeats: YES];
+	
+	[SUUpdater sharedUpdater];
 
     return self;
 }
