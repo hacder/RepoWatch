@@ -79,6 +79,7 @@ void callbackFunction(
 	
 	FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
 	FSEventStreamStart(stream);
+	CFRelease(pathsToWatch);
 
 	return self;
 }
