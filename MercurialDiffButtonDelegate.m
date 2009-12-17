@@ -153,7 +153,7 @@
 		NSData *data = [file readDataToEndOfFile];
 		NSCharacterSet *cs = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 		NSString *utf8String = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-		NSString *string = [[utf8String stringByTrimmingCharactersInSet: cs] retain];
+		NSString *string = [utf8String stringByTrimmingCharactersInSet: cs];
 
 		NSArray *arr = [string componentsSeparatedByString: @"\n"];
 		NSString *s2 = [arr objectAtIndex: [arr count] - 1];
