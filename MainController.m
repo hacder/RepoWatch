@@ -316,8 +316,8 @@ char *find_execable(const char *filename) {
 		if (modded) {
 			[statusItem setTitle: [RepoButtonDelegate getModText]];
 		} else {
-			NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:
-				[@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath]];
+			NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
+			NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
 			NSString *format = [dict objectForKey: @"DateFormat"];
 			if (!format || [format isEqual: @""])
 				format = @"E h:mm a";
