@@ -17,6 +17,17 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 @implementation MainController
 
+void mc_callbackFunction(
+		ConstFSEventStreamRef streamRef,
+		void *clientCallBackInfo,
+		size_t numEvents,
+		void *eventPaths,
+		const FSEventStreamEventFlags eventFlags[],
+		const FSEventStreamEventId eventIds[]) {
+	MainController *mc = (MainController *)clientCallBackInfo;
+	[mc findSupportedSCMS];
+}
+
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
 	RepoButtonDelegate *rbd = [RepoButtonDelegate getModded];
 	if (rbd)
@@ -112,6 +123,28 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	SUUpdater *updater = [SUUpdater sharedUpdater];
 	[updater setFeedURL: [NSURL URLWithString: [NSString stringWithFormat: @"http://www.doomstick.com/mm_update_feed.xml?uuid=%@", [[NSUserDefaults standardUserDefaults] stringForKey: @"UUID"]]]];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
+
+	FSEventStreamRef stream;
+	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
+	CFStringRef myPath = (CFStringRef)[@"~" stringByExpandingTildeInPath];
+	// Leaking this.
+	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
+	CFAbsoluteTime latency = 0.0;
+	stream = FSEventStreamCreate(NULL,
+		&mc_callbackFunction,
+		&fsesc,
+		pathsToWatch,
+		kFSEventStreamEventIdSinceNow,
+		latency,
+		kFSEventStreamCreateFlagNone
+	);
+	
+	FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
+	FSEventStreamStart(stream);
+	CFRelease(pathsToWatch);
+
+	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
+	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self]];
 
     return self;
 }
@@ -254,10 +287,6 @@ char *find_execable(const char *filename) {
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self searchAllPathsForGit: git svn: svn hg: hg];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
-			[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self]];
-		});
 	});
 }
 
