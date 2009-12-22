@@ -2,11 +2,9 @@
 
 @implementation MercurialDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc hgPath: (char *)hgPath repository: (NSString *)rep window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 {
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc hgPath: (char *)hgPath repository: (NSString *)rep window: (NSWindow *)commitWindow {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	hg = hgPath;
-	tv = tv2;
-	[tv retain];
 	window = commitWindow;
 	[window retain];
 	[self fire];
@@ -28,10 +26,10 @@
 
 - (void) commit: (id) something {
 	[window setTitle: repository];
-	[window makeFirstResponder: tv];
+	[window makeFirstResponder: mc->tv];
 
-	[tv setString: @""];
-	[tv setNeedsDisplay: YES];
+	[mc->tv setString: @""];
+	[mc->tv setNeedsDisplay: YES];
 	if (localMod) {	
 		[mc->butt setTitle: @"Do Commit"];
 		[mc->butt setTarget: self];
@@ -56,17 +54,17 @@
 		
 		NSString *string = [self stringFromFile: file];
 		[file closeFile];
-		[tv insertText: string];
-		[tv setEditable: NO];
+		[mc->tv insertText: string];
+		[mc->tv setEditable: NO];
 	}
 	[window center];
 	[NSApp activateIgnoringOtherApps: YES];
 	[window makeKeyAndOrderFront: NSApp];
-	[window makeFirstResponder: tv];
+	[window makeFirstResponder: mc->tv];
 }
 
 - (void) clickUpdate: (id) button {
-	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-m", [[tv textStorage] mutableString], nil]] autorelease];
+	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil]] autorelease];
 	[t launch];
 	if (window)
 		[window close];
