@@ -3,13 +3,11 @@
 @implementation GitDiffButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc gitPath: (char *)gitPath repository: (NSString *)rep
-		window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 {
+		window: (NSWindow *)commitWindow {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	git = gitPath;
 	[self setHidden: YES];
 	[menuItem setAction: nil];
-	tv = tv2;
-	[tv retain];
 	
 	diffCommitTV = mc->diffCommitTextView;
 	[diffCommitTV retain];
@@ -96,12 +94,12 @@
 
 - (void) commit: (id) menuItem {
 	[window setTitle: repository];
-	[window makeFirstResponder: tv];
+	[window makeFirstResponder: mc->tv];
 
-	[tv setNeedsDisplay: YES];
+	[mc->tv setNeedsDisplay: YES];
 	if (localMod) {	
 		NSString *diffString = [self getDiff];
-		[tv setString: @""];
+		[mc->tv setString: @""];
 		[mc->diffView setString: diffString];
 		[mc->butt setTitle: @"Do Commit"];
 		[mc->butt setTarget: self];
@@ -118,13 +116,13 @@
 		
 		NSString *string = [self stringFromFile: file];
 		[file closeFile];
-		[tv setString: string];
-		[tv setEditable: NO];
+		[mc->tv setString: string];
+		[mc->tv setEditable: NO];
 	}
 	[window center];
 	[NSApp activateIgnoringOtherApps: YES];
 	[window makeKeyAndOrderFront: NSApp];
-	[window makeFirstResponder: tv];
+	[window makeFirstResponder: mc->tv];
 }
 
 - (void) upstreamUpdate: (id) sender {
@@ -134,7 +132,7 @@
 }
 
 - (void) clickUpdate: (id) button {
-	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[tv textStorage] mutableString], nil]] autorelease];
+	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[mc->tv textStorage] mutableString], nil]] autorelease];
 	[t launch];
 	if (window)
 		[window close];
