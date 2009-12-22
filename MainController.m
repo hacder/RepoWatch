@@ -3,10 +3,7 @@
 #import "SeparatorButtonDelegate.h"
 #import "QuitButtonDelegate.h"
 #import "GitDiffButtonDelegate.h"
-#import "SVNDiffButtonDelegate.h"
 #import "MercurialDiffButtonDelegate.h"
-#import "ODeskButtonDelegate.h"
-#import "TimeMachineAlertButtonDelegate.h"
 #import "RepoButtonDelegate.h"
 #import <Sparkle/Sparkle.h>
 #import <dirent.h>
@@ -95,11 +92,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	myHotKeyID.id = 1;
 	RegisterEventHotKey(36, cmdKey + optionKey, myHotKeyID, GetApplicationEventTarget(), 0, &myHotKeyRef);
 	
-	[plugins addObject: [[TimeMachineAlertButtonDelegate alloc] initWithTitle: @"Time Machine" menu: theMenu statusItem: statusItem mainController: self]];
-	odb = [[ODeskButtonDelegate alloc] initWithTitle: @"ODesk" menu: theMenu statusItem: statusItem mainController: self];
-	[plugins addObject: odb];
-//	[[theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]] setEnabled: NO];
-
 	localTitle = [theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	[localTitle setEnabled: NO];
 	localSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Changed" menu: theMenu statusItem: statusItem mainController: self];
@@ -222,7 +214,7 @@ char *find_execable(const char *filename) {
 	return NULL;
 }
 
-- (void) searchPath: (NSString *)path forGit: (char *)git svn: (char *)svn hg: (char *)hg {
+- (void) searchPath: (NSString *)path forGit: (char *)git hg: (char *)hg {
 	// Do not search the library. A LOT of crazy stuff is in there, and it's not a sane place to put repositories.
 	if ([path isEqual: [@"~/Library" stringByStandardizingPath]])
 		return;
@@ -248,14 +240,6 @@ char *find_execable(const char *filename) {
 			});
 		}
 	} else if ([contents containsObject: @".svn"] && ![path isEqual: [@"~" stringByStandardizingPath]]) {
-		if (svn) {
-			NSLog(@"Adding svn to %@", path);
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[plugins addObject: [[SVNDiffButtonDelegate alloc] initWithTitle: path
-					menu: theMenu statusItem: statusItem mainController: self
-					svnPath: svn repository: path]];
-			});
-		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
 			NSLog(@"Adding hg to %@", path);
@@ -269,29 +253,28 @@ char *find_execable(const char *filename) {
 		int i;
 		for (i = 0; i < [contents count]; i++) {
 			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] retain];
-			[self searchPath: s forGit: git svn: svn hg: hg];
+			[self searchPath: s forGit: git hg: hg];
 			[s release];
 		}
 	}
 }
 
-- (void) searchAllPathsForGit: (char *)git svn: (char *)svn hg: (char *)hg {
-	[self searchPath: [@"~" stringByStandardizingPath] forGit: git svn: svn hg: hg];
+- (void) searchAllPathsForGit: (char *)git hg: (char *)hg {
+	[self searchPath: [@"~" stringByStandardizingPath] forGit: git hg: hg];
 }
 
 - (void) findSupportedSCMS {
 	char *git = find_execable("git");
-	char *svn = find_execable("svn");
 	char *hg = find_execable("hg");
 
 	if (!doneRepoSearch) {	
-		NSLog(@"Git: %s Svn: %s Mercurial: %s", git, svn, hg);
+		NSLog(@"Git: %s Mercurial: %s", git, hg);
 		doneRepoSearch = YES;
 	}
 	
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[self searchAllPathsForGit: git svn: svn hg: hg];
+		[self searchAllPathsForGit: git hg: hg];
 	});
 }
 
@@ -346,26 +329,22 @@ char *find_execable(const char *filename) {
 }
 
 - (void) ping {
-	if (odb && odb->running) {
-		[statusItem setTitle: odb->title];
+	NSUInteger modded = [RepoButtonDelegate numModified];
+	if (modded) {
+		[statusItem setTitle: [RepoButtonDelegate getModText]];
 	} else {
-		NSUInteger modded = [RepoButtonDelegate numModified];
-		if (modded) {
-			[statusItem setTitle: [RepoButtonDelegate getModText]];
-		} else {
-			NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
-			NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
-			NSString *format = [dict objectForKey: @"DateFormat"];
-			if (!format || [format isEqual: @""])
-				format = @"E h:mm a";
+		NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
+		NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
+		NSString *format = [dict objectForKey: @"DateFormat"];
+		if (!format || [format isEqual: @""])
+			format = @"E h:mm a";
 
-			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-			[dateFormatter setDateFormat: format];
-			[dateFormatter autorelease];
-			
-			NSDate *date2 = [NSDate date];
-			[statusItem setTitle: [dateFormatter stringFromDate: date2]];
-		}
+		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+		[dateFormatter setDateFormat: format];
+		[dateFormatter autorelease];
+		
+		NSDate *date2 = [NSDate date];
+		[statusItem setTitle: [dateFormatter stringFromDate: date2]];
 	}
 }
 
