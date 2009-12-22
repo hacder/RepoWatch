@@ -3,8 +3,7 @@
 @implementation GitDiffButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc gitPath: (char *)gitPath repository: (NSString *)rep
-		window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 button: (NSButton *)butt2
-		window2: (NSWindow *)window2 {
+		window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 button: (NSButton *)butt2 {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	git = gitPath;
 	[self setHidden: YES];
@@ -20,9 +19,6 @@
 
 	window = commitWindow;
 	[window retain];
-	
-	diffCommitWindow = window2;
-	[diffCommitWindow retain];
 	
 	[self fire];
 	[self updateRemote];
@@ -150,8 +146,8 @@
 }
 
 - (void) clickLog: (id) clicker {
-	[diffCommitWindow setTitle: repository];
-	[diffCommitWindow makeFirstResponder: diffCommitTV];
+	[mc->diffCommitWindow setTitle: repository];
+	[mc->diffCommitWindow makeFirstResponder: diffCommitTV];
 	
 	NSArray *parts = [[clicker title] componentsSeparatedByString: @" "];
 	NSString *revisionID = [parts objectAtIndex: 0];
@@ -164,10 +160,10 @@
 	[file closeFile];
 	[diffCommitTV setString: result];
 	
-	[diffCommitWindow center];
+	[mc->diffCommitWindow center];
 	[NSApp activateIgnoringOtherApps: YES];
-	[diffCommitWindow makeKeyAndOrderFront: NSApp];
-	[diffCommitWindow makeFirstResponder: diffCommitTV];
+	[mc->diffCommitWindow makeKeyAndOrderFront: NSApp];
+	[mc->diffCommitWindow makeFirstResponder: diffCommitTV];
 }
 
 - (void) fire {
