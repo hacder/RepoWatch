@@ -9,7 +9,6 @@
 	NSButton *butt;
 	NSTextView *tv;
 	NSWindow *window;
-	MainController *mc;
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;

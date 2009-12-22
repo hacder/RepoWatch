@@ -48,12 +48,10 @@ void callbackFunction(
 }
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
 	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;
-	mc = mcc;
-	[mc retain];
 
 	repository = repo;
 	[repository retain];

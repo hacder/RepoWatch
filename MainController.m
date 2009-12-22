@@ -110,8 +110,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	normalSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Up To Date" menu: theMenu statusItem: statusItem mainController: self];
 	[plugins addObject: normalSeparator];
 	
-	[self findSupportedSCMS];
-	
 	timer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(ping) userInfo: nil repeats: YES];
 	
 	SUUpdater *updater = [SUUpdater sharedUpdater];
@@ -140,6 +138,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self]];
 
+	[self findSupportedSCMS];
+	
     return self;
 }
 
@@ -242,7 +242,6 @@ char *find_execable(const char *filename) {
 	} else if ([contents containsObject: @".svn"] && ![path isEqual: [@"~" stringByStandardizingPath]]) {
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
-			NSLog(@"Adding hg to %@", path);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
 					menu: theMenu statusItem: statusItem mainController: self

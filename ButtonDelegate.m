@@ -4,9 +4,10 @@
 
 @implementation ButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc {
 	self = [super init];
-	mainController = mc;
+	mc = mcc;
+	[mc retain];
 	statusItem = si;
 	menu = m;
 	[self setTitle: s];
@@ -21,7 +22,7 @@
 
 - (void) setHidden: (BOOL) b {
 	[menuItem setHidden: b];
-	[mainController maybeRefresh: self];
+	[mc maybeRefresh: self];
 }
 
 - (void) setTitle: (NSString *)t {
@@ -37,7 +38,7 @@
 	[t retain];
 	[shortTitle release];
 	shortTitle = t;
-	[mainController maybeRefresh: self];
+	[mc maybeRefresh: self];
 }
 
 - (NSString *) shortTitle {

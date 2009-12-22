@@ -2,8 +2,8 @@
 
 @implementation SeparatorButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mc];
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc {
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
 	return self;
 }
 
