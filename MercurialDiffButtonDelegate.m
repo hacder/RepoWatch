@@ -2,13 +2,11 @@
 
 @implementation MercurialDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc hgPath: (char *)hgPath repository: (NSString *)rep window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 button: (NSButton *)butt2{
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc hgPath: (char *)hgPath repository: (NSString *)rep window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	hg = hgPath;
 	tv = tv2;
 	[tv retain];
-	butt = butt2;
-	[butt retain];
 	window = commitWindow;
 	[window retain];
 	[self fire];
@@ -35,17 +33,17 @@
 	[tv setString: @""];
 	[tv setNeedsDisplay: YES];
 	if (localMod) {	
-		[butt setTitle: @"Do Commit"];
-		[butt setTarget: self];
-		[butt setAction: @selector(clickUpdate:)];
+		[mc->butt setTitle: @"Do Commit"];
+		[mc->butt setTarget: self];
+		[mc->butt setAction: @selector(clickUpdate:)];
 	} else if (upstreamMod) {
 		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
 		NSTask *t = [[self taskFromArguments: arr] autorelease];
 		NSFileHandle *file = [self pipeForTask: t];
 		
-		[butt setTitle: @"Update from upstream"];
-		[butt setTarget: self];
-		[butt setAction: @selector(upstreamUpdate:)];
+		[mc->butt setTitle: @"Update from upstream"];
+		[mc->butt setTarget: self];
+		[mc->butt setAction: @selector(upstreamUpdate:)];
 		@try {
 			[t launch];
 		} @catch (NSException *e) {

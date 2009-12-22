@@ -262,7 +262,7 @@ char *find_execable(const char *filename) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
 					menu: theMenu statusItem: statusItem mainController: self
-					hgPath: hg repository: path window: commitWindow textView: tv button: butt]];
+					hgPath: hg repository: path window: commitWindow textView: tv]];
 			});
 		}
 	} else {
