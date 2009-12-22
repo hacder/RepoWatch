@@ -3,7 +3,7 @@
 @implementation GitDiffButtonDelegate
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc gitPath: (char *)gitPath repository: (NSString *)rep
-		window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 button: (NSButton *)butt2 {
+		window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	git = gitPath;
 	[self setHidden: YES];
@@ -14,9 +14,6 @@
 	diffCommitTV = mc->diffCommitTextView;
 	[diffCommitTV retain];
 	
-	butt = butt2;
-	[butt retain];
-
 	window = commitWindow;
 	[window retain];
 	
@@ -106,17 +103,17 @@
 		NSString *diffString = [self getDiff];
 		[tv setString: @""];
 		[mc->diffView setString: diffString];
-		[butt setTitle: @"Do Commit"];
-		[butt setTarget: self];
-		[butt setAction: @selector(clickUpdate:)];
+		[mc->butt setTitle: @"Do Commit"];
+		[mc->butt setTarget: self];
+		[mc->butt setAction: @selector(clickUpdate:)];
 	} else if (upstreamMod) {
 		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
 		NSTask *t = [[self taskFromArguments: arr] autorelease];
 		NSFileHandle *file = [self pipeForTask: t];
 		
-		[butt setTitle: @"Update from upstream"];
-		[butt setTarget: self];
-		[butt setAction: @selector(upstreamUpdate:)];
+		[mc->butt setTitle: @"Update from upstream"];
+		[mc->butt setTarget: self];
+		[mc->butt setAction: @selector(upstreamUpdate:)];
 		[t launch];
 		
 		NSString *string = [self stringFromFile: file];
