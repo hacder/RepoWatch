@@ -25,6 +25,7 @@ void mc_callbackFunction(
 		const FSEventStreamEventFlags eventFlags[],
 		const FSEventStreamEventId eventIds[]) {
 	MainController *mc = (MainController *)clientCallBackInfo;
+	NSLog(@"Checking for new repositories...");
 	[mc findSupportedSCMS];
 }
 
