@@ -2,17 +2,17 @@
 
 @implementation GitDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc gitPath: (char *)gitPath repository: (NSString *)rep
 		window: (NSWindow *)commitWindow textView: (NSTextView *)tv2 button: (NSButton *)butt2
-		window2: (NSWindow *)window2 textView2: (NSTextView *)tv3 {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mc repository: rep];
+		window2: (NSWindow *)window2 {
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	git = gitPath;
 	[self setHidden: YES];
 	[menuItem setAction: nil];
 	tv = tv2;
 	[tv retain];
 	
-	diffCommitTV = tv3;
+	diffCommitTV = mc->diffCommitTextView;
 	[diffCommitTV retain];
 	
 	butt = butt2;
@@ -91,13 +91,25 @@
 	return string;
 }
 
+- (NSString *)getDiff {
+	NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
+	NSTask *t = [[self taskFromArguments: arr] autorelease];
+	NSFileHandle *file = [self pipeForTask: t];
+	[t launch];
+	NSString *result = [self stringFromFile: file];
+	[file closeFile];
+	return result;
+}
+
 - (void) commit: (id) menuItem {
 	[window setTitle: repository];
 	[window makeFirstResponder: tv];
 
 	[tv setNeedsDisplay: YES];
 	if (localMod) {	
+		NSString *diffString = [self getDiff];
 		[tv setString: @""];
+		[mc->diffView setString: diffString];
 		[butt setTitle: @"Do Commit"];
 		[butt setTarget: self];
 		[butt setAction: @selector(clickUpdate:)];

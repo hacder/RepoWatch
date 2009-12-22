@@ -23,22 +23,24 @@
 	
 	ODeskButtonDelegate *odb;
 	NSTimer *timer;
-	
-	IBOutlet NSWindow *commitWindow;
-	IBOutlet NSTextView *tv;
-	IBOutlet NSButton *butt;
-	
-	IBOutlet NSWindow *diffCommitWindow;
-	IBOutlet NSButton *undoSingleButton;
-	IBOutlet NSButton *changeCommitButton;
-	IBOutlet NSButton *goBackToHereButton;
-	IBOutlet NSTextView *diffCommitTextView;
-	
+
 	char *date;
 	char *time;
 	
 	NSTimer *demoTimer;
 	BOOL doneRepoSearch;
+
+@public	
+	IBOutlet NSWindow *commitWindow;
+	IBOutlet NSTextView *tv;
+	IBOutlet NSButton *butt;
+	IBOutlet NSTextView *diffView;
+	
+	IBOutlet NSWindow *diffCommitWindow;
+	IBOutlet NSButton *undoSingleButton;
+	IBOutlet NSButton *changeCommitButton;
+	IBOutlet NSButton *goBackToHereButton;
+	IBOutlet NSTextView *diffCommitTextView;	
 }
 
 - init;

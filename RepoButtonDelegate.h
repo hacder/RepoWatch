@@ -9,6 +9,7 @@
 	NSButton *butt;
 	NSTextView *tv;
 	NSWindow *window;
+	MainController *mc;
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
@@ -17,7 +18,7 @@
 	BOOL upstreamMod;
 }
 
-- initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc repository: (NSString *)repo;
+- initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo;
 - (void) commit: (id) menuItem;
 - (void) clickUpdate: (id) button;
 - (NSFileHandle *)pipeForTask: (NSTask *)t;
