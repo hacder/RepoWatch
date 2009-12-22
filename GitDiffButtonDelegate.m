@@ -207,8 +207,7 @@
 			NSString *tmp = [logs objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
 				// Leak: NSMenuItem
-				NSMenuItem *item = [m insertItemWithTitle: tmp action: @selector(clickLog:) keyEquivalent: @"" atIndex: the_index++];
-				[item setTarget: self];
+				[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
 			}
 		}
 		
