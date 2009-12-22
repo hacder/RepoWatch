@@ -38,6 +38,7 @@
 	char *time;
 	
 	NSTimer *demoTimer;
+	BOOL doneRepoSearch;
 }
 
 - init;

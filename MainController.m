@@ -39,6 +39,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	self = [super init];
 	date = __DATE__;
 	time = __TIME__;
+	doneRepoSearch = NO;
 	
 	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
 	
@@ -281,8 +282,11 @@ char *find_execable(const char *filename) {
 	char *git = find_execable("git");
 	char *svn = find_execable("svn");
 	char *hg = find_execable("hg");
-	
-	NSLog(@"Git: %s Svn: %s Mercurial: %s", git, svn, hg);
+
+	if (!doneRepoSearch) {	
+		NSLog(@"Git: %s Svn: %s Mercurial: %s", git, svn, hg);
+		doneRepoSearch = YES;
+	}
 	
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
