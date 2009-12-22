@@ -35,7 +35,7 @@ void callbackFunction(
 	[t launch];
 	
 	NSString *string = [self stringFromFile: file];
-	NSArray *result = [[string componentsSeparatedByString: @"\n"] autorelease];
+	NSArray *result = [string componentsSeparatedByString: @"\n"];
 	[file closeFile];
 	return result;
 }
@@ -150,6 +150,16 @@ void callbackFunction(
 			return rbd;
 	}
 	return nil;
+}
+
++ (BOOL) alreadyHasPath: (NSString *)path {
+	int i = 0;
+	for (i = 0; i < [repos count]; i++) {
+		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
+		if ([rbd->repository isEqualToString: path])
+			return YES;
+	}
+	return NO;
 }
 
 - (void) commit: (id) menuItem {
