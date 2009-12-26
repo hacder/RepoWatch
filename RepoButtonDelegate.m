@@ -14,6 +14,7 @@ void callbackFunction(
 		const FSEventStreamEventFlags eventFlags[],
 		const FSEventStreamEventId eventIds[]) {
 	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
+	NSLog(@"Firing on %@", rbd->repository);
 	[rbd fire];
 }
 
