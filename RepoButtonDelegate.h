@@ -22,7 +22,7 @@
 - (void) clickUpdate: (id) button;
 - (NSFileHandle *)pipeForTask: (NSTask *)t;
 - (NSString *)stringFromFile: (NSFileHandle *)file;
-- (NSTask *)taskFromArguments: (NSArray *)args;
+- (NSTask *)taskFromArguments: (NSArray *)args; 
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args;
 
 + (NSUInteger)numModified;
