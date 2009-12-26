@@ -157,136 +157,132 @@
 	[mc->diffCommitWindow makeFirstResponder: diffCommitTV];
 }
 
-- (void) fire {
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		int the_index = 0;
-		
-		[lock lock];
-		NSString *remoteString = [self getDiffRemote: YES];		
-		NSString *string = [self getDiffRemote: NO];
-		if (string == nil) {
-			[lock unlock];
-			return;
-		}
-		
-		// Leaking branches
-		NSArray *arguments = [NSArray arrayWithObjects: @"branch", nil];
-		NSArray *branches = [self arrayFromResultOfArgs: arguments];
+- (void) realFire {
+	int the_index = 0;
+	
+	NSString *remoteString = [self getDiffRemote: YES];		
+	NSString *string = [self getDiffRemote: NO];
+	if (string == nil)
+		return;
+	
+	// Leaking branches
+	NSArray *arguments = [NSArray arrayWithObjects: @"branch", nil];
+	NSArray *branches = [self arrayFromResultOfArgs: arguments];
 
-		NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
-		// Leaking NSMenuItem here
-		[m insertItemWithTitle: @"Branches" action: @selector(branch:) keyEquivalent: @"" atIndex: 0];
-		[m insertItem: [NSMenuItem separatorItem] atIndex: 1];
+	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
+	// Leaking NSMenuItem here
+	[m insertItemWithTitle: @"Branches" action: @selector(branch:) keyEquivalent: @"" atIndex: 0];
+	[m insertItem: [NSMenuItem separatorItem] atIndex: 1];
 
-		int i;
-		the_index = 2;
-		for (i = 0; i < [branches count]; i++) {
-			NSString *tmp = [branches objectAtIndex: i];
-			if (tmp && [tmp length] > 0) {
-				// Leaking NSMenuItem here
-				[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
-				if ('*' == [tmp characterAtIndex: 0]) {
-					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
-					[currentBranch autorelease];
-					currentBranch = tmp;
-					[currentBranch retain];
-				} else {
-					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
-				}
-			}
-		}
-		
-		[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
-		[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
-		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
-		
-		// Leaking these logs.
-		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"5", @"--pretty=oneline", @"--abbrev-commit", nil]];
-		for (i = 0; i < [logs count]; i++) {
-			NSString *tmp = [logs objectAtIndex: i];
-			if (tmp && [tmp length] > 0) {
-				// Leak: NSMenuItem
-				[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
-			}
-		}
-		
-		[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
-		[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
-		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
-
-		if (!remoteString || [remoteString isEqual: @""]) {
-			if ([string isEqual: @""]) {
-				localMod = NO;
-				upstreamMod = NO;
-				dispatch_async(dispatch_get_main_queue(), ^{
-					[lock lock];
-					NSString *s3;
-					if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-						s3 = [NSString stringWithFormat: @"git: %@",
-							[repository lastPathComponent]];
-					} else {
-						s3 = [NSString stringWithFormat: @"git: %@ (%@)",
-								[repository lastPathComponent], currentBranch];
-					}
-					[self setTitle: s3];
-					[self setShortTitle: s3];
-					[self setHidden: NO];
-					[lock unlock];
-				});
+	int i;
+	the_index = 2;
+	for (i = 0; i < [branches count]; i++) {
+		NSString *tmp = [branches objectAtIndex: i];
+		if (tmp && [tmp length] > 0) {
+			// Leaking NSMenuItem here
+			[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
+			if ('*' == [tmp characterAtIndex: 0]) {
+				tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
+				[currentBranch autorelease];
+				currentBranch = tmp;
+				[currentBranch retain];
 			} else {
-				NSString *sTit;
-				localMod = YES;
-				upstreamMod = NO;
-				[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-				if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-					sTit = [NSString stringWithFormat: @"%@: %@",
-						[repository lastPathComponent],
-						[string stringByTrimmingCharactersInSet:
-							[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
-				} else {
-					sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
-						[repository lastPathComponent],
-						[string stringByTrimmingCharactersInSet:
-						[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
-				}
-				dispatch_async(dispatch_get_main_queue(), ^{
-					[lock lock];
-					[self setTitle: sTit];
-					[self setShortTitle: sTit];
-					[self setHidden: NO];
-					[lock unlock];
-				});
+				tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
 			}
-		} else {
-			// There is a remote diff.
-			NSString *sTit;
+		}
+	}
+	
+	[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
+	[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
+	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
+	
+	// Leaking these logs.
+	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"5", @"--pretty=oneline", @"--abbrev-commit", nil]];
+	for (i = 0; i < [logs count]; i++) {
+		NSString *tmp = [logs objectAtIndex: i];
+		if (tmp && [tmp length] > 0) {
+			// Leak: NSMenuItem
+			[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
+		}
+	}
+	
+	[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
+	[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
+	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
+
+	if (!remoteString || [remoteString isEqual: @""]) {
+		if ([string isEqual: @""]) {
 			localMod = NO;
-			upstreamMod = YES;
-			[[m insertItemWithTitle: @"Update from origin" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+			upstreamMod = NO;
+			dispatch_sync(dispatch_get_main_queue(), ^{
+				NSString *s3;
+				if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
+					s3 = [NSString stringWithFormat: @"git: %@",
+						[repository lastPathComponent]];
+				} else {
+					s3 = [NSString stringWithFormat: @"git: %@ (%@)",
+							[repository lastPathComponent], currentBranch];
+				}
+				[self setTitle: s3];
+				[self setShortTitle: s3];
+				[self setHidden: NO];
+			});
+		} else {
+			NSString *sTit;
+			localMod = YES;
+			upstreamMod = NO;
+			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 			if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-				sTit = [NSString stringWithFormat: @"*Remote* %@: %@",
+				sTit = [NSString stringWithFormat: @"%@: %@",
 					[repository lastPathComponent],
-					[remoteString stringByTrimmingCharactersInSet:
+					[string stringByTrimmingCharactersInSet:
 						[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 			} else {
-				sTit = [NSString stringWithFormat: @"*Remote* %@: %@ (%@)",
+				sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
 					[repository lastPathComponent],
-					[remoteString stringByTrimmingCharactersInSet:
+					[string stringByTrimmingCharactersInSet:
 					[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
 			}
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[lock lock];
+			dispatch_sync(dispatch_get_main_queue(), ^{
 				[self setTitle: sTit];
 				[self setShortTitle: sTit];
 				[self setHidden: NO];
-				[lock unlock];
 			});
 		}
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[lock lock];
-			[menuItem setSubmenu: m];
-			[lock unlock];
+	} else {
+		// There is a remote diff.
+		NSString *sTit;
+		localMod = NO;
+		upstreamMod = YES;
+		[[m insertItemWithTitle: @"Update from origin" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+		if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
+			sTit = [NSString stringWithFormat: @"*Remote* %@: %@",
+				[repository lastPathComponent],
+				[remoteString stringByTrimmingCharactersInSet:
+					[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+		} else {
+			sTit = [NSString stringWithFormat: @"*Remote* %@: %@ (%@)",
+				[repository lastPathComponent],
+				[remoteString stringByTrimmingCharactersInSet:
+				[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
+		}
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[self setTitle: sTit];
+			[self setShortTitle: sTit];
+			[self setHidden: NO];
 		});
+	}
+	dispatch_sync(dispatch_get_main_queue(), ^{
+		[menuItem setSubmenu: m];
+	});
+}
+
+- (void) fire {
+	if (![lock tryLock])
+		return;
+	
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[self realFire];
 		[lock unlock];
 	});
 }
