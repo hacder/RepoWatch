@@ -14,6 +14,9 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 @implementation MainController
 
+int mc_ignored = 0;
+int mc_passed = 0;
+
 void mc_callbackFunction(
 		ConstFSEventStreamRef streamRef,
 		void *clientCallBackInfo,
@@ -21,9 +24,21 @@ void mc_callbackFunction(
 		void *eventPaths,
 		const FSEventStreamEventFlags eventFlags[],
 		const FSEventStreamEventId eventIds[]) {
+	
+	char **paths = eventPaths;
+	int i;
 	MainController *mc = (MainController *)clientCallBackInfo;
-	NSLog(@"Checking for new repositories...");
+	for (i = 0; i < numEvents; i++) {
+		NSString *s = [NSString stringWithFormat: @"%s", paths[i]];
+		if ([s hasPrefix: [@"~/Library" stringByExpandingTildeInPath]]) {
+			mc_ignored++;
+			NSLog(@"Ingored %d, Passed %d", mc_ignored, mc_passed);
+			return;
+		}
+		mc_passed++;
+	}
 	[mc findSupportedSCMS];
+	NSLog(@"Ingored %d, Passed %d", mc_ignored, mc_passed);
 }
 
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
