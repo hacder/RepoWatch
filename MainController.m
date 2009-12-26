@@ -39,7 +39,7 @@ void mc_callbackFunction(
 		break;
 	}
 	[mc findSupportedSCMS];
-	NSLog(@"Ingored %d, Passed %d", mc_ignored, mc_passed);
+	NSLog(@"Ingored %d, Passed %d (%0.2f%%)", mc_ignored, mc_passed, (mc_passed * 1.0) / (mc_passed + mc_ignored));
 }
 
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
