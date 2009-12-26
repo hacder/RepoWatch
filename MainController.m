@@ -32,7 +32,6 @@ void mc_callbackFunction(
 		NSString *s = [NSString stringWithFormat: @"%s", paths[i]];
 		if ([s hasPrefix: [@"~/Library" stringByExpandingTildeInPath]]) {
 			mc_ignored++;
-			NSLog(@"Ingored %d, Passed %d", mc_ignored, mc_passed);
 			return;
 		}
 		NSLog(@"Passing %@", s);
