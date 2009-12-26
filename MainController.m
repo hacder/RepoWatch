@@ -35,6 +35,7 @@ void mc_callbackFunction(
 			NSLog(@"Ingored %d, Passed %d", mc_ignored, mc_passed);
 			return;
 		}
+		NSLog(@"Passing %@", s);
 		mc_passed++;
 	}
 	[mc findSupportedSCMS];
