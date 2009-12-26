@@ -17,6 +17,20 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 int mc_ignored = 0;
 int mc_passed = 0;
 
+BOOL isGoodPath(NSString *path) {
+	if ([path hasPrefix: [@"~/Library" stringByStandardizingPath]])
+		return NO;
+	if ([path hasPrefix: [@"~/Downloads" stringByStandardizingPath]])
+		return NO;
+	if ([path hasPrefix: [@"~/Music" stringByStandardizingPath]])
+		return NO;
+	if ([path hasPrefix: [@"~/Movies" stringByStandardizingPath]])
+		return NO;
+	if ([path hasPrefix: [@"~/.Trash" stringByStandardizingPath]])
+		return NO;
+	return YES;
+}
+
 void mc_callbackFunction(
 		ConstFSEventStreamRef streamRef,
 		void *clientCallBackInfo,
@@ -30,7 +44,7 @@ void mc_callbackFunction(
 	MainController *mc = (MainController *)clientCallBackInfo;
 	for (i = 0; i < numEvents; i++) {
 		NSString *s = [NSString stringWithFormat: @"%s", paths[i]];
-		if ([s hasPrefix: [@"~/Library" stringByExpandingTildeInPath]]) {
+		if (!isGoodPath(s)) {
 			mc_ignored++;
 			return;
 		}
@@ -75,14 +89,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	
 	[statusItem setMenu: theMenu];
 	
-	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-		@"1", @"timeMachineEnabled",
-		@"5", @"timeMachineOverdueTime",
-		@"1", @"vcsEnabled",
-		@"0", @"gitTagOnClick",
-		nil];
-	
-	[[NSUserDefaults standardUserDefaults] registerDefaults: dict];	
 	plugins = [[NSMutableArray alloc] initWithCapacity: 10];
 	
 	if ([[NSUserDefaults standardUserDefaults] stringForKey: @"UUID"] == nil) {
@@ -231,18 +237,8 @@ char *find_execable(const char *filename) {
 }
 
 - (void) searchPath: (NSString *)path forGit: (char *)git hg: (char *)hg {
-	// Do not search the library. A LOT of crazy stuff is in there, and it's not a sane place to put repositories.
-	if ([path isEqual: [@"~/Library" stringByStandardizingPath]])
-		return;
-	if ([path isEqual: [@"~/Downloads" stringByStandardizingPath]])
-		return;
-	if ([path isEqual: [@"~/Music" stringByStandardizingPath]])
-		return;
-	if ([path isEqual: [@"~/Movies" stringByStandardizingPath]])
-		return;
-	if ([path isEqual: [@"~/.Trash" stringByStandardizingPath]])
-		return;
-	
+	if (!isGoodPath(path))
+		return;	
 	if ([RepoButtonDelegate alreadyHasPath: path])
 		return;
 	
