@@ -120,27 +120,12 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	myHotKeyID.id = 1;
 	RegisterEventHotKey(36, cmdKey + optionKey, myHotKeyID, GetApplicationEventTarget(), 0, &myHotKeyRef);
 	
-	localTitle = [theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[localTitle setHidden: YES];
-	[localTitle setEnabled: NO];
 	localSeparator = [NSMenuItem separatorItem];
+	[localSeparator setHidden: YES];
 	[theMenu addItem: localSeparator];
-	localSpace = [theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[localSpace setEnabled: NO];
-	[localSpace setHidden: YES];
-
-	upstreamTitle = [theMenu insertItemWithTitle: @"Upstream Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[upstreamTitle setEnabled: NO];
-	[upstreamTitle setHidden: YES];
 	upstreamSeparator = [NSMenuItem separatorItem];
 	[upstreamSeparator setHidden: YES];
 	[theMenu addItem: upstreamSeparator];
-	upstreamSpace = [theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[upstreamSpace setHidden: YES];
-	
-	normalTitle = [theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
-	[normalTitle setHidden: YES];
-	[normalTitle setEnabled: NO];
 	normalSeparator = [NSMenuItem separatorItem];
 	[normalSeparator setHidden: YES];
 	[theMenu addItem: normalSeparator];

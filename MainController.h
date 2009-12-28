@@ -9,17 +9,9 @@
 	NSMenu *theMenu;
 	NSMutableArray *plugins;
 
-	NSMenuItem *normalTitle;
 	NSMenuItem *normalSeparator;
-	NSMenuItem *normalSpace;
-
-	NSMenuItem *upstreamTitle;
 	NSMenuItem *upstreamSeparator;
-	NSMenuItem *upstreamSpace;
-	
-	NSMenuItem *localTitle;
 	NSMenuItem *localSeparator;
-	NSMenuItem *localSpace;
 	
 	ODeskButtonDelegate *odb;
 	NSTimer *timer;
