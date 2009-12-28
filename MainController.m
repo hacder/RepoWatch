@@ -149,7 +149,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	FSEventStreamRef stream;
 	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
 	CFStringRef myPath = (CFStringRef)[@"~" stringByExpandingTildeInPath];
-	// Leaking this.
 	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
 	CFAbsoluteTime latency = 1.0;
 	stream = FSEventStreamCreate(NULL,
@@ -169,6 +168,12 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self]];
 
 	[self findSupportedSCMS];
+
+	NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"manualRepos"];
+	for (NSString *key in dict) {
+		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
+		[self testDirectoryContents: contents ofPath: key];
+	}
 	
     return self;
 }
@@ -187,7 +192,15 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		} else {
 			NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 			NSDictionary *dict = [def dictionaryForKey: @"manualRepos"];
-			NSLog(@"Dictionary: %@", dict);
+			NSMutableDictionary *dict2;
+			if (dict) {
+				dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
+			} else {
+				dict2 = [NSMutableDictionary dictionaryWithCapacity: 1];
+			}
+			[dict2 setObject: [[NSDictionary alloc] init] forKey: filename];
+			[def setObject: dict2 forKey: @"manualRepos"];
+			[def synchronize];
 		}
 	}
 }
