@@ -14,9 +14,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 @implementation MainController
 
-int mc_ignored = 0;
-int mc_passed = 0;
-
 BOOL isGoodPath(NSString *path) {
 	if ([path hasPrefix: [@"~/Library" stringByStandardizingPath]])
 		return NO;
@@ -46,16 +43,11 @@ void mc_callbackFunction(
 	MainController *mc = (MainController *)clientCallBackInfo;
 	for (i = 0; i < numEvents; i++) {
 		NSString *s = [NSString stringWithFormat: @"%s", paths[i]];
-		if (!isGoodPath(s)) {
-			mc_ignored++;
+		if (!isGoodPath(s))
 			return;
-		}
-		NSLog(@"Passing %@", s);
-		mc_passed++;
 		break;
 	}
 	[mc findSupportedSCMS];
-	NSLog(@"Ingored %d, Passed %d (%0.2f%%)", mc_ignored, mc_passed, (mc_ignored * 100.0) / (mc_passed + mc_ignored));
 }
 
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
