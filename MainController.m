@@ -170,6 +170,10 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
     return self;
 }
 
+- (IBAction) openFile: (id) sender {
+	NSLog(@"Here");
+}
+
 char *concat_path_file(const char *path, const char *filename) {
 	char *lc;
 	if (!path)

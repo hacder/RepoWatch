@@ -47,5 +47,6 @@
 - init;
 - (void) maybeRefresh: (ButtonDelegate *)bd;
 - (void) findSupportedSCMS;
+- (IBAction) openFile: (id) sender;
 
 @end

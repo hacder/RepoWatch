@@ -162,9 +162,9 @@
 		if (![s2 isEqual: @"0 files changed"]) {
 			localMod = YES;
 			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index] setTarget: self];
-			NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], s2];
+			NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [self shortenDiff: s2]];
 		
-			[self setAllTitles: [self shortenDiff: sTit]];
+			[self setAllTitles: sTit];
 		} else {
 			localMod = NO;
 			NSString *sTit = [NSString stringWithFormat: @"hg: %@",
