@@ -34,6 +34,7 @@
 - (void) openInTerminal: (id) sender;
 - (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args;
 - (NSTask *)taskFromArguments: (NSArray *)args;
+- (void) ignore: (id) sender;
 
 + (NSUInteger)numModified;
 + (NSUInteger)numLocalEdit;

@@ -81,6 +81,21 @@ void callbackFunction(
 	return t;
 }
 
+- (void) ignore: (id) sender {
+	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+	NSDictionary *dict = [d dictionaryForKey: @"ignoredRepos"];
+	NSMutableDictionary *dict2;
+	if (dict) {
+		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
+	} else {
+		dict2 = [[NSMutableDictionary alloc] initWithCapacity: 1];
+	}
+	[dict2 setObject: [NSMutableDictionary dictionaryWithCapacity: 1] forKey: repository];
+	[d setObject: dict2 forKey: @"ignoredRepos"];
+	[d synchronize];
+	[menuItem setHidden: YES];
+}
+
 - (NSTask *)taskFromArguments: (NSArray *)args {
 	return nil;
 }
