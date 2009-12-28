@@ -20,6 +20,8 @@ int mc_passed = 0;
 BOOL isGoodPath(NSString *path) {
 	if ([path hasPrefix: [@"~/Library" stringByStandardizingPath]])
 		return NO;
+	if ([path hasPrefix: [@"~/Applications" stringByStandardizingPath]])
+		return NO;
 	if ([path hasPrefix: [@"~/Downloads" stringByStandardizingPath]])
 		return NO;
 	if ([path hasPrefix: [@"~/Music" stringByStandardizingPath]])
