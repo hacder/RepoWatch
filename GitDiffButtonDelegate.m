@@ -77,7 +77,6 @@
 	[mc->commitWindow setTitle: repository];
 	[mc->commitWindow makeFirstResponder: mc->tv];
 
-	[mc->tv setNeedsDisplay: YES];
 	if (localMod) {	
 		NSString *diffString = [self getDiff];
 		[mc->tv setString: @""];
