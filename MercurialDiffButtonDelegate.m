@@ -113,12 +113,9 @@
 	
 		NSArray *branches = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"branches", nil]];
 	
-		NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];
-		[m insertItemWithTitle: @"Branches" action: @selector(branch:) keyEquivalent: @"" atIndex: 0];
-		[m insertItem: [NSMenuItem separatorItem] atIndex: 1];
-	
+		NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];	
 		int i;
-		int the_index = 2;
+		int the_index = 0;
 		for (i = 0; i < [branches count]; i++) {
 			NSString *tmp = [branches objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
@@ -131,8 +128,6 @@
 			}
 		}
 	
-		[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
-		[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 		
 		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"5", @"--template", @"{node|short} {desc}\n", nil]];
@@ -143,8 +138,6 @@
 			}
 		}
 		
-		[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
-		[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
 		[t autorelease];

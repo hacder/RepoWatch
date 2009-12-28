@@ -151,11 +151,8 @@
 	NSArray *arguments = [NSArray arrayWithObjects: @"branch", nil];
 	NSArray *branches = [self arrayFromResultOfArgs: arguments];
 
-	[m insertItemWithTitle: @"Branches" action: @selector(branch:) keyEquivalent: @"" atIndex: 0];
-	[m insertItem: [NSMenuItem separatorItem] atIndex: 1];
-	
 	int i;
-	int the_index = 2;
+	int the_index = 0;
 	
 	for (i = 0; i < [branches count]; i++) {
 		NSString *tmp = [branches objectAtIndex: i];
@@ -173,14 +170,12 @@
 		}
 	}
 	
-	[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
 	return the_index;
 }
 
 - (int) doLogsForMenu: (NSMenu *)m atIndex: (int)the_index {
 	int i;
 	
-	[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 	
 	// Leaking these logs.
@@ -193,7 +188,6 @@
 		}
 	}
 	
-	[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
 	return the_index;
 }
 
@@ -250,7 +244,6 @@
 
 	the_index = [self doBranchesForMenu: m];
 	the_index = [self doLogsForMenu: m atIndex: the_index];
-	[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
 	if (!remoteString || [remoteString isEqual: @""]) {
