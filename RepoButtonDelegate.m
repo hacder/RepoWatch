@@ -92,7 +92,7 @@ void callbackFunction(
 		pathsToWatch,
 		kFSEventStreamEventIdSinceNow,
 		latency,
-		kFSEventStreamCreateFlagNone
+		kFSEventStreamCreateFlagNone | kFSEventStreamCreateFlagWatchRoot
 	);
 	
 	FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetMain(), kCFRunLoopDefaultMode);

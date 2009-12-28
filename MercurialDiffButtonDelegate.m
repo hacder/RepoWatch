@@ -82,6 +82,12 @@
 }
 
 - (void) fire {
+	if (![[NSFileManager defaultManager] fileExistsAtPath: repository]) {
+		localMod = NO;
+		upstreamMod = NO;
+		[menuItem setHidden: YES];
+		return;
+	}
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[lock lock];
 		NSTask *t = [[NSTask alloc] init];

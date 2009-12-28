@@ -47,6 +47,7 @@ void mc_callbackFunction(
 	for (i = 0; i < numEvents; i++) {
 		NSString *s = [NSString stringWithFormat: @"%s", paths[i]];
 		if (!isGoodPath(s)) {
+			NSLog(@"Skipping %@", s);
 			mc_ignored++;
 			return;
 		}
