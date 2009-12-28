@@ -207,6 +207,24 @@
 	return the_index;
 }
 
+- (void) noMods {
+	localMod = NO;
+	upstreamMod = NO;
+	dispatch_sync(dispatch_get_main_queue(), ^{
+		NSString *s3;
+		if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
+			s3 = [NSString stringWithFormat: @"git: %@",
+				[repository lastPathComponent]];
+		} else {
+			s3 = [NSString stringWithFormat: @"git: %@ (%@)",
+					[repository lastPathComponent], currentBranch];
+		}
+		[self setTitle: s3];
+		[self setShortTitle: s3];
+		[self setHidden: NO];
+	});
+}
+
 - (void) realFire {
 	int the_index = 0;
 	
@@ -224,21 +242,7 @@
 
 	if (!remoteString || [remoteString isEqual: @""]) {
 		if ([string isEqual: @""]) {
-			localMod = NO;
-			upstreamMod = NO;
-			dispatch_sync(dispatch_get_main_queue(), ^{
-				NSString *s3;
-				if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-					s3 = [NSString stringWithFormat: @"git: %@",
-						[repository lastPathComponent]];
-				} else {
-					s3 = [NSString stringWithFormat: @"git: %@ (%@)",
-							[repository lastPathComponent], currentBranch];
-				}
-				[self setTitle: s3];
-				[self setShortTitle: s3];
-				[self setHidden: NO];
-			});
+			[self noMods];
 		} else {
 			NSString *sTit;
 			localMod = YES;
