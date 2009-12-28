@@ -19,7 +19,6 @@
 - (NSString *) shortTitle;
 - (void) setShortTitle: (NSString *)t;
 - (void) setTitle: (NSString *)t;
-- (void) setHidden: (BOOL)b;
 - (NSMenuItem *) getMenuItem;
 - (void) beep: (id) something;
 

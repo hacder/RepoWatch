@@ -5,7 +5,7 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc gitPath: (char *)gitPath repository: (NSString *)rep {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	git = gitPath;
-	[self setHidden: YES];
+	[menuItem setHidden: YES];
 	[menuItem setAction: nil];
 	
 	diffCommitTV = mc->diffCommitTextView;
@@ -199,7 +199,7 @@
 		}
 		[self setTitle: s3];
 		[self setShortTitle: s3];
-		[self setHidden: NO];
+		[menuItem setHidden: NO];
 	});
 }
 
@@ -222,7 +222,7 @@
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		[self setTitle: sTit];
 		[self setShortTitle: sTit];
-		[self setHidden: NO];
+		[menuItem setHidden: NO];
 	});
 }
 
@@ -266,7 +266,7 @@
 		dispatch_sync(dispatch_get_main_queue(), ^{
 			[self setTitle: sTit];
 			[self setShortTitle: sTit];
-			[self setHidden: NO];
+			[menuItem setHidden: NO];
 		});
 	}
 	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];

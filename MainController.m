@@ -123,9 +123,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	localTitle = [theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	[localTitle setHidden: YES];
 	[localTitle setEnabled: NO];
-	localSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Changed" menu: theMenu statusItem: statusItem mainController: self];
-	[localSeparator setHidden: YES];
-	[plugins addObject: localSeparator];
+	localSeparator = [NSMenuItem separatorItem];
+	[theMenu addItem: localSeparator];
 	localSpace = [theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	[localSpace setEnabled: NO];
 	[localSpace setHidden: YES];
@@ -133,18 +132,18 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	upstreamTitle = [theMenu insertItemWithTitle: @"Upstream Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	[upstreamTitle setEnabled: NO];
 	[upstreamTitle setHidden: YES];
-	upstreamSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Upstream" menu: theMenu statusItem: statusItem mainController: self];
+	upstreamSeparator = [NSMenuItem separatorItem];
 	[upstreamSeparator setHidden: YES];
-	[plugins addObject: upstreamSeparator];
+	[theMenu addItem: upstreamSeparator];
 	upstreamSpace = [theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	[upstreamSpace setHidden: YES];
 	
 	normalTitle = [theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	[normalTitle setHidden: YES];
 	[normalTitle setEnabled: NO];
-	normalSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Up To Date" menu: theMenu statusItem: statusItem mainController: self];
+	normalSeparator = [NSMenuItem separatorItem];
 	[normalSeparator setHidden: YES];
-	[plugins addObject: normalSeparator];
+	[theMenu addItem: normalSeparator];
 	
 	timer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(ping) userInfo: nil repeats: YES];
 	
@@ -369,11 +368,11 @@ char *find_execable(const char *filename) {
 		NSInteger index = 0;
 		
 		if (bd2->localMod) {
-			index = [theMenu indexOfItem: [localSeparator getMenuItem]];
+			index = [theMenu indexOfItem: localSeparator];
 		} else if (bd2->upstreamMod) {
-			index = [theMenu indexOfItem: [upstreamSeparator getMenuItem]];
+			index = [theMenu indexOfItem: upstreamSeparator];
 		} else {
-			index = [theMenu indexOfItem: [normalSeparator getMenuItem]];
+			index = [theMenu indexOfItem: normalSeparator];
 		}
 		[theMenu insertItem: [bd2 getMenuItem] atIndex: index + 1];
 	}

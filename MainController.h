@@ -10,15 +10,15 @@
 	NSMutableArray *plugins;
 
 	NSMenuItem *normalTitle;
-	ButtonDelegate *normalSeparator;
+	NSMenuItem *normalSeparator;
 	NSMenuItem *normalSpace;
 
 	NSMenuItem *upstreamTitle;
-	ButtonDelegate *upstreamSeparator;
+	NSMenuItem *upstreamSeparator;
 	NSMenuItem *upstreamSpace;
 	
 	NSMenuItem *localTitle;
-	ButtonDelegate *localSeparator;
+	NSMenuItem *localSeparator;
 	NSMenuItem *localSpace;
 	
 	ODeskButtonDelegate *odb;

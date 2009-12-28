@@ -47,7 +47,7 @@
 			[t launch];
 		} @catch (NSException *e) {
 			[self setTitle: @"Errored"];
-			[self setHidden: YES];
+			[menuItem setHidden: YES];
 			localMod = NO;
 			upstreamMod = NO;
 			return;

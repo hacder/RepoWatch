@@ -20,11 +20,6 @@
 	return nil;
 }
 
-- (void) setHidden: (BOOL) b {
-	[menuItem setHidden: b];
-	[mc maybeRefresh: self];
-}
-
 - (void) setTitle: (NSString *)t {
 	[t retain];
 	[menuItem setTitle: t];
