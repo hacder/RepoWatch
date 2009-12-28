@@ -157,25 +157,16 @@
 	[mc->diffCommitWindow makeFirstResponder: diffCommitTV];
 }
 
-- (void) realFire {
-	int the_index = 0;
-	
-	NSString *remoteString = [self getDiffRemote: YES];		
-	NSString *string = [self getDiffRemote: NO];
-	if (string == nil)
-		return;
-	
-	// Leaking branches
+- (int) doBranchesForMenu: (NSMenu *)m {
 	NSArray *arguments = [NSArray arrayWithObjects: @"branch", nil];
 	NSArray *branches = [self arrayFromResultOfArgs: arguments];
 
-	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
-	// Leaking NSMenuItem here
 	[m insertItemWithTitle: @"Branches" action: @selector(branch:) keyEquivalent: @"" atIndex: 0];
 	[m insertItem: [NSMenuItem separatorItem] atIndex: 1];
-
+	
 	int i;
-	the_index = 2;
+	int the_index = 2;
+	
 	for (i = 0; i < [branches count]; i++) {
 		NSString *tmp = [branches objectAtIndex: i];
 		if (tmp && [tmp length] > 0) {
@@ -193,6 +184,21 @@
 	}
 	
 	[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
+	return the_index;
+}
+
+- (void) realFire {
+	int the_index = 0;
+	int i;
+	
+	NSString *remoteString = [self getDiffRemote: YES];		
+	NSString *string = [self getDiffRemote: NO];
+	if (string == nil)
+		return;
+	
+	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
+
+	the_index = [self doBranchesForMenu: m];
 	[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 	
