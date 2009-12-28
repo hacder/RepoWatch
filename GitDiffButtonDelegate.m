@@ -225,6 +225,29 @@
 	});
 }
 
+- (void) localModsWithMenu: (NSMenu *)m index: (int)the_index string: (NSString *)string {
+	NSString *sTit;
+	localMod = YES;
+	upstreamMod = NO;
+	[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+	if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
+		sTit = [NSString stringWithFormat: @"%@: %@",
+			[repository lastPathComponent],
+			[string stringByTrimmingCharactersInSet:
+				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+	} else {
+		sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
+			[repository lastPathComponent],
+			[string stringByTrimmingCharactersInSet:
+			[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
+	}
+	dispatch_sync(dispatch_get_main_queue(), ^{
+		[self setTitle: sTit];
+		[self setShortTitle: sTit];
+		[self setHidden: NO];
+	});
+}
+
 - (void) realFire {
 	int the_index = 0;
 	
@@ -244,26 +267,7 @@
 		if ([string isEqual: @""]) {
 			[self noMods];
 		} else {
-			NSString *sTit;
-			localMod = YES;
-			upstreamMod = NO;
-			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-			if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-				sTit = [NSString stringWithFormat: @"%@: %@",
-					[repository lastPathComponent],
-					[string stringByTrimmingCharactersInSet:
-						[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
-			} else {
-				sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
-					[repository lastPathComponent],
-					[string stringByTrimmingCharactersInSet:
-					[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
-			}
-			dispatch_sync(dispatch_get_main_queue(), ^{
-				[self setTitle: sTit];
-				[self setShortTitle: sTit];
-				[self setHidden: NO];
-			});
+			[self localModsWithMenu: m index: the_index string: string];
 		}
 	} else {
 		// There is a remote diff.
