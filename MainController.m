@@ -72,6 +72,9 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	time = __TIME__;
 	doneRepoSearch = NO;
 	
+	git = NULL;
+	hg = NULL;
+	
 	lock = [[NSLock alloc] init];
 	
 	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
@@ -175,9 +178,13 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[op setCanChooseFiles: NO];
 	[op setCanChooseDirectories: YES];
 	[op setAllowsMultipleSelection: NO];
+	// TODO: Find some way to verify directory before they hit OK.
 	if ([op runModal] == NSOKButton) {
 		NSString *filename = [op filename];
-		NSLog(@"Got filename: %@", filename);
+		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: filename error: nil];
+		if (![self testDirectoryContents: contents ofPath: filename]) {
+			// TODO: Add alert here.
+		}
 	}
 }
 
@@ -252,7 +259,7 @@ char *find_execable(const char *filename) {
 	return NULL;
 }
 
-- (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path forGit: (char *)git hg: (char *)hg {
+- (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path {
 	if ([contents containsObject: @".git"]) {
 		if (git) {
 			NSLog(@"Found git repository at %@", path);
@@ -277,7 +284,7 @@ char *find_execable(const char *filename) {
 	return NO;
 }
 
-- (void) searchPath: (NSString *)path forGit: (char *)git hg: (char *)hg {
+- (void) searchPath: (NSString *)path {
 	if (!isGoodPath(path))
 		return;	
 	if ([RepoButtonDelegate alreadyHasPath: path])
@@ -289,28 +296,30 @@ char *find_execable(const char *filename) {
 	}
 
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
-	if (![self testDirectoryContents: contents ofPath: path forGit: git hg: hg]) {
+	if (![self testDirectoryContents: contents ofPath: path]) {
 		int i;
 		for (i = 0; i < [contents count]; i++) {
 			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] retain];
 			NSAutoreleasePool *innerPool = [[NSAutoreleasePool alloc] init];
-			[self searchPath: s forGit: git hg: hg];
+			[self searchPath: s];
 			[innerPool release];
 			[s release];
 		}
 	}
 }
 
-- (void) searchAllPathsForGit: (char *)git hg: (char *)hg {
-	[self searchPath: [@"~" stringByStandardizingPath] forGit: git hg: hg];
+- (void) searchAllPaths {
+	[self searchPath: [@"~" stringByStandardizingPath]];
 }
 
 - (void) findSupportedSCMS {
 	if (![lock tryLock])
 		return;
 		
-	char *git = find_execable("git");
-	char *hg = find_execable("hg");
+	if (!git)
+		git = find_execable("git");
+	if (!hg)
+		hg = find_execable("hg");
 
 	if (!doneRepoSearch) {	
 		NSLog(@"Git: %s Mercurial: %s", git, hg);
@@ -319,7 +328,7 @@ char *find_execable(const char *filename) {
 	
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[self searchAllPathsForGit: git hg: hg];
+		[self searchAllPaths];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[lock unlock];
 		});

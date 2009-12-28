@@ -27,6 +27,9 @@
 	char *date;
 	char *time;
 	
+	char *git;
+	char *hg;
+	
 	NSTimer *demoTimer;
 	BOOL doneRepoSearch;
 
@@ -48,5 +51,6 @@
 - (void) maybeRefresh: (ButtonDelegate *)bd;
 - (void) findSupportedSCMS;
 - (IBAction) openFile: (id) sender;
+- (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path;
 
 @end
