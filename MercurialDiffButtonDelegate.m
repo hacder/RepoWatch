@@ -29,6 +29,9 @@
 	[mc->tv setString: @""];
 	[mc->tv setNeedsDisplay: YES];
 	if (localMod) {	
+		NSString *diffString = [self getDiff];
+		[mc->tv setString: @""];
+		[mc->diffView setString: diffString];
 		[mc->butt setTitle: @"Do Commit"];
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(clickUpdate:)];

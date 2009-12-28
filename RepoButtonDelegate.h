@@ -25,6 +25,7 @@
 - (NSTask *)taskFromArguments: (NSArray *)args; 
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args;
 - (NSString *)shortenDiff: (NSString *)diff;
+- (NSString *)getDiff;
 
 + (NSUInteger)numModified;
 + (NSUInteger)numLocalEdit;

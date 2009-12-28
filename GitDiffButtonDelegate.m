@@ -78,16 +78,6 @@
 	return [self shortenDiff: string];
 }
 
-- (NSString *)getDiff {
-	NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
-	NSTask *t = [[self taskFromArguments: arr] autorelease];
-	NSFileHandle *file = [self pipeForTask: t];
-	[t launch];
-	NSString *result = [self stringFromFile: file];
-	[file closeFile];
-	return result;
-}
-
 - (void) commit: (id) menuItem {
 	[mc->commitWindow setTitle: repository];
 	[mc->commitWindow makeFirstResponder: mc->tv];
