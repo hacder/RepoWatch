@@ -45,13 +45,17 @@ void callbackFunction(
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args {
 	NSTask *t = [[self taskFromArguments: args] autorelease];
 	NSFileHandle *file = [self pipeForTask: t];
-	// TODO: Wrap in try/catch
-	[t launch];
-	
-	NSString *string = [self stringFromFile: file];
-	NSArray *result = [string componentsSeparatedByString: @"\n"];
-	[file closeFile];
-	return result;
+
+	@try {
+		[t launch];
+		
+		NSString *string = [self stringFromFile: file];
+		NSArray *result = [string componentsSeparatedByString: @"\n"];
+		[file closeFile];
+		return result;
+	} @catch (NSException *e) {
+	}
+	return nil;
 }
 
 - (NSFileHandle *)pipeForTask: (NSTask *)t {
