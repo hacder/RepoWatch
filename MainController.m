@@ -354,6 +354,7 @@ char *find_execable(const char *filename) {
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self searchAllPaths];
 		dispatch_async(dispatch_get_main_queue(), ^{
+			NSLog(@"Done searching");
 			[lock unlock];
 		});
 	});
