@@ -187,18 +187,9 @@
 	return the_index;
 }
 
-- (void) realFire {
-	int the_index = 0;
+- (int) doLogsForMenu: (NSMenu *)m atIndex: (int)the_index {
 	int i;
 	
-	NSString *remoteString = [self getDiffRemote: YES];		
-	NSString *string = [self getDiffRemote: NO];
-	if (string == nil)
-		return;
-	
-	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
-
-	the_index = [self doBranchesForMenu: m];
 	[m insertItemWithTitle: @"Logs" action: nil keyEquivalent: @"" atIndex: the_index++];
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 	
@@ -213,6 +204,21 @@
 	}
 	
 	[m insertItemWithTitle: @"" action: nil keyEquivalent: @"" atIndex: the_index++];
+	return the_index;
+}
+
+- (void) realFire {
+	int the_index = 0;
+	
+	NSString *remoteString = [self getDiffRemote: YES];		
+	NSString *string = [self getDiffRemote: NO];
+	if (string == nil)
+		return;
+	
+	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
+
+	the_index = [self doBranchesForMenu: m];
+	the_index = [self doLogsForMenu: m atIndex: the_index];
 	[m insertItemWithTitle: @"Actions" action: nil keyEquivalent: @"" atIndex: the_index++];
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
