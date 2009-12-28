@@ -243,10 +243,16 @@ char *find_execable(const char *filename) {
 		return;	
 	if ([RepoButtonDelegate alreadyHasPath: path])
 		return;
-	
+	NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: path error: nil];
+	if ([fileAttributes objectForKey: @"NSFileType"] == NSFileTypeSymbolicLink) {
+		NSLog(@"Skipping out on symlink: %@", path);
+		return;
+	}
+
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
 	if ([contents containsObject: @".git"]) {
 		if (git) {
+			NSLog(@"Found git repository at %@", path);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
 					menu: theMenu statusItem: statusItem mainController: self
@@ -256,6 +262,7 @@ char *find_execable(const char *filename) {
 	} else if ([contents containsObject: @".svn"] && ![path isEqual: [@"~" stringByStandardizingPath]]) {
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
+			NSLog(@"Found mercurial repository at %@", path);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
 					menu: theMenu statusItem: statusItem mainController: self
@@ -266,7 +273,9 @@ char *find_execable(const char *filename) {
 		int i;
 		for (i = 0; i < [contents count]; i++) {
 			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] retain];
+			NSAutoreleasePool *innerPool = [[NSAutoreleasePool alloc] init];
 			[self searchPath: s forGit: git hg: hg];
+			[innerPool release];
 			[s release];
 		}
 	}
