@@ -123,21 +123,29 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	RegisterEventHotKey(36, cmdKey + optionKey, myHotKeyID, GetApplicationEventTarget(), 0, &myHotKeyRef);
 	
 	localTitle = [theMenu insertItemWithTitle: @"Local Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[localTitle setHidden: YES];
 	[localTitle setEnabled: NO];
 	localSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Changed" menu: theMenu statusItem: statusItem mainController: self];
+	[localSeparator setHidden: YES];
 	[plugins addObject: localSeparator];
 	localSpace = [theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	[localSpace setEnabled: NO];
+	[localSpace setHidden: YES];
 
 	upstreamTitle = [theMenu insertItemWithTitle: @"Upstream Edits" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
 	[upstreamTitle setEnabled: NO];
+	[upstreamTitle setHidden: YES];
 	upstreamSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Upstream" menu: theMenu statusItem: statusItem mainController: self];
+	[upstreamSeparator setHidden: YES];
 	[plugins addObject: upstreamSeparator];
 	upstreamSpace = [theMenu insertItemWithTitle: @" " action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[upstreamSpace setHidden: YES];
 	
 	normalTitle = [theMenu insertItemWithTitle: @"Up To Date" action: nil keyEquivalent: @"" atIndex: [theMenu numberOfItems]];
+	[normalTitle setHidden: YES];
 	[normalTitle setEnabled: NO];
 	normalSeparator = [[SeparatorButtonDelegate alloc] initWithTitle: @"Up To Date" menu: theMenu statusItem: statusItem mainController: self];
+	[normalSeparator setHidden: YES];
 	[plugins addObject: normalSeparator];
 	
 	timer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(ping) userInfo: nil repeats: YES];
@@ -368,33 +376,6 @@ char *find_execable(const char *filename) {
 			index = [theMenu indexOfItem: [normalSeparator getMenuItem]];
 		}
 		[theMenu insertItem: [bd2 getMenuItem] atIndex: index + 1];
-		if ([RepoButtonDelegate numLocalEdit] == 0) {
-			[localSeparator setHidden: YES];
-			[localTitle setHidden: YES];
-			[localSpace setHidden: YES];
-		} else {
-			[localSeparator setHidden: NO];
-			[localTitle setHidden: NO];
-			[localSpace setHidden: NO];
-		}
-		if ([RepoButtonDelegate numRemoteEdit] == 0) {
-			[upstreamSeparator setHidden: YES];
-			[upstreamTitle setHidden: YES];
-			[upstreamSpace setHidden: YES];
-		} else {
-			[upstreamSeparator setHidden: NO];
-			[upstreamTitle setHidden: NO];
-			[upstreamSpace setHidden: NO];
-		}
-		if ([RepoButtonDelegate numUpToDate] == 0) {
-			[normalSeparator setHidden: YES];
-			[normalTitle setHidden: YES];
-			[normalSpace setHidden: YES];
-		} else {
-			[normalSeparator setHidden: NO];
-			[normalTitle setHidden: NO];
-			[normalSpace setHidden: NO];
-		}
 	}
 }
 

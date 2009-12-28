@@ -10,6 +10,10 @@
 	NSTextView *tv;
 	NSWindow *window;
 	
+	NSImage *redBubble;
+	NSImage *yellowBubble;
+	NSImage *greenBubble;
+	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
 @public

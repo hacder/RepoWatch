@@ -283,6 +283,12 @@
 		});
 	}
 	dispatch_sync(dispatch_get_main_queue(), ^{
+		if (localMod)
+			[menuItem setImage: redBubble];
+		else if (upstreamMod)
+			[menuItem setImage: yellowBubble];
+		else
+			[menuItem setImage: greenBubble];
 		[menuItem setSubmenu: m];
 	});
 }
