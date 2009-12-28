@@ -178,6 +178,12 @@
 		[lock unlock];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[lock lock];
+			if (localMod)
+				[menuItem setImage: redBubble];
+			else if (upstreamMod)
+				[menuItem setImage: yellowBubble];
+			else
+				[menuItem setImage: greenBubble];
 			[menuItem setSubmenu: m];
 			[lock unlock];
 		});
