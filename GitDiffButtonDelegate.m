@@ -16,14 +16,17 @@
 	return self;
 }
 
-- (NSTask *)taskFromArguments: (NSArray *)args {
+- (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args {
 	NSTask *t = [[NSTask alloc] init];
-	NSString *lp = [NSString stringWithFormat: @"%s", git];
-	[t setLaunchPath: lp];
+	[t setLaunchPath: task];
 	[t setCurrentDirectoryPath: repository];
 	[t setArguments: args];
-
 	return t;
+}
+
+- (NSTask *)taskFromArguments: (NSArray *)args {
+	NSString *lp = [NSString stringWithFormat: @"%s", git];
+	return [self baseTask: lp fromArguments: args];
 }
 
 - (void) updateRemote {
@@ -232,6 +235,12 @@
 	});
 }
 
+- (void) openInFinder: (id) sender {
+	NSTask *t = [self baseTask: @"/usr/bin/open" fromArguments: [NSArray arrayWithObjects: @".", nil]];
+	[t autorelease];
+	[t launch];
+}
+
 - (void) realFire {
 	int the_index = 0;
 	
@@ -275,6 +284,7 @@
 			[self setHidden: NO];
 		});
 	}
+	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		if (localMod)
 			[menuItem setImage: redBubble];
