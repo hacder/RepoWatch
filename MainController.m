@@ -171,7 +171,14 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 }
 
 - (IBAction) openFile: (id) sender {
-	NSLog(@"Here");
+	NSOpenPanel *op = [NSOpenPanel openPanel];
+	[op setCanChooseFiles: NO];
+	[op setCanChooseDirectories: YES];
+	[op setAllowsMultipleSelection: NO];
+	if ([op runModal] == NSOKButton) {
+		NSString *filename = [op filename];
+		NSLog(@"Got filename: %@", filename);
+	}
 }
 
 char *concat_path_file(const char *path, const char *filename) {
@@ -245,6 +252,31 @@ char *find_execable(const char *filename) {
 	return NULL;
 }
 
+- (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path forGit: (char *)git hg: (char *)hg {
+	if ([contents containsObject: @".git"]) {
+		if (git) {
+			NSLog(@"Found git repository at %@", path);
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
+					menu: theMenu statusItem: statusItem mainController: self
+					gitPath: git repository: path]];
+			});
+			return YES;
+		}
+	} else if ([contents containsObject: @".hg"]) {
+		if (hg) {
+			NSLog(@"Found mercurial repository at %@", path);
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
+					menu: theMenu statusItem: statusItem mainController: self
+					hgPath: hg repository: path]];
+			});
+			return YES;
+		}
+	}
+	return NO;
+}
+
 - (void) searchPath: (NSString *)path forGit: (char *)git hg: (char *)hg {
 	if (!isGoodPath(path))
 		return;	
@@ -257,26 +289,7 @@ char *find_execable(const char *filename) {
 	}
 
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
-	if ([contents containsObject: @".git"]) {
-		if (git) {
-			NSLog(@"Found git repository at %@", path);
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
-					menu: theMenu statusItem: statusItem mainController: self
-					gitPath: git repository: path]];
-			});
-		}
-	} else if ([contents containsObject: @".svn"] && ![path isEqual: [@"~" stringByStandardizingPath]]) {
-	} else if ([contents containsObject: @".hg"]) {
-		if (hg) {
-			NSLog(@"Found mercurial repository at %@", path);
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
-					menu: theMenu statusItem: statusItem mainController: self
-					hgPath: hg repository: path]];
-			});
-		}
-	} else {
+	if (![self testDirectoryContents: contents ofPath: path forGit: git hg: hg]) {
 		int i;
 		for (i = 0; i < [contents count]; i++) {
 			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] retain];
