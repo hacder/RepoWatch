@@ -31,10 +31,6 @@ void callbackFunction(
 	}
 }
 
-- (NSTask *)taskFromArguments: (NSArray *)args {
-	return nil;
-}
-
 - (NSString *)stringFromFile: (NSFileHandle *)file {
 	NSData *data = [file readDataToEndOfFile];
 	NSString *string = [[[NSString alloc] initWithData: data
@@ -63,6 +59,30 @@ void callbackFunction(
 	[t setStandardOutput: pipe];
 	NSFileHandle *file = [pipe fileHandleForReading];
 	return file;
+}
+
+- (void) openInFinder: (id) sender {
+	NSTask *t = [self baseTask: @"/usr/bin/open" fromArguments: [NSArray arrayWithObjects: @".", nil]];
+	[t autorelease];
+	[t launch];
+}
+
+- (void) openInTerminal: (id) sender {
+	NSString *s = [NSString stringWithFormat: @"tell application \"Terminal\" to do script \"cd '%@'\"", repository];
+	NSAppleScript *as = [[NSAppleScript alloc] initWithSource: s];
+	[as executeAndReturnError:nil];
+}
+
+- (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args {
+	NSTask *t = [[NSTask alloc] init];
+	[t setLaunchPath: task];
+	[t setCurrentDirectoryPath: repository];
+	[t setArguments: args];
+	return t;
+}
+
+- (NSTask *)taskFromArguments: (NSArray *)args {
+	return nil;
 }
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {

@@ -30,6 +30,10 @@
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args;
 - (NSString *)shortenDiff: (NSString *)diff;
 - (NSString *)getDiff;
+- (void) openInFinder: (id) sender;
+- (void) openInTerminal: (id) sender;
+- (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args;
+- (NSTask *)taskFromArguments: (NSArray *)args;
 
 + (NSUInteger)numModified;
 + (NSUInteger)numLocalEdit;

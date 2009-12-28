@@ -16,14 +16,6 @@
 	return self;
 }
 
-- (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args {
-	NSTask *t = [[NSTask alloc] init];
-	[t setLaunchPath: task];
-	[t setCurrentDirectoryPath: repository];
-	[t setArguments: args];
-	return t;
-}
-
 - (NSTask *)taskFromArguments: (NSArray *)args {
 	NSString *lp = [NSString stringWithFormat: @"%s", git];
 	return [self baseTask: lp fromArguments: args];
@@ -233,18 +225,6 @@
 		[self setShortTitle: sTit];
 		[self setHidden: NO];
 	});
-}
-
-- (void) openInFinder: (id) sender {
-	NSTask *t = [self baseTask: @"/usr/bin/open" fromArguments: [NSArray arrayWithObjects: @".", nil]];
-	[t autorelease];
-	[t launch];
-}
-
-- (void) openInTerminal: (id) sender {
-	NSString *s = [NSString stringWithFormat: @"tell application \"Terminal\" to do script \"cd '%@'\"", repository];
-	NSAppleScript *as = [[NSAppleScript alloc] initWithSource: s];
-	[as executeAndReturnError:nil];
 }
 
 - (void) realFire {
