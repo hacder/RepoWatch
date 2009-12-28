@@ -48,7 +48,7 @@
 }
 	
 - (NSString *) getDiffRemote: (BOOL)remote {
-	NSArray *arr;
+	NSArray *arr;  
 	NSTask *t;
 	NSFileHandle *file;
 	NSString *string;
@@ -75,7 +75,16 @@
 	string = [self stringFromFile: file];
 	[file closeFile];
 	
-	return string;
+	NSArray *parts = [string componentsSeparatedByString: @", "];
+	if ([parts count] == 3) {
+		NSString *ret = [NSString stringWithFormat: @"%d files, +%d -%d",
+			[[parts objectAtIndex: 0] intValue],
+			[[parts objectAtIndex: 1] intValue],
+			[[parts objectAtIndex: 2] intValue]];
+		return ret;
+	} else {
+		return string;
+	}
 }
 
 - (NSString *)getDiff {
