@@ -184,6 +184,10 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: filename error: nil];
 		if (![self testDirectoryContents: contents ofPath: filename]) {
 			// TODO: Add alert here.
+		} else {
+			NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+			NSDictionary *dict = [def dictionaryForKey: @"manualRepos"];
+			NSLog(@"Dictionary: %@", dict);
 		}
 	}
 }
@@ -260,6 +264,8 @@ char *find_execable(const char *filename) {
 }
 
 - (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path {
+	if ([RepoButtonDelegate alreadyHasPath: path])
+		return NO;
 	if ([contents containsObject: @".git"]) {
 		if (git) {
 			NSLog(@"Found git repository at %@", path);
@@ -287,8 +293,6 @@ char *find_execable(const char *filename) {
 - (void) searchPath: (NSString *)path {
 	if (!isGoodPath(path))
 		return;	
-	if ([RepoButtonDelegate alreadyHasPath: path])
-		return;
 	NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: path error: nil];
 	if ([fileAttributes objectForKey: @"NSFileType"] == NSFileTypeSymbolicLink) {
 		NSLog(@"Skipping out on symlink: %@", path);
