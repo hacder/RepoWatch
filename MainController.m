@@ -306,10 +306,8 @@ char *find_execable(const char *filename) {
 	if (!isGoodPath(path))
 		return;	
 	NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: path error: nil];
-	if ([fileAttributes objectForKey: @"NSFileType"] == NSFileTypeSymbolicLink) {
-		NSLog(@"Skipping out on symlink: %@", path);
+	if ([fileAttributes objectForKey: @"NSFileType"] == NSFileTypeSymbolicLink)
 		return;
-	}
 
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
 	if (![self testDirectoryContents: contents ofPath: path]) {
