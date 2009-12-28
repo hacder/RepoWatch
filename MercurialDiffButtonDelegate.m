@@ -158,7 +158,7 @@
 			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index] setTarget: self];
 			NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], s2];
 		
-			[self setAllTitles: sTit];
+			[self setAllTitles: [self shortenDiff: sTit]];
 		} else {
 			localMod = NO;
 			NSString *sTit = [NSString stringWithFormat: @"hg: %@",

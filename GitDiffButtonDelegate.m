@@ -75,16 +75,7 @@
 	string = [self stringFromFile: file];
 	[file closeFile];
 	
-	NSArray *parts = [string componentsSeparatedByString: @", "];
-	if ([parts count] == 3) {
-		NSString *ret = [NSString stringWithFormat: @"%d files, +%d -%d",
-			[[parts objectAtIndex: 0] intValue],
-			[[parts objectAtIndex: 1] intValue],
-			[[parts objectAtIndex: 2] intValue]];
-		return ret;
-	} else {
-		return string;
-	}
+	return [self shortenDiff: string];
 }
 
 - (NSString *)getDiff {

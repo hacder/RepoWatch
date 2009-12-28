@@ -18,6 +18,19 @@ void callbackFunction(
 	[rbd fire];
 }
 
+- (NSString *)shortenDiff: (NSString *)diff {
+	NSArray *parts = [diff componentsSeparatedByString: @", "];
+	if ([parts count] == 3) {
+		NSString *ret = [NSString stringWithFormat: @"%d files, +%d -%d",
+			[[parts objectAtIndex: 0] intValue],
+			[[parts objectAtIndex: 1] intValue],
+			[[parts objectAtIndex: 2] intValue]];
+		return ret;
+	} else {
+		return diff;
+	}
+}
+
 - (NSTask *)taskFromArguments: (NSArray *)args {
 	return nil;
 }

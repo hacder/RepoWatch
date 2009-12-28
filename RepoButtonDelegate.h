@@ -24,6 +24,7 @@
 - (NSString *)stringFromFile: (NSFileHandle *)file;
 - (NSTask *)taskFromArguments: (NSArray *)args; 
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args;
+- (NSString *)shortenDiff: (NSString *)diff;
 
 + (NSUInteger)numModified;
 + (NSUInteger)numLocalEdit;
