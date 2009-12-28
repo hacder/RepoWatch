@@ -4,11 +4,11 @@ SRC = icons.m ButtonDelegate.m RepoButtonDelegate.m \
 	MainController.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
 	QuitButtonDelegate.m SeparatorButtonDelegate.m BugController.m
 
-CFLAGS=-F./RepoWatch.app/Contents/Frameworks -Wall -Werror -g
+CFLAGS=-F./RepoWatch.app/Contents/Frameworks -Wall -Werror -g -arch x86_64 -arch i386
 OBJ = $(addsuffix .o, $(basename $(SRC)))
 
 RepoWatch: $(OBJ)
-	gcc -F./RepoWatch.app/Contents/Frameworks -framework Sparkle -framework Carbon -framework Foundation -framework AppKit -lobjc *.o -g -o RepoWatch
+	gcc -F./RepoWatch.app/Contents/Frameworks -framework Sparkle -framework Carbon -framework Foundation -framework AppKit -lobjc *.o -g -o RepoWatch -arch x86_64 -arch i386
 	cp RepoWatch RepoWatch.app/Contents/MacOS/
 
 release: RepoWatch
