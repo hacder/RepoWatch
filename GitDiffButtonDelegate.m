@@ -179,7 +179,7 @@
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 	
 	// Leaking these logs.
-	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"5", @"--pretty=oneline", @"--abbrev-commit", nil]];
+	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=oneline", @"--abbrev-commit", nil]];
 	for (i = 0; i < [logs count]; i++) {
 		NSString *tmp = [logs objectAtIndex: i];
 		if (tmp && [tmp length] > 0) {
