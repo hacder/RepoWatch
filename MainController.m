@@ -334,8 +334,11 @@ char *find_execable(const char *filename) {
 }
 
 - (void) findSupportedSCMS {
-	if (![lock tryLock])
+	if (![lock tryLock]) {
+		NSLog(@"Failing to lock. Bailing");
 		return;
+	}
+	NSLog(@"Searching all paths");
 		
 	if (!git)
 		git = find_execable("git");
