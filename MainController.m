@@ -69,6 +69,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	time = __TIME__;
 	doneRepoSearch = NO;
 	
+	lock = [[NSLock alloc] init];
+	
 	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
 	
 	// 30 days from compilation.
@@ -275,6 +277,9 @@ char *find_execable(const char *filename) {
 }
 
 - (void) findSupportedSCMS {
+	if (![lock tryLock])
+		return;
+		
 	char *git = find_execable("git");
 	char *hg = find_execable("hg");
 
@@ -286,6 +291,9 @@ char *find_execable(const char *filename) {
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self searchAllPathsForGit: git hg: hg];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[lock unlock];
+		});
 	});
 }
 

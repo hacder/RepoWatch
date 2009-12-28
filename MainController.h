@@ -30,6 +30,7 @@
 	NSTimer *demoTimer;
 	BOOL doneRepoSearch;
 
+	NSLock *lock;
 @public	
 	IBOutlet NSWindow *commitWindow;
 	IBOutlet NSTextView *tv;
