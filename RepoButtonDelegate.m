@@ -145,7 +145,7 @@ void callbackFunction(
 	CFStringRef myPath = (CFStringRef)repository;
 	// Leaking this.
 	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
-	CFAbsoluteTime latency = 0.0;
+	CFAbsoluteTime latency = 1.0;
 	stream = FSEventStreamCreate(NULL,
 		&callbackFunction,
 		&fsesc,
