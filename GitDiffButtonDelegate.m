@@ -241,6 +241,12 @@
 	[t launch];
 }
 
+- (void) openInTerminal: (id) sender {
+	NSString *s = [NSString stringWithFormat: @"tell application \"Terminal\" to do script \"cd '%@'\"", repository];
+	NSAppleScript *as = [[NSAppleScript alloc] initWithSource: s];
+	[as executeAndReturnError:nil];
+}
+
 - (void) realFire {
 	int the_index = 0;
 	
@@ -285,6 +291,7 @@
 		});
 	}
 	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+	[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		if (localMod)
 			[menuItem setImage: redBubble];
