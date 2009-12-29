@@ -29,6 +29,8 @@ BOOL isGoodPath(NSString *path) {
 		return NO;
 	if ([path hasPrefix: [@"~/.gem" stringByStandardizingPath]])
 		return NO;
+	if ([path hasPrefix: [@"/Applications" stringByStandardizingPath]])
+		return NO;
 
 	NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"ignoredRepos"];
 	for (NSString *key in dict) {
