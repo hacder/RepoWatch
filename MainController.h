@@ -25,8 +25,9 @@
 	NSTimer *demoTimer;
 	BOOL doneRepoSearch;
 
-	NSLock *lock;
 @public	
+	NSLock *lock;
+
 	NSImage *redBubble;
 	NSImage *yellowBubble;
 	NSImage *greenBubble;
@@ -48,5 +49,6 @@
 - (void) findSupportedSCMS;
 - (IBAction) openFile: (id) sender;
 - (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path;
+- (void) searchPath: (NSString *)path;
 
 @end

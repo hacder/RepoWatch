@@ -56,9 +56,21 @@ void mc_callbackFunction(
 		NSString *s = [NSString stringWithFormat: @"%s", paths[i]];
 		if (!isGoodPath(s))
 			return;
+
+		if (![mc->lock tryLock]) {
+			NSLog(@"Failing to lock. Bailing");
+			return;
+		}
+	
+		dispatch_async(dispatch_get_global_queue(0, 0), ^{
+			[mc searchPath: s];
+			dispatch_async(dispatch_get_main_queue(), ^{
+				NSLog(@"Done searching");
+				[mc->lock unlock];
+			});
+		});
 		break;
 	}
-	[mc findSupportedSCMS];
 }
 
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
