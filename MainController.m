@@ -63,6 +63,7 @@ void mc_callbackFunction(
 		}
 	
 		dispatch_async(dispatch_get_global_queue(0, 0), ^{
+			NSLog(@"Searching under %@", s);
 			[mc searchPath: s];
 			dispatch_async(dispatch_get_main_queue(), ^{
 				NSLog(@"Done searching");
