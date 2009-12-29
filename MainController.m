@@ -295,22 +295,31 @@ char *find_execable(const char *filename) {
 }
 
 - (void) searchPath: (NSString *)path {
-	if (!isGoodPath(path))
-		return;
+	NSMutableArray *paths = [NSMutableArray arrayWithCapacity: 10];
+	[paths addObject: path];
 	
-	NSString *dest = [[NSFileManager defaultManager] destinationOfSymbolicLinkAtPath: path error: nil];
-	if (!(dest == nil || [dest isEqualToString: path]))
-		return;
-
-	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
-	if (![self testDirectoryContents: contents ofPath: path]) {
-		dispatch_apply([contents count], dispatch_get_global_queue(0, 0), ^(size_t i) {
-			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] retain];
-			NSAutoreleasePool *innerPool = [[NSAutoreleasePool alloc] init];
-			[self searchPath: s];
-			[innerPool release];
-			[s release];
-		});
+	NSString *curPath;
+	while (YES) {
+		if ([paths count] == 0)
+			break;
+		curPath = [paths objectAtIndex: 0];
+		[paths removeObjectAtIndex: 0];
+	
+		if (!isGoodPath(curPath))
+			continue;
+		
+		NSString *dest = [[NSFileManager defaultManager] destinationOfSymbolicLinkAtPath: curPath error: nil];
+		if (!(dest == nil || [dest isEqualToString: curPath]))
+			continue;
+		
+		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: curPath error: nil];
+		if (![self testDirectoryContents: contents ofPath: curPath]) {
+			int i;
+			for (i = 0; i < [contents count]; i++) {
+				NSString *s = [NSString stringWithFormat: @"%@/%@", curPath, [contents objectAtIndex: i]];
+				[paths addObject: s];
+			}
+		}
 	}
 }
 
