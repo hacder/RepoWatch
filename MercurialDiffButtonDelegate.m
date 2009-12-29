@@ -130,7 +130,7 @@
 	
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 		
-		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {desc}\n", nil]];
+		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|age} {desc}\n", nil]];
 		NSDictionary *attributes = [NSDictionary dictionaryWithObject: [NSFont userFixedPitchFontOfSize: 12.0] forKey: NSFontAttributeName];
 		for (i = 0; i < [logs count]; i++) {
 			NSString *tmp = [logs objectAtIndex: i];
