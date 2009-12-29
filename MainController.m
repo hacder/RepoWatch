@@ -416,9 +416,9 @@ char *find_execable(const char *filename) {
 - (void) ping {
 	NSUInteger modded = [RepoButtonDelegate numModified];
 	if (modded) {
-		[statusItem setTitle: @""];
+		// [statusItem setTitle: @""];
 		[statusItem setImage: redBubble];
-		// [statusItem setTitle: [RepoButtonDelegate getModText]];
+		[statusItem setTitle: [RepoButtonDelegate getModText]];
 	} else {
 		[statusItem setImage: greenBubble];
 		[statusItem setTitle: @""];

@@ -201,7 +201,8 @@ void callbackFunction(
 + (NSString *) getModText {
 	RepoButtonDelegate *rbd = [RepoButtonDelegate getModded];
 	if (rbd)
-		return rbd->title;
+		return [rbd->repository lastPathComponent];
+//		return rbd->title;
 	return nil;
 }
 
