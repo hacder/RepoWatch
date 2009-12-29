@@ -197,7 +197,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	FSEventStreamStart(stream);
 	CFRelease(pathsToWatch);
 
-	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
+	[theMenu addItem: [NSMenuItem separatorItem]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self]];
 
 	NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
