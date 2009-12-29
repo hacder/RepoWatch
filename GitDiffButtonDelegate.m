@@ -70,6 +70,8 @@
 		if (![string length]) {
 			upstreamMod = NO;
 			return nil;
+		} else {
+			upstreamMod = YES;
 		}
 		string = [NSString stringWithFormat: @"HEAD...%@", string];
 		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string, nil];
@@ -93,6 +95,7 @@
 	[mc->commitWindow makeFirstResponder: mc->tv];
 
 	if (localMod) {	
+		[mc->tv setEditable: YES];
 		NSString *diffString = [self getDiff];
 		[mc->tv setString: @""];
 		[mc->diffView setString: diffString];
@@ -100,7 +103,7 @@
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(clickUpdate:)];
 	} else if (upstreamMod) {
-		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
+		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %s", nil];
 		NSTask *t = [[self taskFromArguments: arr] autorelease];
 		NSFileHandle *file = [self pipeForTask: t];
 		
@@ -116,6 +119,16 @@
 		[file closeFile];
 		[mc->tv setString: string];
 		[mc->tv setEditable: NO];
+		
+		arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
+		t = [[self taskFromArguments: arr] autorelease];
+		file = [self pipeForTask: t];
+		
+		[t launch];
+		string = [self stringFromFile: file];
+		[file closeFile];
+		[mc->diffView setString: string];
+		[mc->diffView setEditable: NO];
 	}
 	[mc->commitWindow center];
 	[NSApp activateIgnoringOtherApps: YES];
@@ -130,6 +143,9 @@
 	[t waitUntilExit];
 	if ([t terminationStatus] != 0)
 		NSLog(@"Git upstreamUpdate, task status: %d", [t terminationStatus]);
+	[sender setEnabled: YES];
+	[mc->commitWindow close];
+	[NSApp hide: self];
 }
 
 - (void) clickUpdate: (id) button {
@@ -290,7 +306,7 @@
 		localMod = NO;
 		upstreamMod = YES;
 		[[m insertItemWithTitle: @"Update from origin" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-		sTit = [NSString stringWithFormat: @"*Remote* %@: %@",
+		sTit = [NSString stringWithFormat: @"%@: %@",
 			[repository lastPathComponent],
 			[remoteString stringByTrimmingCharactersInSet:
 				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
