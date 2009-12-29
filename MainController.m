@@ -424,27 +424,29 @@ char *find_execable(const char *filename) {
 
 - (void) ping {
 	NSUInteger modded = [RepoButtonDelegate numModified];
+	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+	BOOL emulateClock = [def boolForKey: @"emulateClock"];
 	if (modded) {
-		// [statusItem setTitle: @""];
 		[statusItem setImage: redBubble];
 		[statusItem setTitle: [RepoButtonDelegate getModText]];
 	} else {
-		[statusItem setImage: greenBubble];
-		[statusItem setTitle: @""];
-		/*
-		NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
-		NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
-		NSString *format = [dict objectForKey: @"DateFormat"];
-		if (!format || [format isEqual: @""])
-			format = @"E h:mm a";
-
-		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-		[dateFormatter setDateFormat: format];
-		[dateFormatter autorelease];
+		if (!emulateClock) {
+			[statusItem setImage: greenBubble];
+			[statusItem setTitle: @""];
+		} else {
+			NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
+			NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
+			NSString *format = [dict objectForKey: @"DateFormat"];
+			if (!format || [format isEqual: @""])
+				format = @"E h:mm a";
 		
-		NSDate *date2 = [NSDate date];
-		[statusItem setTitle: [dateFormatter stringFromDate: date2]];
-		*/
+			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+			[dateFormatter setDateFormat: format];
+			[dateFormatter autorelease];
+			
+			NSDate *date2 = [NSDate date];
+			[statusItem setTitle: [dateFormatter stringFromDate: date2]];
+		}
 	}
 }
 
