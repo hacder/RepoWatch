@@ -75,7 +75,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	git = NULL;
 	hg = NULL;
 	
-	int size = 10;
+	int size = 15;
 	redBubble = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
 	[redBubble lockFocus];
 	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(0, 0, size, size)];
