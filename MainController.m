@@ -416,9 +416,12 @@ char *find_execable(const char *filename) {
 - (void) ping {
 	NSUInteger modded = [RepoButtonDelegate numModified];
 	if (modded) {
-		[statusItem setTitle: [RepoButtonDelegate getModText]];
+		[statusItem setTitle: @""];
+		[statusItem setImage: redBubble];
+		// [statusItem setTitle: [RepoButtonDelegate getModText]];
 	} else {
 		[statusItem setImage: greenBubble];
+		[statusItem setTitle: @""];
 		/*
 		NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
 		NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
