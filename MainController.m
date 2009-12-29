@@ -228,12 +228,19 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		NSString *filename = [op filename];
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: filename error: nil];
 
+		NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+		NSDictionary *dict = [def dictionaryForKey: @"ignoredRepos"];
+		NSMutableDictionary *dict2;
+		if (dict) {
+			dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
+			[dict2 removeObjectForKey: filename];
+			[def setObject: dict2 forKey: @"ignoredRepos"];
+		}
+
 		if (![RepoButtonDelegate alreadyHasPath: filename] && ![self testDirectoryContents: contents ofPath: [filename stringByStandardizingPath]]) {
 			// TODO: Add alert here.
 		} else {
-			NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-			NSDictionary *dict = [def dictionaryForKey: @"manualRepos"];
-			NSMutableDictionary *dict2;
+			dict = [def dictionaryForKey: @"manualRepos"];
 			if (dict) {
 				dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
 			} else {
@@ -241,6 +248,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			}
 			[dict2 setObject: [[NSDictionary alloc] init] forKey: filename];
 			[def setObject: dict2 forKey: @"manualRepos"];
+			
 			[def synchronize];
 		}
 	}

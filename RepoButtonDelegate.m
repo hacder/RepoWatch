@@ -242,8 +242,10 @@ void callbackFunction(
 	int i = 0;
 	for (i = 0; i < [repos count]; i++) {
 		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
-		if ([rbd->repository isEqualToString: path])
+		if ([rbd->repository isEqualToString: path]) {
+			[rbd->menuItem setHidden: NO];
 			return YES;
+		}
 	}
 	return NO;
 }
