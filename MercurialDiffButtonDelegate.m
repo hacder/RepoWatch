@@ -131,10 +131,15 @@
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 		
 		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {desc}\n", nil]];
+		NSDictionary *attributes = [NSDictionary dictionaryWithObject: [NSFont userFixedPitchFontOfSize: 12.0] forKey: NSFontAttributeName];
 		for (i = 0; i < [logs count]; i++) {
 			NSString *tmp = [logs objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
-				[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
+				NSAttributedString *attr = [[NSAttributedString alloc] initWithString: tmp attributes: attributes];
+				NSMenuItem *mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
+				[mi setAttributedTitle: attr];
+				[m addItem: mi];
+				the_index++;
 			}
 		}
 		

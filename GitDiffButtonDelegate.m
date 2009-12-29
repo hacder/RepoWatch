@@ -172,13 +172,16 @@
 	
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 	
-	// Leaking these logs.
 	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=oneline", @"--abbrev-commit", nil]];
 	for (i = 0; i < [logs count]; i++) {
 		NSString *tmp = [logs objectAtIndex: i];
+		NSDictionary *attributes = [NSDictionary dictionaryWithObject: [NSFont userFixedPitchFontOfSize: 12.0] forKey: NSFontAttributeName];
+		NSAttributedString *attr = [[NSAttributedString alloc] initWithString: tmp attributes: attributes];
 		if (tmp && [tmp length] > 0) {
-			// Leak: NSMenuItem
-			[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
+			NSMenuItem *mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
+			[mi setAttributedTitle: attr];
+			[m addItem: mi];
+			the_index++;
 		}
 	}
 	
