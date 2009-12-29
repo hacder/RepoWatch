@@ -102,6 +102,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		] autorelease];
 	path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(0, 0, size, size)];
 	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.0, 0.0)];
+	[path setLineWidth: 0.1];
 	[[NSColor blackColor] set];
 	[path stroke];
 	[greenBubble unlockFocus];
