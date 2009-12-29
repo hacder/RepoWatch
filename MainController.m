@@ -200,9 +200,15 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[plugins addObject: [[SeparatorButtonDelegate alloc] initWithTitle: @"Separator" menu: theMenu statusItem: statusItem mainController: self]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self]];
 
+	NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
+	for (NSString *key in dict) {
+		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
+		[self testDirectoryContents: contents ofPath: key];
+	}
+
 	[self findSupportedSCMS];
 
-	NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"manualRepos"];
+	dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"manualRepos"];
 	for (NSString *key in dict) {
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
 		[self testDirectoryContents: contents ofPath: key];
@@ -310,11 +316,26 @@ char *find_execable(const char *filename) {
 	return NULL;
 }
 
+- (void) addCachedRepoPath: (NSString *)path {
+	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+	NSDictionary *dict = [def dictionaryForKey: @"cachedRepos"];
+	NSMutableDictionary *dict2;
+	if (dict) {
+		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
+	} else {
+		dict2 = [NSMutableDictionary dictionaryWithCapacity: 1];
+	}
+	[dict2 setObject: [[NSDictionary alloc] init] forKey: path];
+	[def setObject: dict2 forKey: @"cachedRepos"];
+	[def synchronize];
+}
+
 - (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path {
 	if ([RepoButtonDelegate alreadyHasPath: path])
 		return YES;
 	if ([contents containsObject: @".git"]) {
 		if (git) {
+			[self addCachedRepoPath: path];
 			NSLog(@"Found git repository at %@", path);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
@@ -325,6 +346,7 @@ char *find_execable(const char *filename) {
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
+			[self addCachedRepoPath: path];
 			NSLog(@"Found mercurial repository at %@", path);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
