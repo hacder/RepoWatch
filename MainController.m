@@ -75,17 +75,21 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	git = NULL;
 	hg = NULL;
 	
-	int size = 15;
+	int size = 10;
 	redBubble = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
 	[redBubble lockFocus];
+	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(0, 0, size, size)];
+	
 	NSGradient *aGradient = [
 		[
 			[NSGradient alloc]
-				initWithStartingColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.75 blue: 0.75 alpha: 1.0]
+				initWithStartingColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.5 blue: 0.5 alpha: 1.0]
 				endingColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0]
 		] autorelease];
-	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(0, 0, size, size)];
-	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.0, 0.0)];
+	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.2, 0.2)];
+	[path setLineWidth: 0.1];
+	[[NSColor blackColor] set];
+	[path stroke];
 	[redBubble unlockFocus];
 
 	greenBubble = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
