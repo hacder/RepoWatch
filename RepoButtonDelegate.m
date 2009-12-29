@@ -200,9 +200,16 @@ void callbackFunction(
 
 + (NSString *) getModText {
 	RepoButtonDelegate *rbd = [RepoButtonDelegate getModded];
-	if (rbd)
-		return [rbd->repository lastPathComponent];
-//		return rbd->title;
+	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+	BOOL emulateClock = [def boolForKey: @"emulateClock"];
+
+	if (rbd) {
+		if (emulateClock) {
+			return rbd->title;
+		} else {
+			return [rbd->repository lastPathComponent];
+		}
+	}
 	return nil;
 }
 
