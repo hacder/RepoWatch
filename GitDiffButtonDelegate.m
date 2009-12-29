@@ -17,7 +17,6 @@
 }
 
 - (NSTask *)taskFromArguments: (NSArray *)args {
-	NSLog(@"Running git task with arguments: %@", args);
 	NSString *lp = [NSString stringWithFormat: @"%s", git];
 	return [self baseTask: lp fromArguments: args];
 }
