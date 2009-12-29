@@ -418,6 +418,8 @@ char *find_execable(const char *filename) {
 	if (modded) {
 		[statusItem setTitle: [RepoButtonDelegate getModText]];
 	} else {
+		[statusItem setImage: greenBubble];
+		/*
 		NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
 		NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
 		NSString *format = [dict objectForKey: @"DateFormat"];
@@ -430,6 +432,7 @@ char *find_execable(const char *filename) {
 		
 		NSDate *date2 = [NSDate date];
 		[statusItem setTitle: [dateFormatter stringFromDate: date2]];
+		*/
 	}
 }
 
