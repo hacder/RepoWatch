@@ -191,10 +191,10 @@
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		NSString *s3;
 		if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-			s3 = [NSString stringWithFormat: @"git: %@",
+			s3 = [NSString stringWithFormat: @"%@",
 				[repository lastPathComponent]];
 		} else {
-			s3 = [NSString stringWithFormat: @"git: %@ (%@)",
+			s3 = [NSString stringWithFormat: @"%@ (%@)",
 					[repository lastPathComponent], currentBranch];
 		}
 		[self setTitle: s3];

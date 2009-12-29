@@ -163,7 +163,7 @@
 			[self setAllTitles: sTit];
 		} else {
 			localMod = NO;
-			NSString *sTit = [NSString stringWithFormat: @"hg: %@",
+			NSString *sTit = [NSString stringWithFormat: @"%@",
 				[repository lastPathComponent]];
 
 			[self setAllTitles: sTit];
