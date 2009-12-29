@@ -31,6 +31,8 @@
 	t = [[self taskFromArguments: arr] autorelease];
 	file = [self pipeForTask: t];
 	[t launch];
+	[t waitUntilExit];
+	NSLog(@"Git Update Remote <remote>, task status: %d", [t terminationStatus]);
 	
 	string = [self stringFromFile: file];
 	string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -39,6 +41,8 @@
 	
 	t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]];
 	[t launch];
+	[t waitUntilExit];
+	NSLog(@"Git Update Remote <fetch>, task status: %d", [t terminationStatus]);
 	[t autorelease];
 }
 	
@@ -53,6 +57,8 @@
 		t = [[self taskFromArguments: arr] autorelease];
 		file = [self pipeForTask: t];
 		[t launch];
+		[t waitUntilExit];
+		NSLog(@"Git getDiffRemote <remote>, task status: %d", [t terminationStatus]);
 		string = [self stringFromFile: file];
 		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		if (![string length]) {
@@ -67,6 +73,8 @@
 	t = [[self taskFromArguments: arr] autorelease];
 	file = [self pipeForTask: t];	
 	[t launch];
+	[t waitUntilExit];
+	NSLog(@"Git getDiffRemote <diff>, task status: %d", [t terminationStatus]);
 	string = [self stringFromFile: file];
 	[file closeFile];
 	
@@ -93,6 +101,8 @@
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(upstreamUpdate:)];
 		[t launch];
+		[t waitUntilExit];
+		NSLog(@"Git commit, task status: %d", [t terminationStatus]);
 		
 		NSString *string = [self stringFromFile: file];
 		[file closeFile];
@@ -109,11 +119,15 @@
 	[sender setEnabled: NO];
 	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"rebase", @"origin", nil]] autorelease];
 	[t launch];
+	[t waitUntilExit];
+	NSLog(@"Git upstreamUpdate, task status: %d", [t terminationStatus]);
 }
 
 - (void) clickUpdate: (id) button {
 	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[mc->tv textStorage] mutableString], nil]] autorelease];
 	[t launch];
+	[t waitUntilExit];
+	NSLog(@"Git clickUpdate, task status: %d", [t terminationStatus]);
 	if (mc->commitWindow)
 		[mc->commitWindow close];
 	
@@ -131,6 +145,8 @@
 	NSTask *t = [[self taskFromArguments: arr] autorelease];
 	NSFileHandle *file = [self pipeForTask: t];
 	[t launch];
+	[t waitUntilExit];
+	NSLog(@"Git clickLog, task status: %d", [t terminationStatus]);
 	NSString *result = [self stringFromFile: file];
 	[file closeFile];
 	[diffCommitTV setString: result];
