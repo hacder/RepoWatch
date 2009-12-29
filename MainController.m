@@ -177,7 +177,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	if ([op runModal] == NSOKButton) {
 		NSString *filename = [op filename];
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: filename error: nil];
-		if (![self testDirectoryContents: contents ofPath: filename]) {
+
+		if (![RepoButtonDelegate alreadyHasPath: filename] && ![self testDirectoryContents: contents ofPath: filename]) {
 			// TODO: Add alert here.
 		} else {
 			NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
