@@ -40,6 +40,8 @@
 	if (![string length])
 		return;
 	
+	NSLog(@"Updating remote for %@", repository);
+	
 	t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]];
 	[t launch];
 	[t waitUntilExit];
