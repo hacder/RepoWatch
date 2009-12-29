@@ -367,7 +367,7 @@ char *find_execable(const char *filename) {
 		if (![self testDirectoryContents: contents ofPath: curPath]) {
 			int i;
 			for (i = 0; i < [contents count]; i++) {
-				NSString *s = [NSString stringWithFormat: @"%@/%@", curPath, [contents objectAtIndex: i]];
+				NSString *s = [[NSString stringWithFormat: @"%@/%@", curPath, [contents objectAtIndex: i]] stringByStandardizingPath];
 				[paths addObject: s];
 			}
 		}
