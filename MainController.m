@@ -97,11 +97,13 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	aGradient = [
 		[
 			[NSGradient alloc]
-				initWithStartingColor: [NSColor colorWithCalibratedRed: 0.75 green: 1.0 blue: 0.75 alpha: 1.0]
+				initWithStartingColor: [NSColor colorWithCalibratedRed: 0.5 green: 1.0 blue: 0.5 alpha: 1.0]
 				endingColor: [NSColor colorWithCalibratedRed: 0.0 green: 1.0 blue: 0.0 alpha: 1.0]
 		] autorelease];
 	path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(0, 0, size, size)];
 	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.0, 0.0)];
+	[[NSColor blackColor] set];
+	[path stroke];
 	[greenBubble unlockFocus];
 
 	lock = [[NSLock alloc] init];
