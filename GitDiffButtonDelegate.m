@@ -215,7 +215,7 @@
 	
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 	
-	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=oneline", @"--abbrev-commit", nil]];
+	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ar %s", @"--abbrev-commit", nil]];
 	NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
 	NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
 
