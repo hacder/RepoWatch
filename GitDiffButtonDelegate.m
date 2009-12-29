@@ -252,17 +252,10 @@
 		localMod = NO;
 		upstreamMod = YES;
 		[[m insertItemWithTitle: @"Update from origin" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-		if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-			sTit = [NSString stringWithFormat: @"*Remote* %@: %@",
-				[repository lastPathComponent],
-				[remoteString stringByTrimmingCharactersInSet:
-					[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
-		} else {
-			sTit = [NSString stringWithFormat: @"*Remote* %@: %@ (%@)",
-				[repository lastPathComponent],
-				[remoteString stringByTrimmingCharactersInSet:
-				[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
-		}
+		sTit = [NSString stringWithFormat: @"*Remote* %@: %@",
+			[repository lastPathComponent],
+			[remoteString stringByTrimmingCharactersInSet:
+				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 		dispatch_sync(dispatch_get_main_queue(), ^{
 			[self setTitle: sTit];
 			[self setShortTitle: sTit];
