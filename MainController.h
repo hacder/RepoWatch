@@ -50,5 +50,5 @@
 - (IBAction) openFile: (id) sender;
 - (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path;
 - (void) searchPath: (NSString *)path;
-
+- (void) ping;
 @end
