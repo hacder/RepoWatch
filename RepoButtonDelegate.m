@@ -140,7 +140,7 @@ void callbackFunction(
 	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
 	CFStringRef myPath = (CFStringRef)repository;
 	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
-	CFAbsoluteTime latency = 1.0;
+	CFAbsoluteTime latency = 1.5;
 	stream = FSEventStreamCreate(NULL,
 		&callbackFunction,
 		&fsesc,
