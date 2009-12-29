@@ -268,11 +268,11 @@
 
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		if (localMod)
-			[menuItem setImage: redBubble];
+			[menuItem setImage: mc->redBubble];
 		else if (upstreamMod)
-			[menuItem setImage: yellowBubble];
+			[menuItem setImage: mc->yellowBubble];
 		else
-			[menuItem setImage: greenBubble];
+			[menuItem setImage: mc->greenBubble];
 		[menuItem setSubmenu: m];
 	});
 }

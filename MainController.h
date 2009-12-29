@@ -27,6 +27,10 @@
 
 	NSLock *lock;
 @public	
+	NSImage *redBubble;
+	NSImage *yellowBubble;
+	NSImage *greenBubble;
+	
 	IBOutlet NSWindow *commitWindow;
 	IBOutlet NSTextView *tv;
 	IBOutlet NSButton *butt;
