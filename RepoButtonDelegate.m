@@ -109,6 +109,7 @@ void callbackFunction(
 
 	[d synchronize];
 	[menuItem setHidden: YES];
+	[mc maybeRefresh: self];
 }
 
 - (NSTask *)taskFromArguments: (NSArray *)args {
@@ -151,7 +152,6 @@ void callbackFunction(
 	return self;
 }
 
-
 - (NSString *)getDiff {
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
 	NSTask *t = [[self taskFromArguments: arr] autorelease];
@@ -174,7 +174,7 @@ void callbackFunction(
 	int i = 0;
 	for (i = 0; i < [repos count]; i++) {
 		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
-		if (rbd->localMod || rbd->upstreamMod)
+		if (![rbd->menuItem isHidden] && (rbd->localMod || rbd->upstreamMod))
 			ret++;
 	}
 	return ret;
@@ -232,7 +232,7 @@ void callbackFunction(
 	int i = 0;
 	for (i = 0; i < [repos count]; i++) {
 		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
-		if (rbd->localMod || rbd->upstreamMod)
+		if (![rbd->menuItem isHidden] && (rbd->localMod || rbd->upstreamMod))
 			return rbd;
 	}
 	return nil;

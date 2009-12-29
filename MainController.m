@@ -470,6 +470,7 @@ char *find_execable(const char *filename) {
 			index = [theMenu indexOfItem: normalSeparator];
 		}
 		[theMenu insertItem: [bd2 getMenuItem] atIndex: index + 1];
+		[self ping];
 	}
 }
 
