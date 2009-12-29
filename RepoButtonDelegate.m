@@ -15,6 +15,11 @@ void callbackFunction(
 		const FSEventStreamEventId eventIds[]) {
 	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
 	NSLog(@"Firing on %@", rbd->repository);
+	char **ep = (char **)eventPaths;
+	int i;
+	for (i = 0; i < numEvents; i++) {
+		NSLog(@"Event %d of %d was for file %s", i + 1, numEvents, ep[i]);
+	}
 	[rbd fire];
 }
 
