@@ -92,6 +92,21 @@ void callbackFunction(
 	}
 	[dict2 setObject: [NSMutableDictionary dictionaryWithCapacity: 1] forKey: repository];
 	[d setObject: dict2 forKey: @"ignoredRepos"];
+
+	dict = [d dictionaryForKey: @"cachedRepos"];
+	if (dict) {
+		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
+		[dict2 removeObjectForKey: repository];
+		[d setObject: dict2 forKey: @"cachedRepos"];
+	}
+	
+	dict = [d dictionaryForKey: @"manualRepos"];
+	if (dict) {
+		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
+		[dict2 removeObjectForKey: repository];
+		[d setObject: dict2 forKey: @"manualRepos"];
+	}	
+
 	[d synchronize];
 	[menuItem setHidden: YES];
 }
