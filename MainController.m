@@ -203,7 +203,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
 	for (NSString *key in dict) {
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
-		[self testDirectoryContents: contents ofPath: key];
+		[self testDirectoryContents: contents ofPath: [key stringByStandardizingPath]];
 	}
 
 	[self findSupportedSCMS];
@@ -211,7 +211,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"manualRepos"];
 	for (NSString *key in dict) {
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
-		[self testDirectoryContents: contents ofPath: key];
+		[self testDirectoryContents: contents ofPath: [key stringByStandardizingPath]];
 	}
 	[self ping];
 	
@@ -228,7 +228,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		NSString *filename = [op filename];
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: filename error: nil];
 
-		if (![RepoButtonDelegate alreadyHasPath: filename] && ![self testDirectoryContents: contents ofPath: filename]) {
+		if (![RepoButtonDelegate alreadyHasPath: filename] && ![self testDirectoryContents: contents ofPath: [filename stringByStandardizingPath]]) {
 			// TODO: Add alert here.
 		} else {
 			NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
@@ -387,7 +387,7 @@ char *find_execable(const char *filename) {
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: curPath error: nil];
 		if ([contents count] > 100)
 			NSLog(@"Directory count (%@): %d", curPath, [contents count]);
-		if (![self testDirectoryContents: contents ofPath: curPath]) {
+		if (![self testDirectoryContents: contents ofPath: [curPath stringByStandardizingPath]]) {
 			int i;
 			for (i = 0; i < [contents count]; i++) {
 				NSString *s = [[NSString stringWithFormat: @"%@/%@", curPath, [contents objectAtIndex: i]] stringByStandardizingPath];
