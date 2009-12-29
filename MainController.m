@@ -397,7 +397,7 @@ char *find_execable(const char *filename) {
 			break;
 		if ([paths count] > high_count)
 			high_count = [paths count];
-		if ([paths count] > 10000)
+		if ([paths count] > 100000)
 			break;
 		curPath = [paths objectAtIndex: 0];
 		[paths removeObjectAtIndex: 0];
