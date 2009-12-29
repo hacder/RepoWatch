@@ -52,28 +52,20 @@ void mc_callbackFunction(
 		const FSEventStreamEventId eventIds[]) {
 	
 	char **paths = eventPaths;
-	int i;
 	MainController *mc = (MainController *)clientCallBackInfo;
+	if (![mc->lock tryLock]) {
+		NSLog(@"Failing to lock. Bailing.");
+		return;
+	}
+	int i;
 	for (i = 0; i < numEvents; i++) {
 		NSString *s = [NSString stringWithFormat: @"%s", paths[i]];
 		if (!isGoodPath(s))
-			return;
+			continue;
 
-		if (![mc->lock tryLock]) {
-			NSLog(@"Failing to lock. Bailing");
-			return;
-		}
-	
-		dispatch_async(dispatch_get_global_queue(0, 0), ^{
-			NSLog(@"Searching under %@", s);
-			[mc searchPath: s];
-			dispatch_async(dispatch_get_main_queue(), ^{
-				NSLog(@"Done searching");
-				[mc->lock unlock];
-			});
-		});
-		break;
+		[mc searchPath: s];
 	}
+	[mc->lock unlock];
 }
 
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
