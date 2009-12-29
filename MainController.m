@@ -27,6 +27,8 @@ BOOL isGoodPath(NSString *path) {
 		return NO;
 	if ([path hasPrefix: [@"~/.Trash" stringByStandardizingPath]])
 		return NO;
+	if ([path hasPrefix: [@"~/.gem" stringByStandardizingPath]])
+		return NO;
 
 	NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"ignoredRepos"];
 	for (NSString *key in dict) {
@@ -298,9 +300,15 @@ char *find_execable(const char *filename) {
 	NSMutableArray *paths = [NSMutableArray arrayWithCapacity: 10];
 	[paths addObject: path];
 	
+	int high_count = 0;
+	
 	NSString *curPath;
 	while (YES) {
 		if ([paths count] == 0)
+			break;
+		if ([paths count] > high_count)
+			high_count = [paths count];
+		if ([paths count] > 10000)
 			break;
 		curPath = [paths objectAtIndex: 0];
 		[paths removeObjectAtIndex: 0];
@@ -313,6 +321,8 @@ char *find_execable(const char *filename) {
 			continue;
 		
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: curPath error: nil];
+		if ([contents count] > 100)
+			NSLog(@"Directory count (%@): %d", curPath, [contents count]);
 		if (![self testDirectoryContents: contents ofPath: curPath]) {
 			int i;
 			for (i = 0; i < [contents count]; i++) {
@@ -321,6 +331,7 @@ char *find_execable(const char *filename) {
 			}
 		}
 	}
+	NSLog(@"High count: %d", high_count);
 }
 
 - (void) searchAllPaths {
