@@ -131,11 +131,20 @@
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 		
 		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|age} {desc}\n", nil]];
-		NSDictionary *attributes = [NSDictionary dictionaryWithObject: [NSFont userFixedPitchFontOfSize: 12.0] forKey: NSFontAttributeName];
+		NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
+		NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
 		for (i = 0; i < [logs count]; i++) {
 			NSString *tmp = [logs objectAtIndex: i];
+
+			NSDictionary *attributes;
+			if (i == 0) {
+				attributes = [NSDictionary dictionaryWithObject: firstFont forKey: NSFontAttributeName];
+			} else {
+				attributes = [NSDictionary dictionaryWithObject: secondFont forKey: NSFontAttributeName];
+			}
+			NSAttributedString *attr = [[NSAttributedString alloc] initWithString: tmp attributes: attributes];
+
 			if (tmp && [tmp length] > 0) {
-				NSAttributedString *attr = [[NSAttributedString alloc] initWithString: tmp attributes: attributes];
 				NSMenuItem *mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
 				[mi setAttributedTitle: attr];
 				[m addItem: mi];
