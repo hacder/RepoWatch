@@ -427,7 +427,8 @@ char *find_execable(const char *filename) {
 	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 	BOOL emulateClock = [def boolForKey: @"emulateClock"];
 	if (modded) {
-		[statusItem setImage: redBubble];
+		if (!emulateClock)
+			[statusItem setImage: redBubble];
 		[statusItem setTitle: [RepoButtonDelegate getModText]];
 	} else {
 		if (!emulateClock) {
