@@ -302,14 +302,13 @@ char *find_execable(const char *filename) {
 
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
 	if (![self testDirectoryContents: contents ofPath: path]) {
-		int i;
-		for (i = 0; i < [contents count]; i++) {
+		dispatch_apply([contents count], dispatch_get_global_queue(0, 0), ^(size_t i) {
 			NSString *s = [[NSString stringWithFormat: @"%@/%@", path, [contents objectAtIndex: i]] retain];
 			NSAutoreleasePool *innerPool = [[NSAutoreleasePool alloc] init];
 			[self searchPath: s];
 			[innerPool release];
 			[s release];
-		}
+		});
 	}
 }
 
