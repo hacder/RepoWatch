@@ -295,9 +295,10 @@ char *find_execable(const char *filename) {
 
 - (void) searchPath: (NSString *)path {
 	if (!isGoodPath(path))
-		return;	
-	NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: path error: nil];
-	if ([fileAttributes objectForKey: @"NSFileType"] == NSFileTypeSymbolicLink)
+		return;
+	
+	NSString *dest = [[NSFileManager defaultManager] destinationOfSymbolicLinkAtPath: path error: nil];
+	if (!(dest == nil || [dest isEqualToString: path]))
 		return;
 
 	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: nil];
