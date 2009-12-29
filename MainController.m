@@ -213,6 +213,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
 		[self testDirectoryContents: contents ofPath: key];
 	}
+	[self ping];
 	
     return self;
 }
