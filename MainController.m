@@ -268,7 +268,7 @@ char *find_execable(const char *filename) {
 
 - (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path {
 	if ([RepoButtonDelegate alreadyHasPath: path])
-		return NO;
+		return YES;
 	if ([contents containsObject: @".git"]) {
 		if (git) {
 			NSLog(@"Found git repository at %@", path);
