@@ -218,7 +218,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[theMenu addItem: [NSMenuItem separatorItem]];
 	[plugins addObject: [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self]];
 
-	NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
+	NSDictionary *dict;
+	dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
 	for (NSString *key in dict) {
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
 		[self testDirectoryContents: contents ofPath: [key stringByStandardizingPath]];
@@ -364,22 +365,18 @@ char *find_execable(const char *filename) {
 		if (git) {
 			[self addCachedRepoPath: path];
 			NSLog(@"Found git repository at %@", path);
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
-					menu: theMenu statusItem: statusItem mainController: self
-					gitPath: git repository: path]];
-			});
+			[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
+				menu: theMenu statusItem: statusItem mainController: self
+				gitPath: git repository: path]];
 			return YES;
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
 			[self addCachedRepoPath: path];
 			NSLog(@"Found mercurial repository at %@", path);
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
-					menu: theMenu statusItem: statusItem mainController: self
-					hgPath: hg repository: path]];
-			});
+			[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
+				menu: theMenu statusItem: statusItem mainController: self
+				hgPath: hg repository: path]];
 			return YES;
 		}
 	}

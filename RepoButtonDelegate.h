@@ -12,6 +12,7 @@
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
+	FSEventStreamRef stream;
 @public
 	BOOL localMod;
 	BOOL upstreamMod;

@@ -115,6 +115,7 @@ void callbackFunction(
 	[d synchronize];
 	[menuItem setHidden: YES];
 	[mc maybeRefresh: self];
+	FSEventStreamStop(stream);
 }
 
 - (NSTask *)taskFromArguments: (NSArray *)args {
@@ -136,7 +137,6 @@ void callbackFunction(
 	}
 	[repos addObject: self];
 
-	FSEventStreamRef stream;
 	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
 	CFStringRef myPath = (CFStringRef)repository;
 	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
