@@ -80,6 +80,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	date = __DATE__;
 	time = __TIME__;
 	doneRepoSearch = NO;
+	doneStartup = NO;
 	
 	git = NULL;
 	hg = NULL;
@@ -448,6 +449,7 @@ char *find_execable(const char *filename) {
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self searchAllPaths];
 		dispatch_async(dispatch_get_main_queue(), ^{
+			doneStartup = YES;
 			NSLog(@"Done searching");
 			[lock unlock];
 		});
@@ -479,6 +481,9 @@ char *find_execable(const char *filename) {
 }
 
 - (void) ping {
+	if (!doneStartup)
+		return;
+
 	NSUInteger modded = [RepoButtonDelegate numModified];
 	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 	BOOL emulateClock = [def boolForKey: @"emulateClock"];

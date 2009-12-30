@@ -24,6 +24,7 @@
 	
 	NSTimer *demoTimer;
 	BOOL doneRepoSearch;
+	BOOL doneStartup;
 
 @public	
 	NSLock *lock;
