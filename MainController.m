@@ -166,7 +166,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 }
 
 NSInteger intSort(id num1, id num2, void *context) {
-	return [((RepoButtonDelegate *)num1)->shortTitle compare: ((RepoButtonDelegate *)num2)->shortTitle];
+	return [((RepoButtonDelegate *)num1)->shortTitle caseInsensitiveCompare: ((RepoButtonDelegate *)num2)->shortTitle];
 }
 
 - (void) maybeRefresh: (ButtonDelegate *)bd {
