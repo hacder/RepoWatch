@@ -190,6 +190,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 	NSArray *upToDate2 = [upToDate sortedArrayUsingFunction: intSort context: nil];
 	NSArray *remoteMods2 = [remoteMods sortedArrayUsingFunction: intSort context: nil];
 	
+	[theMenu setMenuChangedMessagesEnabled: NO];
 	int index = 0;
 	for (i = 0; i < [localMods2 count]; i++) {
 		[theMenu removeItem: [[localMods2 objectAtIndex: i] getMenuItem]];
@@ -203,6 +204,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 		[theMenu removeItem: [[upToDate2 objectAtIndex: i] getMenuItem]];
 		[theMenu insertItem: [[upToDate2 objectAtIndex: i] getMenuItem] atIndex: ++index];
 	}
+	[theMenu setMenuChangedMessagesEnabled: YES];
 
 	[self ping];
 }
