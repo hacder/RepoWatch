@@ -222,31 +222,6 @@ void callbackFunction(
 	return ret;
 }
 
-+ (NSString *) getModText {
-	RepoButtonDelegate *rbd = [RepoButtonDelegate getModded];
-	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-	BOOL emulateClock = [def boolForKey: @"emulateClock"];
-
-	if (rbd) {
-		if (emulateClock) {
-			return rbd->title;
-		} else {
-			return [rbd->repository lastPathComponent];
-		}
-	}
-	return nil;
-}
-
-+ (RepoButtonDelegate *) getModded {
-	int i = 0;
-	for (i = 0; i < [repos count]; i++) {
-		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
-		if (![rbd->menuItem isHidden] && (rbd->localMod || rbd->upstreamMod))
-			return rbd;
-	}
-	return nil;
-}
-
 + (BOOL) alreadyHasPath: (NSString *)path {
 	int i = 0;
 	for (i = 0; i < [repos count]; i++) {

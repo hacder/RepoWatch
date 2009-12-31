@@ -14,9 +14,18 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 @implementation MainController
 
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
-	RepoButtonDelegate *rbd = [RepoButtonDelegate getModded];
-	if (rbd)
-		[rbd commit: nil];
+	MainController *mc = (MainController *)userData;
+	
+	int t = [mc->theMenu numberOfItems];
+	int i;
+	for (i = 0; i < t; i++) {
+		NSMenuItem *mi = [mc->theMenu itemAtIndex: i];
+		if (![mi isHidden]) {
+			RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
+			[rbd commit: nil];
+			return noErr;
+		}
+	}
 	return noErr;
 }
 
@@ -112,7 +121,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	
 	eventType.eventClass = kEventClassKeyboard;
 	eventType.eventKind = kEventHotKeyPressed;
-	InstallApplicationEventHandler(&myHotKeyHandler, 1, &eventType, NULL, NULL);
+	InstallApplicationEventHandler(&myHotKeyHandler, 1, &eventType, (void *)self, NULL);
 	myHotKeyID.signature = 'mhk1';
 	myHotKeyID.id = 1;
 	RegisterEventHotKey(36, cmdKey + optionKey, myHotKeyID, GetApplicationEventTarget(), 0, &myHotKeyRef);
@@ -217,32 +226,28 @@ NSInteger intSort(id num1, id num2, void *context) {
 	int localMods = [RepoButtonDelegate numLocalEdit];
 	int remoteMods = [RepoButtonDelegate numRemoteEdit];
 	
-	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-	BOOL emulateClock = [def boolForKey: @"emulateClock"];
 	if (localMods || remoteMods) {
 		if (localMods)
 			[statusItem setImage: redBubble];
 		if (remoteMods)
 			[statusItem setImage: yellowBubble];
-		[statusItem setTitle: [RepoButtonDelegate getModText]];
-	} else {
-		if (!emulateClock) {
-			[statusItem setImage: greenBubble];
-			[statusItem setTitle: @""];
-		} else {
-			NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
-			NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
-			NSString *format = [dict objectForKey: @"DateFormat"];
-			if (!format || [format isEqual: @""])
-				format = @"E h:mm a";
 		
-			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-			[dateFormatter setDateFormat: format];
-			[dateFormatter autorelease];
-			
-			NSDate *date2 = [NSDate date];
-			[statusItem setTitle: [dateFormatter stringFromDate: date2]];
-		}
+		NSMenuItem *mi = [theMenu itemAtIndex: 1];
+		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
+		[statusItem setTitle: [rbd shortTitle]];
+	} else {
+		NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
+		NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
+		NSString *format = [dict objectForKey: @"DateFormat"];
+		if (!format || [format isEqual: @""])
+			format = @"E h:mm a";
+	
+		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+		[dateFormatter setDateFormat: format];
+		[dateFormatter autorelease];
+		
+		NSDate *date2 = [NSDate date];
+		[statusItem setTitle: [dateFormatter stringFromDate: date2]];
 	}
 }
 

@@ -37,8 +37,6 @@
 + (NSUInteger)numLocalEdit;
 + (NSUInteger)numRemoteEdit;
 + (NSUInteger)numUpToDate;
-+ (NSString *)getModText;
-+ (RepoButtonDelegate *) getModded;
 + (BOOL) alreadyHasPath: (NSString *)path;
 + (NSArray *) getRepos;
 
