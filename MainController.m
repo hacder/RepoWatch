@@ -236,6 +236,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
 		[statusItem setTitle: [rbd shortTitle]];
 	} else {
+		[statusItem setImage: nil];
 		NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
 		NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
 		NSString *format = [dict objectForKey: @"DateFormat"];
