@@ -14,8 +14,6 @@
 	NSMenuItem *upstreamSeparator;
 	NSMenuItem *localSeparator;
 	
-	NSTimer *timer;
-
 	char *date;
 	char *time;
 	

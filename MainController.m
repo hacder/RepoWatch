@@ -136,8 +136,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[normalSeparator setHidden: YES];
 	[theMenu addItem: normalSeparator];
 	
-	timer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(ping) userInfo: nil repeats: YES];
-	
 	SUUpdater *updater = [SUUpdater sharedUpdater];
 	[updater setFeedURL: [NSURL URLWithString: [NSString stringWithFormat: @"http://www.doomstick.com/mm_update_feed.xml?uuid=%@", [[NSUserDefaults standardUserDefaults] stringForKey: @"UUID"]]]];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
