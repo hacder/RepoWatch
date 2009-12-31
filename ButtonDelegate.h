@@ -4,12 +4,12 @@
 @class MainController;
 
 @interface ButtonDelegate : NSObject {
-	NSString *shortTitle;
 	NSMenu *menu;
 	NSStatusItem *statusItem;
 	MainController *mc;
 	NSView *_prefView;
 @public
+	NSString *shortTitle;
 	NSMenuItem *menuItem;
 	NSString *title;
 }

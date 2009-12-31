@@ -165,6 +165,10 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	}
 }
 
+NSInteger intSort(id num1, id num2, void *context) {
+	return [((RepoButtonDelegate *)num1)->shortTitle compare: ((RepoButtonDelegate *)num2)->shortTitle];
+}
+
 - (void) maybeRefresh: (ButtonDelegate *)bd {
 	NSMutableArray *localMods = [NSMutableArray arrayWithCapacity: 10];
 	NSMutableArray *remoteMods = [NSMutableArray arrayWithCapacity: 10];
@@ -182,10 +186,12 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			[upToDate addObject: bd2];
 	}
 	
+	NSArray *localMods2 = [localMods sortedArrayUsingFunction: intSort context: nil];
+	
 	int index = 0;
-	for (i = 0; i < [localMods count]; i++) {
-		[theMenu removeItem: [[localMods objectAtIndex: i] getMenuItem]];
-		[theMenu insertItem: [[localMods objectAtIndex: i] getMenuItem] atIndex: ++index];
+	for (i = 0; i < [localMods2 count]; i++) {
+		[theMenu removeItem: [[localMods2 objectAtIndex: i] getMenuItem]];
+		[theMenu insertItem: [[localMods2 objectAtIndex: i] getMenuItem] atIndex: ++index];
 	}
 	for (i = 0; i < [remoteMods count]; i++) {
 		[theMenu removeItem: [[remoteMods objectAtIndex: i] getMenuItem]];
