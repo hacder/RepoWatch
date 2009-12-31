@@ -30,25 +30,28 @@
 	arr = [NSArray arrayWithObjects: @"remote", nil];
 	t = [[self taskFromArguments: arr] autorelease];
 	file = [self pipeForTask: t];
-	[t launch];
-	[t waitUntilExit];
-	if ([t terminationStatus] != 0)
-		NSLog(@"Git Update Remote <remote>, task status: %d", [t terminationStatus]);
+	@try {
+		[t launch];
+		[t waitUntilExit];
+		if ([t terminationStatus] != 0)
+			NSLog(@"Git Update Remote <remote>, task status: %d", [t terminationStatus]);
 	
-	string = [self stringFromFile: file];
-	string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	if (![string length])
-		return;
-	
-	NSLog(@"Updating remote for %@", repository);
-	
-	t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]];
-	[t launch];
-	[t waitUntilExit];
-	if ([t terminationStatus] != 0) {
-		NSLog(@"Failed to fetch upstream for %@!", repository);
-	}
-	[t autorelease];
+		string = [self stringFromFile: file];
+		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		if (![string length])
+			return;
+		
+		NSLog(@"Updating remote for %@", repository);
+		
+		t = [[self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]] autorelease];
+		@try {
+			[t launch];
+			[t waitUntilExit];
+			if ([t terminationStatus] != 0) {
+				NSLog(@"Failed to fetch upstream for %@!", repository);
+			}
+		} @catch (NSException *e) {}
+	} @catch (NSException *e) {}
 }
 	
 - (NSString *) getDiffRemote: (BOOL)remote {
@@ -61,33 +64,40 @@
 		arr = [NSArray arrayWithObjects: @"remote", nil];
 		t = [[self taskFromArguments: arr] autorelease];
 		file = [self pipeForTask: t];
-		[t launch];
-		[t waitUntilExit];
-		if ([t terminationStatus] != 0)
-			NSLog(@"Git getDiffRemote <remote>, task status: %d", [t terminationStatus]);
-		string = [self stringFromFile: file];
-		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		if (![string length]) {
-			upstreamMod = NO;
+		@try {
+			[t launch];
+			[t waitUntilExit];
+			if ([t terminationStatus] != 0)
+				NSLog(@"Git getDiffRemote <remote>, task status: %d", [t terminationStatus]);
+			string = [self stringFromFile: file];
+			string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+			if (![string length]) {
+				upstreamMod = NO;
+				return nil;
+			} else {
+				upstreamMod = YES;
+			}
+			string = [NSString stringWithFormat: @"HEAD...%@", string];
+			arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string, nil];
+		} @catch (NSException *e) {
 			return nil;
-		} else {
-			upstreamMod = YES;
 		}
-		string = [NSString stringWithFormat: @"HEAD...%@", string];
-		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string, nil];
 	} else {
 		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", nil];
 	}
 	t = [[self taskFromArguments: arr] autorelease];
-	file = [self pipeForTask: t];	
-	[t launch];
-	[t waitUntilExit];
-	if ([t terminationStatus] != 0)
-		NSLog(@"Git getDiffRemote <diff>, task status: %d", [t terminationStatus]);
-	string = [self stringFromFile: file];
-	[file closeFile];
+	file = [self pipeForTask: t];
+	@try {
+		[t launch];
+		[t waitUntilExit];
+		if ([t terminationStatus] != 0)
+			NSLog(@"Git getDiffRemote <diff>, task status: %d", [t terminationStatus]);
+		string = [self stringFromFile: file];
+		[file closeFile];
+		return [self shortenDiff: string];
+	} @catch (NSException *e) {}
 	
-	return [self shortenDiff: string];
+	return nil;
 }
 
 - (void) commit: (id) menuItem {
@@ -110,25 +120,29 @@
 		[mc->butt setTitle: @"Update from upstream"];
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(upstreamUpdate:)];
-		[t launch];
-		[t waitUntilExit];
-		if ([t terminationStatus] != 0)
-			NSLog(@"Git commit, task status: %d", [t terminationStatus]);
-		
-		NSString *string = [self stringFromFile: file];
-		[file closeFile];
-		[mc->tv setString: string];
-		[mc->tv setEditable: NO];
-		
-		arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
-		t = [[self taskFromArguments: arr] autorelease];
-		file = [self pipeForTask: t];
-		
-		[t launch];
-		string = [self stringFromFile: file];
-		[file closeFile];
-		[mc->diffView setString: string];
-		[mc->diffView setEditable: NO];
+		@try {
+			[t launch];
+			[t waitUntilExit];
+			if ([t terminationStatus] != 0)
+				NSLog(@"Git commit, task status: %d", [t terminationStatus]);
+			
+			NSString *string = [self stringFromFile: file];
+			[file closeFile];
+			[mc->tv setString: string];
+			[mc->tv setEditable: NO];
+			
+			arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
+			t = [[self taskFromArguments: arr] autorelease];
+			file = [self pipeForTask: t];
+			
+			@try {
+				[t launch];
+				string = [self stringFromFile: file];
+				[file closeFile];
+				[mc->diffView setString: string];
+				[mc->diffView setEditable: NO];
+			} @catch (NSException *e) {}
+		} @catch (NSException *e) {}
 	}
 	[mc->commitWindow center];
 	[NSApp activateIgnoringOtherApps: YES];
@@ -139,25 +153,29 @@
 - (void) upstreamUpdate: (id) sender {
 	[sender setEnabled: NO];
 	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"rebase", @"origin", nil]] autorelease];
-	[t launch];
-	[t waitUntilExit];
-	if ([t terminationStatus] != 0)
-		NSLog(@"Git upstreamUpdate, task status: %d", [t terminationStatus]);
-	[sender setEnabled: YES];
-	[mc->commitWindow close];
-	[NSApp hide: self];
+	@try {
+		[t launch];
+		[t waitUntilExit];
+		if ([t terminationStatus] != 0)
+			NSLog(@"Git upstreamUpdate, task status: %d", [t terminationStatus]);
+		[sender setEnabled: YES];
+		[mc->commitWindow close];
+		[NSApp hide: self];
+	} @catch (NSException *e) {}
 }
 
 - (void) clickUpdate: (id) button {
 	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[mc->tv textStorage] mutableString], nil]] autorelease];
-	[t launch];
-	[t waitUntilExit];
-	if ([t terminationStatus] != 0)
-		NSLog(@"Git clickUpdate, task status: %d", [t terminationStatus]);
-	if (mc->commitWindow)
-		[mc->commitWindow close];
-	
-	[NSApp hide: self];
+	@try {
+		[t launch];
+		[t waitUntilExit];
+		if ([t terminationStatus] != 0)
+			NSLog(@"Git clickUpdate, task status: %d", [t terminationStatus]);
+		if (mc->commitWindow)
+			[mc->commitWindow close];
+		
+		[NSApp hide: self];
+	} @catch (NSException *e) {}
 }
 
 - (void) clickLog: (id) clicker {
@@ -170,18 +188,20 @@
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", revisionID, [NSString stringWithFormat: @"%@^", revisionID], nil];
 	NSTask *t = [[self taskFromArguments: arr] autorelease];
 	NSFileHandle *file = [self pipeForTask: t];
-	[t launch];
-	[t waitUntilExit];
-	if ([t terminationStatus] != 0)
-		NSLog(@"Git clickLog, task status: %d", [t terminationStatus]);
-	NSString *result = [self stringFromFile: file];
-	[file closeFile];
-	[diffCommitTV setString: result];
-	
-	[mc->diffCommitWindow center];
-	[NSApp activateIgnoringOtherApps: YES];
-	[mc->diffCommitWindow makeKeyAndOrderFront: NSApp];
-	[mc->diffCommitWindow makeFirstResponder: diffCommitTV];
+	@try {
+		[t launch];
+		[t waitUntilExit];
+		if ([t terminationStatus] != 0)
+			NSLog(@"Git clickLog, task status: %d", [t terminationStatus]);
+		NSString *result = [self stringFromFile: file];
+		[file closeFile];
+		[diffCommitTV setString: result];
+		
+		[mc->diffCommitWindow center];
+		[NSApp activateIgnoringOtherApps: YES];
+		[mc->diffCommitWindow makeKeyAndOrderFront: NSApp];
+		[mc->diffCommitWindow makeFirstResponder: diffCommitTV];
+	} @catch (NSException *e) {}
 }
 
 - (int) doBranchesForMenu: (NSMenu *)m {
