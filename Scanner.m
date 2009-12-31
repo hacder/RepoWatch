@@ -139,7 +139,6 @@ char *find_execable(const char *filename) {
 	git = find_execable("git");
 	hg = find_execable("hg");
 	NSLog(@"Git: %s Mercurial: %s", git, hg);
-	plugins = [[NSMutableArray alloc] initWithCapacity: 10];	
 
 /* Take away auto-scan for now.
 	FSEventStreamRef stream;
@@ -256,17 +255,17 @@ char *find_execable(const char *filename) {
 	if ([contents containsObject: @".git"]) {
 		if (git) {
 			[self addCachedRepoPath: path];
-			[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
+			[[GitDiffButtonDelegate alloc] initWithTitle: path
 				menu: menu statusItem: statusItem mainController: mc
-				gitPath: git repository: path]];
+				gitPath: git repository: path];
 			return YES;
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
 			[self addCachedRepoPath: path];
-			[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
+			[[MercurialDiffButtonDelegate alloc] initWithTitle: path
 				menu: menu statusItem: statusItem mainController: mc
-				hgPath: hg repository: path]];
+				hgPath: hg repository: path];
 			return YES;
 		}
 	}

@@ -6,7 +6,6 @@
 	NSLock *lock;
 	char *git;
 	char *hg;	
-	NSMutableArray *plugins;
 	BOOL done;
 }
 
