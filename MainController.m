@@ -223,7 +223,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) ping {
-	NSLog(@"mc Ping");
 	int localMods = [RepoButtonDelegate numLocalEdit];
 	int remoteMods = [RepoButtonDelegate numRemoteEdit];
 	
