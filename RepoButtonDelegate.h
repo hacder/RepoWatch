@@ -34,7 +34,6 @@
 - (void) ignore: (id) sender;
 - (void) hideIt;
 
-+ (NSUInteger)numModified;
 + (NSUInteger)numLocalEdit;
 + (NSUInteger)numRemoteEdit;
 + (NSUInteger)numUpToDate;

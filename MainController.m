@@ -214,8 +214,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) ping {
-	int localMods = [RepoButtonDelegate numLocalMods];
-	int remoteMods = [RepoButtonDelegate numRemoteMods];
+	int localMods = [RepoButtonDelegate numLocalEdit];
+	int remoteMods = [RepoButtonDelegate numRemoteEdit];
 	
 	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 	BOOL emulateClock = [def boolForKey: @"emulateClock"];
