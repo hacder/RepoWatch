@@ -239,7 +239,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
 		[statusItem setTitle: [rbd shortTitle]];
 	} else {
-		[statusItem setImage: nil];
+		[statusItem setImage: greenBubble];
 		[statusItem setTitle: @""];
 	}
 }
