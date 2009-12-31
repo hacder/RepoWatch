@@ -426,6 +426,12 @@ char *find_execable(const char *filename) {
 }
 
 - (void) findSupportedSCMS {
+	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self findSupportedSCMS];
+		});
+		return;
+	}
 	if (![lock tryLock]) {
 		NSLog(@"Failing to lock. Bailing");
 		return;
