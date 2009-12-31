@@ -255,6 +255,10 @@ void callbackFunction(
 	return NO;
 }
 
++ (NSArray *)getRepos {
+	return repos;
+}
+
 - (void) commit: (id) menuItem {
 }
 

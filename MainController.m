@@ -166,23 +166,37 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 }
 
 - (void) maybeRefresh: (ButtonDelegate *)bd {
-	if ([bd isKindOfClass: [RepoButtonDelegate class]]) {
-		RepoButtonDelegate *bd2 = (RepoButtonDelegate *)bd;
-		if ([theMenu indexOfItem: [bd2 getMenuItem]] == -1)
-			return;
-		[theMenu removeItem: [bd2 getMenuItem]];
-		NSInteger index = 0;
-		
-		if (bd2->localMod) {
-			index = [theMenu indexOfItem: localSeparator];
-		} else if (bd2->upstreamMod) {
-			index = [theMenu indexOfItem: upstreamSeparator];
-		} else {
-			index = [theMenu indexOfItem: normalSeparator];
-		}
-		[theMenu insertItem: [bd2 getMenuItem] atIndex: index + 1];
-		[self ping];
+	NSMutableArray *localMods = [NSMutableArray arrayWithCapacity: 10];
+	NSMutableArray *remoteMods = [NSMutableArray arrayWithCapacity: 10];
+	NSMutableArray *upToDate = [NSMutableArray arrayWithCapacity: 10];
+	
+	NSArray *arr = [RepoButtonDelegate getRepos];
+	int i;
+	for (i = 0; i < [arr count]; i++) {
+		RepoButtonDelegate *bd2 = [arr objectAtIndex: i];
+		if (bd2->localMod)
+			[localMods addObject: bd2];
+		else if (bd2->upstreamMod)
+			[remoteMods addObject: bd2];
+		else
+			[upToDate addObject: bd2];
 	}
+	
+	int index = 0;
+	for (i = 0; i < [localMods count]; i++) {
+		[theMenu removeItem: [[localMods objectAtIndex: i] getMenuItem]];
+		[theMenu insertItem: [[localMods objectAtIndex: i] getMenuItem] atIndex: ++index];
+	}
+	for (i = 0; i < [remoteMods count]; i++) {
+		[theMenu removeItem: [[remoteMods objectAtIndex: i] getMenuItem]];
+		[theMenu insertItem: [[remoteMods objectAtIndex: i] getMenuItem] atIndex: ++index];
+	}
+	for (i = 0; i < [upToDate count]; i++) {
+		[theMenu removeItem: [[upToDate objectAtIndex: i] getMenuItem]];
+		[theMenu insertItem: [[upToDate objectAtIndex: i] getMenuItem] atIndex: ++index];
+	}
+
+	[self ping];
 }
 
 - (void) timeout: (id) sender {
