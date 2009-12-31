@@ -1,5 +1,5 @@
 #import "ButtonDelegate.h"
-#import <dispatch/dispatch.h>
+#import "MainController.h"#import <dispatch/dispatch.h>
 #import <sys/time.h>
 
 @implementation ButtonDelegate

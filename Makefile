@@ -1,6 +1,6 @@
 .PHONY: release clean
 
-SRC = icons.m ButtonDelegate.m RepoButtonDelegate.m \
+SRC = icons.m ButtonDelegate.m RepoButtonDelegate.m Scanner.m \
 	MainController.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
 	QuitButtonDelegate.m SeparatorButtonDelegate.m BugController.m
 

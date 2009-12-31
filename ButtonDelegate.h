@@ -1,15 +1,16 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "MainController.h"
+
+@class MainController;
 
 @interface ButtonDelegate : NSObject {
-	NSMenuItem *menuItem;
 	NSString *shortTitle;
 	NSMenu *menu;
 	NSStatusItem *statusItem;
 	MainController *mc;
 	NSView *_prefView;
 @public
+	NSMenuItem *menuItem;
 	NSString *title;
 }
 

@@ -1,5 +1,7 @@
-	#import <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import "Scanner.h"
+#import "QuitButtonDelegate.h"
 
 @class ButtonDelegate;
 @class ODeskButtonDelegate;
@@ -7,28 +9,21 @@
 @interface MainController : NSObject {
 	NSStatusItem *statusItem;
 	NSMenu *theMenu;
-	NSMutableArray *plugins;
 
 	NSMenuItem *normalSeparator;
 	NSMenuItem *upstreamSeparator;
 	NSMenuItem *localSeparator;
 	
-	ODeskButtonDelegate *odb;
 	NSTimer *timer;
 
 	char *date;
 	char *time;
 	
-	char *git;
-	char *hg;
-	
 	NSTimer *demoTimer;
-	BOOL doneRepoSearch;
-	BOOL doneStartup;
-
+	Scanner *scanner;
+	QuitButtonDelegate *quit;
+	
 @public	
-	NSLock *lock;
-
 	NSImage *redBubble;
 	NSImage *yellowBubble;
 	NSImage *greenBubble;
@@ -47,9 +42,6 @@
 
 - init;
 - (void) maybeRefresh: (ButtonDelegate *)bd;
-- (void) findSupportedSCMS;
 - (IBAction) openFile: (id) sender;
-- (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path;
-- (void) searchPath: (NSString *)path;
 - (void) ping;
 @end
