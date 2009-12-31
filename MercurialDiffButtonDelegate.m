@@ -66,11 +66,13 @@
 
 - (void) clickUpdate: (id) button {
 	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil]] autorelease];
-	[t launch];
-	if (mc->commitWindow)
-		[mc->commitWindow close];
-	
-	[NSApp hide: self];
+	@try {
+		[t launch];
+		if (mc->commitWindow)
+			[mc->commitWindow close];
+		
+		[NSApp hide: self];
+	} @catch (NSException *e) {}
 }
 
 - (void) setAllTitles: (NSString *)s {
@@ -158,47 +160,49 @@
 		[t autorelease];
 		[t2 autorelease];
 		
-		[t launch];
-		[t2 launch];
-		
-		NSData *data = [file readDataToEndOfFile];
-		NSCharacterSet *cs = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-		NSString *utf8String = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
-		NSString *string = [utf8String stringByTrimmingCharactersInSet: cs];
-
-		NSArray *arr = [string componentsSeparatedByString: @"\n"];
-		NSString *s2 = [arr objectAtIndex: [arr count] - 1];
-		s2 = [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		@try {
+			[t launch];
+			[t2 launch];
+			
+			NSData *data = [file readDataToEndOfFile];
+			NSCharacterSet *cs = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+			NSString *utf8String = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
+			NSString *string = [utf8String stringByTrimmingCharactersInSet: cs];
 	
-		if (![s2 isEqual: @"0 files changed"]) {
-			localMod = YES;
-			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index] setTarget: self];
-			NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [self shortenDiff: s2]];
+			NSArray *arr = [string componentsSeparatedByString: @"\n"];
+			NSString *s2 = [arr objectAtIndex: [arr count] - 1];
+			s2 = [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		
-			[self setAllTitles: sTit];
-		} else {
-			localMod = NO;
-			NSString *sTit = [NSString stringWithFormat: @"%@",
-				[repository lastPathComponent]];
-
-			[self setAllTitles: sTit];
-		}
-		[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-		[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-		[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-
-		[lock unlock];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[lock lock];
-			if (localMod)
-				[menuItem setImage: mc->redBubble];
-			else if (upstreamMod)
-				[menuItem setImage: mc->yellowBubble];
-			else
-				[menuItem setImage: mc->greenBubble];
-			[menuItem setSubmenu: m];
+			if (![s2 isEqual: @"0 files changed"]) {
+				localMod = YES;
+				[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index] setTarget: self];
+				NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [self shortenDiff: s2]];
+			
+				[self setAllTitles: sTit];
+			} else {
+				localMod = NO;
+				NSString *sTit = [NSString stringWithFormat: @"%@",
+					[repository lastPathComponent]];
+	
+				[self setAllTitles: sTit];
+			}
+			[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+			[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+			[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+	
 			[lock unlock];
-		});
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[lock lock];
+				if (localMod)
+					[menuItem setImage: mc->redBubble];
+				else if (upstreamMod)
+					[menuItem setImage: mc->yellowBubble];
+				else
+					[menuItem setImage: mc->greenBubble];
+				[menuItem setSubmenu: m];
+				[lock unlock];
+			});
+		} @catch (NSException *e) {}
 	});
 }
 
