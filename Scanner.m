@@ -134,6 +134,7 @@ char *find_execable(const char *filename) {
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
+	done = NO;
 	lock = [[NSLock alloc] init];	
 	git = find_execable("git");
 	hg = find_execable("hg");
@@ -172,8 +173,13 @@ char *find_execable(const char *filename) {
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
 		[self testDirectoryContents: contents ofPath: [key stringByStandardizingPath]];
 	}
+	done = YES;
 
 	return self;
+}
+
+- (BOOL) isDone {
+	return done;
 }
 
 - (void) beep: (id) something {

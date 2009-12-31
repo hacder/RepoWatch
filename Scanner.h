@@ -7,6 +7,7 @@
 	char *git;
 	char *hg;	
 	NSMutableArray *plugins;
+	BOOL done;
 }
 
 - (void) findSupportedSCMS;
@@ -15,5 +16,6 @@
 - (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path;
 - (void) addCachedRepoPath: (NSString *)path;
 - (void) openFile: (NSString *)filename withContents: (NSArray *)contents;
+- (BOOL) isDone;
 
 @end

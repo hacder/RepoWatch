@@ -179,6 +179,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) maybeRefresh: (ButtonDelegate *)bd {
+	if (![scanner isDone])
+		return;
 	NSMutableArray *localMods = [NSMutableArray arrayWithCapacity: 10];
 	NSMutableArray *remoteMods = [NSMutableArray arrayWithCapacity: 10];
 	NSMutableArray *upToDate = [NSMutableArray arrayWithCapacity: 10];
@@ -223,19 +225,24 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) ping {
+	NSLog(@"mc Ping");
 	int localMods = [RepoButtonDelegate numLocalEdit];
 	int remoteMods = [RepoButtonDelegate numRemoteEdit];
 	
 	if (localMods || remoteMods) {
-		if (localMods)
+		if (localMods) {
+			NSLog(@"Red");
 			[statusItem setImage: redBubble];
-		if (remoteMods)
+		} else if (remoteMods) {
+			NSLog(@"Yellow");
 			[statusItem setImage: yellowBubble];
+		}
 		
 		NSMenuItem *mi = [theMenu itemAtIndex: 1];
 		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
 		[statusItem setTitle: [rbd shortTitle]];
 	} else {
+		NSLog(@"Good");
 		[statusItem setImage: nil];
 		NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
 		NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
