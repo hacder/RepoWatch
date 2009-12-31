@@ -187,19 +187,21 @@ NSInteger intSort(id num1, id num2, void *context) {
 	}
 	
 	NSArray *localMods2 = [localMods sortedArrayUsingFunction: intSort context: nil];
+	NSArray *upToDate2 = [upToDate sortedArrayUsingFunction: intSort context: nil];
+	NSArray *remoteMods2 = [remoteMods sortedArrayUsingFunction: intSort context: nil];
 	
 	int index = 0;
 	for (i = 0; i < [localMods2 count]; i++) {
 		[theMenu removeItem: [[localMods2 objectAtIndex: i] getMenuItem]];
 		[theMenu insertItem: [[localMods2 objectAtIndex: i] getMenuItem] atIndex: ++index];
 	}
-	for (i = 0; i < [remoteMods count]; i++) {
-		[theMenu removeItem: [[remoteMods objectAtIndex: i] getMenuItem]];
-		[theMenu insertItem: [[remoteMods objectAtIndex: i] getMenuItem] atIndex: ++index];
+	for (i = 0; i < [remoteMods2 count]; i++) {
+		[theMenu removeItem: [[remoteMods2 objectAtIndex: i] getMenuItem]];
+		[theMenu insertItem: [[remoteMods2 objectAtIndex: i] getMenuItem] atIndex: ++index];
 	}
-	for (i = 0; i < [upToDate count]; i++) {
-		[theMenu removeItem: [[upToDate objectAtIndex: i] getMenuItem]];
-		[theMenu insertItem: [[upToDate objectAtIndex: i] getMenuItem] atIndex: ++index];
+	for (i = 0; i < [upToDate2 count]; i++) {
+		[theMenu removeItem: [[upToDate2 objectAtIndex: i] getMenuItem]];
+		[theMenu insertItem: [[upToDate2 objectAtIndex: i] getMenuItem] atIndex: ++index];
 	}
 
 	[self ping];
