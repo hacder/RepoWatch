@@ -230,32 +230,17 @@ NSInteger intSort(id num1, id num2, void *context) {
 	int remoteMods = [RepoButtonDelegate numRemoteEdit];
 	
 	if (localMods || remoteMods) {
-		if (localMods) {
-			NSLog(@"Red");
+		if (localMods)
 			[statusItem setImage: redBubble];
-		} else if (remoteMods) {
-			NSLog(@"Yellow");
+		else if (remoteMods)
 			[statusItem setImage: yellowBubble];
-		}
 		
 		NSMenuItem *mi = [theMenu itemAtIndex: 1];
 		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
 		[statusItem setTitle: [rbd shortTitle]];
 	} else {
-		NSLog(@"Good");
 		[statusItem setImage: nil];
-		NSString *clockPlist = [@"~/Library/Preferences/com.apple.menuextra.clock.plist" stringByExpandingTildeInPath];
-		NSDictionary *dict = [[[NSDictionary alloc] initWithContentsOfFile: clockPlist] autorelease];
-		NSString *format = [dict objectForKey: @"DateFormat"];
-		if (!format || [format isEqual: @""])
-			format = @"E h:mm a";
-	
-		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-		[dateFormatter setDateFormat: format];
-		[dateFormatter autorelease];
-		
-		NSDate *date2 = [NSDate date];
-		[statusItem setTitle: [dateFormatter stringFromDate: date2]];
+		[statusItem setTitle: @""];
 	}
 }
 
