@@ -174,6 +174,10 @@ void callbackFunction(
 - (void) fire {
 }
 
+- (void) hideIt {
+	[menuItem setHidden: YES];
+}
+
 + (NSUInteger) numModified {
 	NSUInteger ret = 0;
 	int i = 0;

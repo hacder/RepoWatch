@@ -50,8 +50,14 @@
 			if ([t terminationStatus] != 0) {
 				NSLog(@"Failed to fetch upstream for %@!", repository);
 			}
-		} @catch (NSException *e) {}
-	} @catch (NSException *e) {}
+		} @catch (NSException *e) {
+			[self hideIt];
+			return;
+		}
+	} @catch (NSException *e) {
+		[self hideIt];
+		return;
+	}
 }
 	
 - (NSString *) getDiffRemote: (BOOL)remote {
@@ -80,6 +86,7 @@
 			string = [NSString stringWithFormat: @"HEAD...%@", string];
 			arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string, nil];
 		} @catch (NSException *e) {
+			[self hideIt];
 			return nil;
 		}
 	} else {
@@ -95,7 +102,10 @@
 		string = [self stringFromFile: file];
 		[file closeFile];
 		return [self shortenDiff: string];
-	} @catch (NSException *e) {}
+	} @catch (NSException *e) {
+		[self hideIt];
+		return nil;
+	}
 	
 	return nil;
 }
@@ -141,8 +151,14 @@
 				[file closeFile];
 				[mc->diffView setString: string];
 				[mc->diffView setEditable: NO];
-			} @catch (NSException *e) {}
-		} @catch (NSException *e) {}
+			} @catch (NSException *e) {
+				[self hideIt];
+				return;
+			}
+		} @catch (NSException *e) {
+			[self hideIt];
+			return;
+		}
 	}
 	[mc->commitWindow center];
 	[NSApp activateIgnoringOtherApps: YES];
@@ -161,7 +177,10 @@
 		[sender setEnabled: YES];
 		[mc->commitWindow close];
 		[NSApp hide: self];
-	} @catch (NSException *e) {}
+	} @catch (NSException *e) {
+		[self hideIt];
+		return;
+	}
 }
 
 - (void) clickUpdate: (id) button {
@@ -175,7 +194,10 @@
 			[mc->commitWindow close];
 		
 		[NSApp hide: self];
-	} @catch (NSException *e) {}
+	} @catch (NSException *e) {
+		[self hideIt];
+		return;
+	}
 }
 
 - (void) clickLog: (id) clicker {
@@ -201,7 +223,10 @@
 		[NSApp activateIgnoringOtherApps: YES];
 		[mc->diffCommitWindow makeKeyAndOrderFront: NSApp];
 		[mc->diffCommitWindow makeFirstResponder: diffCommitTV];
-	} @catch (NSException *e) {}
+	} @catch (NSException *e) {
+		[self hideIt];
+		return;
+	}
 }
 
 - (int) doBranchesForMenu: (NSMenu *)m {

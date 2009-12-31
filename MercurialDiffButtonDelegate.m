@@ -46,10 +46,7 @@
 		@try {
 			[t launch];
 		} @catch (NSException *e) {
-			[self setTitle: @"Errored"];
-			[menuItem setHidden: YES];
-			localMod = NO;
-			upstreamMod = NO;
+			[self hideIt];
 			return;
 		}
 		
@@ -72,7 +69,10 @@
 			[mc->commitWindow close];
 		
 		[NSApp hide: self];
-	} @catch (NSException *e) {}
+	} @catch (NSException *e) {
+		[self hideIt];
+		return;
+	}
 }
 
 - (void) setAllTitles: (NSString *)s {
@@ -202,7 +202,10 @@
 				[menuItem setSubmenu: m];
 				[lock unlock];
 			});
-		} @catch (NSException *e) {}
+		} @catch (NSException *e) {
+			[self hideIt];
+			return;
+		}
 	});
 }
 

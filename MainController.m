@@ -214,12 +214,16 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) ping {
-	NSUInteger modded = [RepoButtonDelegate numModified];
+	int localMods = [RepoButtonDelegate numLocalMods];
+	int remoteMods = [RepoButtonDelegate numRemoteMods];
+	
 	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 	BOOL emulateClock = [def boolForKey: @"emulateClock"];
-	if (modded) {
-		if (!emulateClock)
+	if (localMods || remoteMods) {
+		if (localMods)
 			[statusItem setImage: redBubble];
+		if (remoteMods)
+			[statusItem setImage: yellowBubble];
 		[statusItem setTitle: [RepoButtonDelegate getModText]];
 	} else {
 		if (!emulateClock) {

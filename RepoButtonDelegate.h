@@ -32,6 +32,7 @@
 - (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args;
 - (NSTask *)taskFromArguments: (NSArray *)args;
 - (void) ignore: (id) sender;
+- (void) hideIt;
 
 + (NSUInteger)numModified;
 + (NSUInteger)numLocalEdit;
