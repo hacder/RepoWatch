@@ -110,12 +110,13 @@
 		[t2 setStandardOutput: pipe2];
 		
 		NSFileHandle *file = [pipe2 fileHandleForReading];
-	
-		NSArray *branches = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"branches", nil]];
-	
+		int the_index = 0;
 		NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];	
 		int i;
-		int the_index = 0;
+		
+/*
+		NSArray *branches = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"branches", nil]];
+	
 		for (i = 0; i < [branches count]; i++) {
 			NSString *tmp = [branches objectAtIndex: i];
 			if (tmp && [tmp length] > 0) {
@@ -126,9 +127,9 @@
 					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
 				}
 			}
-		}
-	
+		}	
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
+*/
 		
 		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|age} {desc}\n", nil]];
 		NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];

@@ -206,14 +206,14 @@
 			}
 		}
 	}
+
+	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];	
 	
 	return the_index;
 }
 
 - (int) doLogsForMenu: (NSMenu *)m atIndex: (int)the_index {
 	int i;
-	
-	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 	
 	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ar %s", @"--abbrev-commit", nil]];
 	NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
@@ -290,7 +290,7 @@
 	
 	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
 
-	the_index = [self doBranchesForMenu: m];
+//	the_index = [self doBranchesForMenu: m];
 	the_index = [self doLogsForMenu: m atIndex: the_index];
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
