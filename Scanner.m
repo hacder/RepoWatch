@@ -164,7 +164,6 @@ char *find_execable(const char *filename) {
 	dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
 	for (NSString *key in dict) {
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
-		NSLog(@"Cached: %@", [key stringByStandardizingPath]);
 		[self testDirectoryContents: contents ofPath: [key stringByStandardizingPath]];
 	}
 
@@ -251,18 +250,14 @@ char *find_execable(const char *filename) {
 	if ([contents containsObject: @".git"]) {
 		if (git) {
 			[self addCachedRepoPath: path];
-			NSLog(@"Found git repository at %@", path);
 			[plugins addObject: [[GitDiffButtonDelegate alloc] initWithTitle: path
 				menu: menu statusItem: statusItem mainController: mc
 				gitPath: git repository: path]];
 			return YES;
-		} else {
-			NSLog(@"Found git repository, but no git program");
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
 			[self addCachedRepoPath: path];
-			NSLog(@"Found mercurial repository at %@", path);
 			[plugins addObject: [[MercurialDiffButtonDelegate alloc] initWithTitle: path
 				menu: menu statusItem: statusItem mainController: mc
 				hgPath: hg repository: path]];
