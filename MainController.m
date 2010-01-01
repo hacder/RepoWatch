@@ -29,12 +29,13 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	return noErr;
 }
 
-- (NSImage *)getBubbleOfColor: (NSColor *)color hilightColor: (NSColor *)hilightColor {
+- (NSImage *)getBubbleOfColor: (NSColor *)highlightColor {
 	int size = 15;
+	NSColor *color = [highlightColor blendedColorWithFraction: 0.75 ofColor: [NSColor whiteColor]];
 	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
 	[ret lockFocus];
 	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(1.0, 1.0, size - 2.0, size - 2.0)];
-	NSGradient *aGradient = [[[NSGradient alloc] initWithStartingColor: color endingColor: hilightColor] autorelease];
+	NSGradient *aGradient = [[[NSGradient alloc] initWithStartingColor: color endingColor: highlightColor] autorelease];
 	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.2, 0.2)];
 	[path setLineWidth: 2];
 	[[NSColor colorWithCalibratedRed: 0.5 green: 0.5 blue: 0.5 alpha: 1.0] set];
@@ -48,15 +49,9 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	date = __DATE__;
 	time = __TIME__;
 	
-	redBubble = [self
-		getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.5 blue: 0.5 alpha: 1.0]
-		hilightColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0]];
-	yellowBubble = [self
-		getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.5 alpha: 1.0]
-		hilightColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0]];
-	greenBubble = [self
-		getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0]
-		hilightColor: [NSColor colorWithCalibratedRed: 0.5 green: 0.5 blue: 0.5 alpha: 1.0]];
+	redBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0]];
+	yellowBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0]];
+	greenBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0]];
 
 	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
 	
