@@ -56,7 +56,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		hilightColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0]];
 	greenBubble = [self
 		getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.5 green: 0.5 blue: 0.5 alpha: 1.0]
-		hilightColor: [NSColor colorWithCalibratedRed: 0.0 green: 1.0 blue: 0.0 alpha: 1.0]];
+		hilightColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0]];
 
 	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
 	
