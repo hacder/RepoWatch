@@ -263,21 +263,28 @@
 	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ar %s", @"--abbrev-commit", nil]];
 	NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
 	NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
+	NSMenuItem *mi;
 
-	for (i = 0; i < [logs count]; i++) {
-		NSString *tmp = [logs objectAtIndex: i];
-		NSDictionary *attributes;
-		if (i == 0) {
-			attributes = [NSDictionary dictionaryWithObject: firstFont forKey: NSFontAttributeName];
-		} else {
-			attributes = [NSDictionary dictionaryWithObject: secondFont forKey: NSFontAttributeName];
-		}
-		NSAttributedString *attr = [[NSAttributedString alloc] initWithString: tmp attributes: attributes];
-		if (tmp && [tmp length] > 0) {
-			NSMenuItem *mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
-			[mi setAttributedTitle: attr];
-			[m addItem: mi];
-			the_index++;
+	if ([logs count] == 1) {
+		mi = [[NSMenuItem alloc] initWithTitle: @"No history for this project" action: nil keyEquivalent: @""];
+		[m addItem: mi];
+		the_index++;
+	} else {
+		for (i = 0; i < [logs count]; i++) {
+			NSString *tmp = [logs objectAtIndex: i];
+			NSDictionary *attributes;
+			if (i == 0) {
+				attributes = [NSDictionary dictionaryWithObject: firstFont forKey: NSFontAttributeName];
+			} else {
+				attributes = [NSDictionary dictionaryWithObject: secondFont forKey: NSFontAttributeName];
+			}
+			NSAttributedString *attr = [[NSAttributedString alloc] initWithString: tmp attributes: attributes];
+			if (tmp && [tmp length] > 0) {
+				mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
+				[mi setAttributedTitle: attr];
+				[m addItem: mi];
+				the_index++;
+			}
 		}
 	}
 	
