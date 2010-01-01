@@ -29,59 +29,34 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	return noErr;
 }
 
+- (NSImage *)getBubbleOfColor: (NSColor *)color hilightColor: (NSColor *)hilightColor {
+	int size = 15;
+	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
+	[ret lockFocus];
+	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(1.0, 1.0, size - 2.0, size - 2.0)];
+	NSGradient *aGradient = [[[NSGradient alloc] initWithStartingColor: color endingColor: hilightColor] autorelease];
+	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.2, 0.2)];
+	[path setLineWidth: 2];
+	[[NSColor blackColor] set];
+	[path stroke];
+	[ret unlockFocus];
+	return ret;
+}
+
 - init {
 	self = [super init];
 	date = __DATE__;
 	time = __TIME__;
 	
-	int size = 15;
-	
-	redBubble = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
-	[redBubble lockFocus];
-	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(0, 0, size, size)];
-	
-	NSGradient *aGradient = [
-		[
-			[NSGradient alloc]
-				initWithStartingColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.5 blue: 0.5 alpha: 1.0]
-				endingColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0]
-		] autorelease];
-	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.2, 0.2)];
-	[path setLineWidth: 0.1];
-	[[NSColor blackColor] set];
-	[path stroke];
-	[redBubble unlockFocus];
-
-	yellowBubble = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
-	[yellowBubble lockFocus];
-	path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(0, 0, size, size)];
-	
-	aGradient = [
-		[
-			[NSGradient alloc]
-				initWithStartingColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.5 alpha: 1.0]
-				endingColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0]
-		] autorelease];
-	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.2, 0.2)];
-	[path setLineWidth: 0.1];
-	[[NSColor blackColor] set];
-	[path stroke];
-	[yellowBubble unlockFocus];
-
-	greenBubble = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
-	[greenBubble lockFocus];
-	aGradient = [
-		[
-			[NSGradient alloc]
-				initWithStartingColor: [NSColor colorWithCalibratedRed: 0.5 green: 1.0 blue: 0.5 alpha: 1.0]
-				endingColor: [NSColor colorWithCalibratedRed: 0.0 green: 1.0 blue: 0.0 alpha: 1.0]
-		] autorelease];
-	path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(0, 0, size, size)];
-	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.0, 0.0)];
-	[path setLineWidth: 0.1];
-	[[NSColor blackColor] set];
-	[path stroke];
-	[greenBubble unlockFocus];
+	redBubble = [self
+		getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.5 blue: 0.5 alpha: 1.0]
+		hilightColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0]];
+	yellowBubble = [self
+		getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.5 alpha: 1.0]
+		hilightColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0]];
+	greenBubble = [self
+		getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.5 green: 1.0 blue: 0.5 alpha: 1.0]
+		hilightColor: [NSColor colorWithCalibratedRed: 0.0 green: 1.0 blue: 0.0 alpha: 1.0]];
 
 	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
 	
