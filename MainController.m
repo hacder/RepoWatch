@@ -154,6 +154,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[op setCanChooseFiles: NO];
 	[op setCanChooseDirectories: YES];
 	[op setAllowsMultipleSelection: NO];
+
 	// TODO: Find some way to verify directory before they hit OK.
 	if ([op runModal] == NSOKButton) {
 		NSString *filename = [op filename];
