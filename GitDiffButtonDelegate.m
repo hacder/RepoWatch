@@ -335,10 +335,8 @@
 - (void) realFire {
 	int the_index = 0;
 	
-	NSString *remoteString = [self getDiffRemote: YES];		
+	NSString *remoteString = [self getDiffRemote: YES];
 	NSString *string = [self getDiffRemote: NO];
-	if (string == nil)
-		return;
 	
 	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
 
@@ -347,7 +345,7 @@
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
 	if (!remoteString || [remoteString isEqual: @""]) {
-		if ([string isEqual: @""]) {
+		if (string == nil || [string isEqual: @""]) {
 			[self noMods];
 		} else {
 			[self localModsWithMenu: m index: the_index string: string];
