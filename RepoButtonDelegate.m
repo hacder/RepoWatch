@@ -140,7 +140,7 @@ void callbackFunction(
 	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
 
 	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
-	float lat = [d floatForKey: @"ignoredRepos"];
+	float lat = [d floatForKey: @"fseventDelay"];
 
 	CFAbsoluteTime latency = lat ? lat : 1.5;
 	stream = FSEventStreamCreate(NULL,
