@@ -138,7 +138,11 @@ void callbackFunction(
 	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
 	CFStringRef myPath = (CFStringRef)repository;
 	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
-	CFAbsoluteTime latency = 1.5;
+
+	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+	float lat = [d floatForKey: @"ignoredRepos"];
+
+	CFAbsoluteTime latency = lat ? lat : 1.5;
 	stream = FSEventStreamCreate(NULL,
 		&callbackFunction,
 		&fsesc,
