@@ -261,12 +261,12 @@
 	int i;
 	
 	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ar %s", @"--abbrev-commit", nil]];
-	NSLog(@"Logs result: %@", logs);
 	NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
 	NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
 	NSMenuItem *mi;
 
 	if ([logs count] == 1) {
+		NSLog(@"Thinks that there is no log: %@", logs);
 		mi = [[NSMenuItem alloc] initWithTitle: @"No history for this project" action: nil keyEquivalent: @""];
 		[m addItem: mi];
 		the_index++;

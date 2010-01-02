@@ -52,6 +52,7 @@ void callbackFunction(
 		[file closeFile];
 		return result;
 	} @catch (NSException *e) {
+		NSLog(@"Got exception: %@", e);
 	}
 	return nil;
 }
