@@ -261,7 +261,7 @@
 	int i;
 	
 	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10",
-			@"--format=%h %ar %s", @"--abbrev-commit", nil]];
+			@"--pretty=format:%h %ar %s", @"--abbrev-commit", nil]];
 	NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
 	NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
 	NSMenuItem *mi;
