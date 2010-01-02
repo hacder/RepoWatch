@@ -136,6 +136,9 @@ char *find_execable(const char *filename) {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
 	done = NO;
 	lock = [[NSLock alloc] init];	
+
+	NSLog(@"Path is: %s", getenv("PATH"));
+
 	git = find_execable("git");
 	hg = find_execable("hg");
 	NSLog(@"Git: %s Mercurial: %s", git, hg);
