@@ -260,7 +260,8 @@
 - (int) doLogsForMenu: (NSMenu *)m atIndex: (int)the_index {
 	int i;
 	
-	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--format=%h %ar %s", @"--abbrev-commit", nil]];
+	NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-n", @"10",
+			@"--format=%h %ar %s", @"--abbrev-commit", nil]];
 	NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
 	NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
 	NSMenuItem *mi;
