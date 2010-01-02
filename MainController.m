@@ -195,6 +195,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) ping {
+	if (![scanner isDone])
+		return;
 	int localMods = [RepoButtonDelegate numLocalEdit];
 	int remoteMods = [RepoButtonDelegate numRemoteEdit];
 	
