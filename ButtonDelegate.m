@@ -41,7 +41,7 @@
 }
 
 - (void) forceRefresh {
-	[self fire];
+	[self fire: nil];
 }
 
 - (NSMenuItem *)getMenuItem {
@@ -58,7 +58,7 @@
 - (void) beep: (id) something {
 }
 
-- (void) fire {
+- (void) fire: (NSTimer *)t {
 }
 
 @end

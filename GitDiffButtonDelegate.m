@@ -11,7 +11,7 @@
 	diffCommitTV = mc->diffCommitTextView;
 	[diffCommitTV retain];
 	
-	[self fire];
+	[self fire: nil];
 	[self updateRemote];
 	return self;
 }
@@ -387,11 +387,11 @@
 	});
 }
 
-- (void) fire {
+- (void) fire: (NSTimer *)t {
 	NSLog(@"Calling fire on %@", repository);
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		dispatch_async(dispatch_get_main_queue(), ^{
-			[self fire];
+			[self fire: nil];
 		});
 		return;
 	}
@@ -401,6 +401,7 @@
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self realFire];
 		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setupTimer];
 			[lock unlock];
 		});
 	});

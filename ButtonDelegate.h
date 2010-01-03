@@ -15,7 +15,7 @@
 }
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc;
-- (void) fire;
+- (void) fire: (NSTimer *)t;
 - (void) addMenuItem;
 - (NSString *) shortTitle;
 - (void) setShortTitle: (NSString *)t;

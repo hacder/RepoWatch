@@ -5,7 +5,7 @@
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc hgPath: (char *)hgPath repository: (NSString *)rep {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	hg = hgPath;
-	[self fire];
+	[self fire: nil];
 	return self;
 }
 
@@ -86,7 +86,7 @@
 	});
 }
 
-- (void) fire {
+- (void) fire: (NSTimer *)t {
 	if (![[NSFileManager defaultManager] fileExistsAtPath: repository]) {
 		localMod = NO;
 		upstreamMod = NO;
@@ -115,23 +115,6 @@
 		int the_index = 0;
 		NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];	
 		int i;
-		
-/*
-		NSArray *branches = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"branches", nil]];
-	
-		for (i = 0; i < [branches count]; i++) {
-			NSString *tmp = [branches objectAtIndex: i];
-			if (tmp && [tmp length] > 0) {
-				[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
-				if ('*' == [tmp characterAtIndex: 0]) {
-					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
-				} else {
-					tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
-				}
-			}
-		}	
-		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
-*/
 		
 		NSArray *logs = [self
 			arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|age} {desc}\n", nil]
@@ -213,8 +196,10 @@
 			});
 		} @catch (NSException *e) {
 			[self hideIt];
+			[self setupTimer];
 			return;
 		}
+		[self setupTimer];
 	});
 }
 

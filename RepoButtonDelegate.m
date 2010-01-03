@@ -142,7 +142,7 @@ void callbackFunction(
 	[dirtyLock lock];
 	dirty = NO;
 	[dirtyLock unlock];
-	interval = 100;
+	interval = 10;
 	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;
@@ -184,11 +184,9 @@ void callbackFunction(
 }
 
 - (void) setupTimer {
-	NSInvocation *invocation = [[NSInvocation alloc] init];
-	[invocation setSelector: @selector(fire)];
-	[invocation setTarget: self];
+	NSLog(@"Setting up timer");
 	[timer release];
-	timer = [NSTimer scheduledTimerWithTimeInterval: interval invocation: invocation repeats: NO];
+	timer = [NSTimer scheduledTimerWithTimeInterval: interval target: self selector: @selector(fire:) userInfo: nil repeats: NO];
 	[timer retain];
 }
 
