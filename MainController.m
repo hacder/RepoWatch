@@ -104,7 +104,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[upstreamSeparator setHidden: YES];
 	[theMenu addItem: upstreamSeparator];
 	normalSeparator = [NSMenuItem separatorItem];
-	[normalSeparator setHidden: YES];
+	[normalSeparator setHidden: YES];  
 	[theMenu addItem: normalSeparator];
 	
 	SUUpdater *updater = [SUUpdater sharedUpdater];
