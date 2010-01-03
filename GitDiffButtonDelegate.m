@@ -284,7 +284,7 @@
 			} else {
 				attributes = [NSDictionary dictionaryWithObject: secondFont forKey: NSFontAttributeName];
 			}
-			NSAttributedString *attr = [[NSAttributedString alloc] initWithString: tmp attributes: attributes];
+			NSAttributedString *attr = [[[NSAttributedString alloc] initWithString: tmp attributes: attributes] autorelease];
 			if (tmp && [tmp length] > 0) {
 				mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
 				[mi setAttributedTitle: attr];
