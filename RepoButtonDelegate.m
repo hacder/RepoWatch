@@ -40,7 +40,7 @@ void callbackFunction(
 	return string;
 }
 
-- (NSArray *)arrayFromResultOfArgs: (NSArray *)args {
+- (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name {
 	NSTask *t = [[self taskFromArguments: args] autorelease];
 	NSFileHandle *file = [self pipeForTask: t];
 
@@ -49,6 +49,9 @@ void callbackFunction(
 		
 		NSString *string = [self stringFromFile: file];
 		NSArray *result = [string componentsSeparatedByString: @"\n"];
+		if ([t terminationStatus] != 0) {
+			NSLog(@"%@, task status: %d", name, [t terminationStatus]);
+		}
 		[file closeFile];
 		return result;
 	} @catch (NSException *e) {

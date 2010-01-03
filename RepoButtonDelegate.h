@@ -24,7 +24,7 @@
 - (NSFileHandle *)pipeForTask: (NSTask *)t;
 - (NSString *)stringFromFile: (NSFileHandle *)file;
 - (NSTask *)taskFromArguments: (NSArray *)args; 
-- (NSArray *)arrayFromResultOfArgs: (NSArray *)args;
+- (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name;
 - (NSString *)shortenDiff: (NSString *)diff;
 - (NSString *)getDiff;
 - (void) openInFinder: (id) sender;

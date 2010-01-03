@@ -133,7 +133,9 @@
 		[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 */
 		
-		NSArray *logs = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|age} {desc}\n", nil]];
+		NSArray *logs = [self
+			arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|age} {desc}\n", nil]
+			withName: @"Mercurial::fire::logs"];
 		NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
 		NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
 		NSMenuItem *mi;
