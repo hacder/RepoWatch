@@ -269,7 +269,7 @@
 	NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
 	NSMenuItem *mi;
 
-	if ([logs count] == 1) {
+	if ([logs count] == 1 && [[logs objectAtIndex: 0] isEqualToString: @""]) {
 		NSLog(@"Thinks that there is no log: %@", logs);
 		mi = [[NSMenuItem alloc] initWithTitle: @"No history for this project" action: nil keyEquivalent: @""];
 		[m addItem: mi];
