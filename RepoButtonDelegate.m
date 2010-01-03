@@ -184,7 +184,7 @@ void callbackFunction(
 }
 
 - (void) setupTimer {
-	NSLog(@"Setting up timer");
+	NSLog(@"Setting up timer for %f on %@", interval, shortTitle);
 	[timer release];
 	timer = [NSTimer scheduledTimerWithTimeInterval: interval target: self selector: @selector(fire:) userInfo: nil repeats: NO];
 	[timer retain];
