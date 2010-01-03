@@ -184,7 +184,7 @@ void callbackFunction(
 
 - (void) setupTimer {
 	NSInvocation *invocation = [[NSInvocation alloc] init];
-	[invocation setSelector: @selector(fire:)];
+	[invocation setSelector: @selector(fire)];
 	[invocation setTarget: self];
 	[NSTimer scheduledTimerWithTimeInterval: interval invocation: invocation repeats: NO];
 }
