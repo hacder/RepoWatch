@@ -193,8 +193,8 @@ void callbackFunction(
 	
 	if (interval < 2.0) {
 		interval = 2.0;
-	} else if (interval > 30.0) {
-		interval = 30.0;
+	} else if (interval > 60.0) {
+		interval = 60.0;
 	}
 	[timer release];
 	timer = [NSTimer scheduledTimerWithTimeInterval: interval target: self selector: @selector(fire:) userInfo: nil repeats: NO];
