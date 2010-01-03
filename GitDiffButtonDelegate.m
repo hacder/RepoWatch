@@ -270,7 +270,7 @@
 	NSMenuItem *mi;
 
 	if ([logs count] == 1 && [[logs objectAtIndex: 0] isEqualToString: @""]) {
-		NSLog(@"Thinks that there is no log: %@", logs);
+		NSLog(@"%@: Thinks that there is no log: %@", repository, logs);
 		mi = [[NSMenuItem alloc] initWithTitle: @"No history for this project" action: nil keyEquivalent: @""];
 		[m addItem: mi];
 		the_index++;
