@@ -22,6 +22,9 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		NSMenuItem *mi = [mc->theMenu itemAtIndex: i];
 		if (![mi isHidden]) {
 			RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
+			if (!(rbd->localMod || rbd->upstreamMod))
+				continue;
+
 			[rbd commit: nil];
 			return noErr;
 		}
