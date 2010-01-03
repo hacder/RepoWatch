@@ -97,8 +97,10 @@
 	@try {
 		[t launch];
 		[t waitUntilExit];
-		if ([t terminationStatus] != 0)
+		if ([t terminationStatus] != 0) {
 			NSLog(@"Git getDiffRemote <diff>, task status: %d", [t terminationStatus]);
+			return nil;
+		}
 		string = [self stringFromFile: file];
 		[file closeFile];
 		return [self shortenDiff: string];
