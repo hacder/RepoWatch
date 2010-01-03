@@ -99,6 +99,7 @@
 		[t waitUntilExit];
 		if ([t terminationStatus] != 0) {
 			NSLog(@"Git getDiffRemote <diff>, task status: %d", [t terminationStatus]);
+			[self hideIt];
 			return nil;
 		}
 		string = [self stringFromFile: file];
