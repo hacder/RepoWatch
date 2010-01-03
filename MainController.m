@@ -21,6 +21,9 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	for (i = 0; i < t; i++) {
 		NSMenuItem *mi = [mc->theMenu itemAtIndex: i];
 		if (![mi isHidden]) {
+			if (![[mi target] isKindOfClass: [RepoButtonDelegate class]])
+				continue;
+
 			RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
 			if (!rbd)
 				continue;
