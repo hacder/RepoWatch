@@ -142,6 +142,18 @@ char *find_execable(const char *filename) {
 	git = find_execable("git");
 	hg = find_execable("hg");
 	NSLog(@"Git: %s Mercurial: %s", git, hg);
+	
+	NSTask *task = [[NSTask alloc] init];
+	[task setLaunchPath: [NSString stringWithFormat: @"%s", git]];
+	[task setArguments: [NSArray arrayWithObjects: @"--version", nil]];
+	NSPipe *pipe = [NSPipe pipe];
+	[task setStandardOutput: pipe];
+	NSFileHandle *file = [pipe fileHandleForReading];	
+	[task launch];
+	NSData *data = [file readDataToEndOfFile];
+	NSString *string = [[[NSString alloc] initWithData: data
+			encoding: NSUTF8StringEncoding] autorelease];
+	NSLog(@"Git version: %d", [string intValue]);
 
 /* Take away auto-scan for now.
 	FSEventStreamRef stream;
