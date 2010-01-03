@@ -142,11 +142,12 @@ void callbackFunction(
 	[dirtyLock lock];
 	dirty = NO;
 	[dirtyLock unlock];
-	interval = 10;
+	interval = 100;
 	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;
 	
+	timer = nil;
 	[self setupTimer];
 	
 	repository = repo;
@@ -186,7 +187,9 @@ void callbackFunction(
 	NSInvocation *invocation = [[NSInvocation alloc] init];
 	[invocation setSelector: @selector(fire)];
 	[invocation setTarget: self];
-	[NSTimer scheduledTimerWithTimeInterval: interval invocation: invocation repeats: NO];
+	[timer release];
+	timer = [NSTimer scheduledTimerWithTimeInterval: interval invocation: invocation repeats: NO];
+	[timer retain];
 }
 
 - (NSString *)getDiff {

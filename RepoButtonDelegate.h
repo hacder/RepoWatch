@@ -12,6 +12,7 @@
 	NSLock *dirtyLock;
 	BOOL dirty;
 	NSTimeInterval interval;
+	NSTimer *timer;
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
