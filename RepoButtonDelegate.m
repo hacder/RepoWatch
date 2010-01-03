@@ -147,6 +147,8 @@ void callbackFunction(
 	localMod = NO;
 	upstreamMod = NO;
 	
+	[self setupTimer];
+	
 	repository = repo;
 	[repository retain];
 
