@@ -185,6 +185,17 @@ void callbackFunction(
 
 - (void) setupTimer {
 	NSLog(@"Setting up timer for %f on %@", interval, shortTitle);
+	if (localMod || upstreamMod) {
+		interval = interval / 2.0;
+	} else {
+		interval += 1.0;
+	}
+	
+	if (interval < 2.0) {
+		interval = 2.0;
+	} else if (interval > 30.0) {
+		interval = 30.0;
+	}
 	[timer release];
 	timer = [NSTimer scheduledTimerWithTimeInterval: interval target: self selector: @selector(fire:) userInfo: nil repeats: NO];
 	[timer retain];
