@@ -288,6 +288,7 @@
 			if (tmp && [tmp length] > 0) {
 				mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
 				[mi setAttributedTitle: attr];
+				[mi autorelease];
 				[m addItem: mi];
 				the_index++;
 			}
