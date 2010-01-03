@@ -139,6 +139,7 @@
 				NSAttributedString *attr = [[[NSAttributedString alloc] initWithString: tmp attributes: attributes] autorelease];
 				if (tmp && [tmp length] > 0) {
 					mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
+					[mi autorelease];
 					[mi setAttributedTitle: attr];
 					[m addItem: mi];
 					the_index++;
