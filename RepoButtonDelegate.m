@@ -14,7 +14,10 @@ void callbackFunction(
 		const FSEventStreamEventFlags eventFlags[],
 		const FSEventStreamEventId eventIds[]) {
 	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
-	[rbd fire];
+	[rbd->dirtyLock lock];
+	NSLog(@"Setting %@ to dirty", rbd->shortTitle);
+	rbd->dirty = YES;
+	[rbd->dirtyLock unlock];
 }
 
 - (NSString *)shortenDiff: (NSString *)diff {
@@ -135,6 +138,11 @@ void callbackFunction(
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
+	dirtyLock = [[NSLock alloc] init];
+	[dirtyLock lock];
+	dirty = NO;
+	[dirtyLock unlock];
+	interval = 10;
 	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;

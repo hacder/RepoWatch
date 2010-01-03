@@ -9,6 +9,9 @@
 	NSButton *butt;
 	NSTextView *tv;
 	NSWindow *window;
+	NSLock *dirtyLock;
+	BOOL dirty;
+	NSTimeInterval interval;
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
