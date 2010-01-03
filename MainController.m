@@ -111,7 +111,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
 	NSString *build = [infoDict objectForKey: @"CFBundleVersion"];
 	
-	[updater setFeedURL: [NSURL URLWithString: [NSString stringWithFormat: @"http://www.doomstick.com/mm_update_feed.xml?uuid=%@&version=",
+	[updater setFeedURL: [NSURL URLWithString: [NSString stringWithFormat: @"http://www.doomstick.com/mm_update_feed.xml?uuid=%@&version=%@",
 			[[NSUserDefaults standardUserDefaults] stringForKey: @"UUID"],
 			[build stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding]]]];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
