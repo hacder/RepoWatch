@@ -22,6 +22,7 @@
 - (void) commit: (id) menuItem;
 - (void) clickUpdate: (id) button;
 - (NSFileHandle *)pipeForTask: (NSTask *)t;
+- (NSFileHandle *)errForTask: (NSTask *)t;
 - (NSString *)stringFromFile: (NSFileHandle *)file;
 - (NSTask *)taskFromArguments: (NSArray *)args; 
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name;

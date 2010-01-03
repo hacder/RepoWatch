@@ -43,6 +43,7 @@ void callbackFunction(
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name {
 	NSTask *t = [[self taskFromArguments: args] autorelease];
 	NSFileHandle *file = [self pipeForTask: t];
+	NSFileHandle *err = [self errForTask: t];
 
 	@try {
 		[t launch];
@@ -51,8 +52,9 @@ void callbackFunction(
 		NSArray *result = [string componentsSeparatedByString: @"\n"];
 		[t waitUntilExit];
 		if ([t terminationStatus] != 0) {
-			NSLog(@"%@, task status: %d", name, [t terminationStatus]);
+			NSLog(@"%@, task status: %d error: %@", name, [t terminationStatus], [self stringFromFile: err]);
 		}
+		[err closeFile];
 		[file closeFile];
 		return result;
 	} @catch (NSException *e) {
@@ -64,6 +66,13 @@ void callbackFunction(
 - (NSFileHandle *)pipeForTask: (NSTask *)t {
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
+	NSFileHandle *file = [pipe fileHandleForReading];
+	return file;
+}
+
+- (NSFileHandle *)errForTask: (NSTask *)t {
+	NSPipe *pipe = [NSPipe pipe];
+	[t setStandardError: pipe];
 	NSFileHandle *file = [pipe fileHandleForReading];
 	return file;
 }
