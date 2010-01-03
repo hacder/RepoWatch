@@ -37,6 +37,7 @@
 - (NSTask *)taskFromArguments: (NSArray *)args;
 - (void) ignore: (id) sender;
 - (void) hideIt;
+- (void) setupTimer;
 
 + (NSUInteger)numLocalEdit;
 + (NSUInteger)numRemoteEdit;

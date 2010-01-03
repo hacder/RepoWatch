@@ -180,6 +180,13 @@ void callbackFunction(
 	return self;
 }
 
+- (void) setupTimer {
+	NSInvocation *invocation = [[NSInvocation alloc] init];
+	[invocation setSelector: @selector(fire:)];
+	[invocation setTarget: self];
+	[NSTimer scheduledTimerWithTimeInterval: interval invocation: invocation repeats: NO];
+}
+
 - (NSString *)getDiff {
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
 	NSTask *t = [[self taskFromArguments: arr] autorelease];
