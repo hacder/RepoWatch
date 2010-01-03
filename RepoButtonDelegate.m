@@ -49,6 +49,7 @@ void callbackFunction(
 		
 		NSString *string = [self stringFromFile: file];
 		NSArray *result = [string componentsSeparatedByString: @"\n"];
+		[t waitUntilExit];
 		if ([t terminationStatus] != 0) {
 			NSLog(@"%@, task status: %d", name, [t terminationStatus]);
 		}
