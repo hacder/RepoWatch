@@ -388,6 +388,7 @@
 }
 
 - (void) fire {
+	NSLog(@"Calling fire on %@", repository);
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self fire];
