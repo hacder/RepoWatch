@@ -81,41 +81,21 @@
 		[mc->butt setAction: @selector(clickUpdate:)];
 	} else if (upstreamMod) {
 		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %s", nil];
-		NSTask *t = [[self taskFromArguments: arr] autorelease];
-		NSFileHandle *file = [self pipeForTask: t];
+		NSArray *resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::commit::log"];
 		
 		[mc->butt setTitle: @"Update from upstream"];
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(upstreamUpdate:)];
-		@try {
-			[t launch];
-			[t waitUntilExit];
-			if ([t terminationStatus] != 0)
-				NSLog(@"Git commit, task status: %d", [t terminationStatus]);
+
+		NSString *string = [resultarr objectAtIndex: 0];
+		[mc->tv setString: string];
+		[mc->tv setEditable: NO];
 			
-			NSString *string = [self stringFromFile: file];
-			[file closeFile];
-			[mc->tv setString: string];
-			[mc->tv setEditable: NO];
-			
-			arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
-			t = [[self taskFromArguments: arr] autorelease];
-			file = [self pipeForTask: t];
-			
-			@try {
-				[t launch];
-				string = [self stringFromFile: file];
-				[file closeFile];
-				[mc->diffView setString: string];
-				[mc->diffView setEditable: NO];
-			} @catch (NSException *e) {
-				[self hideIt];
-				return;
-			}
-		} @catch (NSException *e) {
-			[self hideIt];
-			return;
-		}
+		arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
+		resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::commit::diff"];
+		string = [resultarr objectAtIndex: 0];
+		[mc->diffView setString: string];
+		[mc->diffView setEditable: NO];
 	}
 	[mc->commitWindow center];
 	[NSApp activateIgnoringOtherApps: YES];
