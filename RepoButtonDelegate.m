@@ -199,6 +199,7 @@ void callbackFunction(
 		interval = 60.0;
 	}
 	[timer release];
+	NSLog(@"Timer for %@ set to %f", shortTitle, interval);
 	timer = [NSTimer scheduledTimerWithTimeInterval: interval target: self selector: @selector(fire:) userInfo: nil repeats: NO];
 	[timer retain];
 }
