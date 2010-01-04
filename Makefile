@@ -7,9 +7,10 @@ SRC = icons.m ButtonDelegate.m RepoButtonDelegate.m Scanner.m \
 CFLAGS=-F./RepoWatch.app/Contents/Frameworks -Wall -Werror -g -arch x86_64 -arch i386
 OBJ = $(addsuffix .o, $(basename $(SRC)))
 
-RepoWatch: $(OBJ)
+RepoWatch: $(OBJ) Info.plist
 	gcc -F./RepoWatch.app/Contents/Frameworks -framework Growl -framework Sparkle -framework Carbon -framework Foundation -framework AppKit -lobjc *.o -g -o RepoWatch -arch x86_64 -arch i386
 	cp RepoWatch RepoWatch.app/Contents/MacOS/
+	cp Info.plist RepoWatch.app/Contents/
 
 release: RepoWatch
 	rm -f RepoWatch-go.dmg
