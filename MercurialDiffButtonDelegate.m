@@ -73,6 +73,7 @@
 		[self hideIt];
 		return;
 	}
+	[self fire: nil];
 }
 
 - (void) setAllTitles: (NSString *)s {

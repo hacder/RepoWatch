@@ -201,6 +201,7 @@
 		[self hideIt];
 		return;
 	}
+	[self fire: nil];
 }
 
 - (void) clickLog: (id) clicker {
