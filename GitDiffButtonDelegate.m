@@ -109,20 +109,8 @@
 }
 
 - (void) clickUpdate: (id) button {
-	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[mc->tv textStorage] mutableString], nil]] autorelease];
-	@try {
-		[t launch];
-		[t waitUntilExit];
-		if ([t terminationStatus] != 0)
-			NSLog(@"Git clickUpdate, task status: %d", [t terminationStatus]);
-		if (mc->commitWindow)
-			[mc->commitWindow close];
-		
-		[NSApp hide: self];
-	} @catch (NSException *e) {
-		[self hideIt];
-		return;
-	}
+	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[mc->tv textStorage] mutableString], nil] withName: @"Git::clickUpdate::commit"];
+	[NSApp hide: self];
 	[self fire: nil];
 }
 
