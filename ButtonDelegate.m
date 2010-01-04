@@ -16,10 +16,6 @@
 	return self;
 }
 
-- (NSView *) preferences {
-	return nil;
-}
-
 - (void) setTitle: (NSString *)t {
 	[t retain];
 	[menuItem setTitle: t];
