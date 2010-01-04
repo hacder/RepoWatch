@@ -182,7 +182,7 @@ void callbackFunction(
 	FSEventStreamStart(stream);
 	CFRelease(pathsToWatch);
 
-	return self;
+	return self; 
 }
 
 - (void) setupTimer {
