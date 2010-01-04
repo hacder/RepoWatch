@@ -190,11 +190,11 @@
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[lock lock];
 				if (localMod)
-					[menuItem setImage: mc->redBubble];
+					[menuItem setOffStateImage: mc->redBubble];
 				else if (upstreamMod)
-					[menuItem setImage: mc->yellowBubble];
+					[menuItem setOffStateImage: mc->yellowBubble];
 				else
-					[menuItem setImage: mc->greenBubble];
+					[menuItem setOffStateImage: mc->greenBubble];
 				[menuItem setSubmenu: m];
 				[lock unlock];
 			});
