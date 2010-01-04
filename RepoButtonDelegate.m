@@ -57,7 +57,13 @@ void callbackFunction(
 		NSArray *result = [string componentsSeparatedByString: @"\n"];
 		[t waitUntilExit];
 		if ([t terminationStatus] != 0) {
-			[GrowlApplicationBridge notifyWithTitle: @"Subprocess Error" description: [self stringFromFile: err] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+			NSMutableString *command = [NSMutableString stringWithCapacity: 20];
+			[command appendFormat: @"%@: %@", [t currentDirectoryPath], [t launchPath]];
+			int i;
+			for (i = 0; i < [args count]; i++) {
+				[command appendFormat: @" %@", [args objectAtIndex: i]];
+			}
+			[GrowlApplicationBridge notifyWithTitle: command description: [self stringFromFile: err] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 			NSLog(@"%@, task status: %d error: %@", name, [t terminationStatus], [self stringFromFile: err]);
 		}
 		[err closeFile];
