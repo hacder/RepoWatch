@@ -22,14 +22,10 @@
 }
 
 - (void) updateRemote {
-	NSTask *t;
-	NSFileHandle *file;
 	NSString *string;
 	NSArray *arr;
 	
 	arr = [NSArray arrayWithObjects: @"remote", nil];
-	t = [[self taskFromArguments: arr] autorelease];
-	file = [self pipeForTask: t];
 	NSArray *resarr = [self arrayFromResultOfArgs: arr withName: @"Git::updateRemote::remote"];
 	string = [resarr objectAtIndex: 0];
 	string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
