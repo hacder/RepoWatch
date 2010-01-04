@@ -31,14 +31,8 @@
 	t = [[self taskFromArguments: arr] autorelease];
 	file = [self pipeForTask: t];
 	@try {
-		[t launch];
-		[t waitUntilExit];
-		if ([t terminationStatus] != 0) {
-			[GrowlApplicationBridge notifyWithTitle: @"Git Update Remote Fail" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-			NSLog(@"Git Update Remote <remote>, task status: %d", [t terminationStatus]);
-		}
-	
-		string = [self stringFromFile: file];
+		NSArray *resarr = [self arrayFromResultOfArgs: arr withName: @"Git::updateRemote::remote"];
+		string = [resarr objectAtIndex: 0];
 		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		if (![string length])
 			return;
