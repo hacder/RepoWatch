@@ -43,59 +43,32 @@
 }
 	
 - (NSString *) getDiffRemote: (BOOL)remote {
-	NSArray *arr;  
-	NSTask *t;
-	NSFileHandle *file;
+	NSArray *arr; 
+	NSArray *resultarr; 
 	NSString *string;
 	
 	if (remote) {
 		arr = [NSArray arrayWithObjects: @"remote", nil];
-		t = [[self taskFromArguments: arr] autorelease];
-		file = [self pipeForTask: t];
-		@try {
-			[t launch];
-			[t waitUntilExit];
-			if ([t terminationStatus] != 0)
-				NSLog(@"Git getDiffRemote <remote>, task status: %d", [t terminationStatus]);
-			string = [self stringFromFile: file];
-			string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-			if (![string length]) {
-				upstreamMod = NO;
-				return nil;
-			} else {
-				if (!upstreamMod) {
-					[GrowlApplicationBridge notifyWithTitle: @"Upstream Modification" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-					upstreamMod = YES;
-				}
-			}
-			string = [NSString stringWithFormat: @"HEAD...%@", string];
-			arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string, nil];
-		} @catch (NSException *e) {
-			[self hideIt];
+		resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::getDiffRemote::remote"];
+		string = [resultarr objectAtIndex: 0];
+		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		if (![string length]) {
+			upstreamMod = NO;
 			return nil;
+		} else {
+			if (!upstreamMod) {
+				[GrowlApplicationBridge notifyWithTitle: @"Upstream Modification" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+				upstreamMod = YES;
+			}
 		}
+		string = [NSString stringWithFormat: @"HEAD...%@", string];
+		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string, nil];
 	} else {
 		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", nil];
 	}
-	t = [[self taskFromArguments: arr] autorelease];
-	file = [self pipeForTask: t];
-	@try {
-		[t launch];
-		[t waitUntilExit];
-		if ([t terminationStatus] != 0) {
-			NSLog(@"Git getDiffRemote <diff>, task status: %d", [t terminationStatus]);
-			[self hideIt];
-			return nil;
-		}
-		string = [self stringFromFile: file];
-		[file closeFile];
-		return [self shortenDiff: string];
-	} @catch (NSException *e) {
-		[self hideIt];
-		return nil;
-	}
-	
-	return nil;
+	resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::getDiffRemote::diff"];
+	string = [resultarr objectAtIndex: 0];
+	return [self shortenDiff: string];
 }
 
 - (void) commit: (id) menuItem {
