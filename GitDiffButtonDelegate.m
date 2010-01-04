@@ -32,7 +32,6 @@
 	if (![string length])
 		return;
 	
-	[GrowlApplicationBridge notifyWithTitle: @"Updating Remote" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 	NSLog(@"Updating remote for %@", repository);
 	
 	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"fetch", nil] withName: @"Git::updateRemote::fetch"];

@@ -221,7 +221,6 @@ void callbackFunction(
 }
 
 - (void) fire: (NSTimer *)t {
-	[GrowlApplicationBridge notifyWithTitle: @"Calling Fire" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 	NSLog(@"Calling fire on %@", repository);
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		[GrowlApplicationBridge notifyWithTitle: @"Fire from wrong queue" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
@@ -235,8 +234,6 @@ void callbackFunction(
 		return;
 	
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[GrowlApplicationBridge notifyWithTitle: @"Calling Real Fire" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-		NSLog(@"Calling real fire for %@ in background", repository);
 		[self realFire];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setupTimer];
