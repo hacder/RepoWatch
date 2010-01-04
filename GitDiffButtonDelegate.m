@@ -33,14 +33,17 @@
 	@try {
 		[t launch];
 		[t waitUntilExit];
-		if ([t terminationStatus] != 0)
+		if ([t terminationStatus] != 0) {
+			[GrowlApplicationBridge notifyWithTitle: @"Git Update Remote Fail" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 			NSLog(@"Git Update Remote <remote>, task status: %d", [t terminationStatus]);
+		}
 	
 		string = [self stringFromFile: file];
 		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		if (![string length])
 			return;
 		
+		[GrowlApplicationBridge notifyWithTitle: @"Updating Remote" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 		NSLog(@"Updating remote for %@", repository);
 		
 		t = [[self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]] autorelease];
@@ -48,6 +51,7 @@
 			[t launch];
 			[t waitUntilExit];
 			if ([t terminationStatus] != 0) {
+				[GrowlApplicationBridge notifyWithTitle: @"Upstream Fail" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 				NSLog(@"Failed to fetch upstream for %@!", repository);
 			}
 		} @catch (NSException *e) {

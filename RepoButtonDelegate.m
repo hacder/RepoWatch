@@ -17,7 +17,6 @@ void callbackFunction(
 	[rbd->dirtyLock lock];
 	if (!rbd->dirty) {
 		[GrowlApplicationBridge notifyWithTitle: @"Dirty Repository" description: rbd->repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-
 		NSLog(@"Setting %@ to dirty", rbd->shortTitle);
 		rbd->dirty = YES;
 	}
@@ -59,12 +58,14 @@ void callbackFunction(
 		NSArray *result = [string componentsSeparatedByString: @"\n"];
 		[t waitUntilExit];
 		if ([t terminationStatus] != 0) {
+			[GrowlApplicationBridge notifyWithTitle: @"Subprocess Error" description: [self stringFromFile: err] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 			NSLog(@"%@, task status: %d error: %@", name, [t terminationStatus], [self stringFromFile: err]);
 		}
 		[err closeFile];
 		[file closeFile];
 		return result;
 	} @catch (NSException *e) {
+		[GrowlApplicationBridge notifyWithTitle: @"Exception" description: [e description] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 		NSLog(@"Got exception: %@", e);
 	}
 	return nil;
@@ -188,7 +189,6 @@ void callbackFunction(
 }
 
 - (void) setupTimer {
-//	NSLog(@"Setting up timer for %f on %@", interval, shortTitle);
 	if (localMod || upstreamMod) {
 		interval = interval / 2.0;
 	} else {
@@ -221,8 +221,10 @@ void callbackFunction(
 }
 
 - (void) fire: (NSTimer *)t {
+	[GrowlApplicationBridge notifyWithTitle: @"Calling Fire" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 	NSLog(@"Calling fire on %@", repository);
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
+		[GrowlApplicationBridge notifyWithTitle: @"Fire from wrong queue" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 		NSLog(@"Called %@ from wrong queue, switching", repository);
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self fire: nil];
@@ -233,10 +235,10 @@ void callbackFunction(
 		return;
 	
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[GrowlApplicationBridge notifyWithTitle: @"Calling Real Fire" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 		NSLog(@"Calling real fire for %@ in background", repository);
 		[self realFire];
 		dispatch_async(dispatch_get_main_queue(), ^{
-			NSLog(@"Setting up timer for %@", repository);
 			[self setupTimer];
 			[lock unlock];
 		});
