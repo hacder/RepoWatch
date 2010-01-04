@@ -105,6 +105,8 @@
 - (void) upstreamUpdate: (id) sender {
 	[sender setEnabled: NO];
 	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"rebase", @"origin", nil] withName: @"Git::upstreamUpdate::rebase"];
+	[NSApp hide: self];
+	[sender setEnabled: YES];
 }
 
 - (void) clickUpdate: (id) button {
