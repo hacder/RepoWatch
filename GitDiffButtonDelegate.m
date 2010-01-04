@@ -172,6 +172,8 @@
 
 - (void) localModsWithMenu: (NSMenu *)m index: (int)the_index string: (NSString *)string {
 	NSString *sTit;
+	[GrowlApplicationBridge notifyWithTitle: @"Local Modifications" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+
 	localMod = YES;
 	upstreamMod = NO;
 	[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
