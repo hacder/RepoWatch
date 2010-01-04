@@ -301,6 +301,9 @@
 - (void) noMods {
 	localMod = NO;
 	upstreamMod = NO;
+	[dirtyLock lock];
+	dirty = NO;
+	[dirtyLock unlock];
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		NSString *s3;
 		if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
@@ -347,7 +350,6 @@
 	
 	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
 
-//	the_index = [self doBranchesForMenu: m];
 	the_index = [self doLogsForMenu: m atIndex: the_index];
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 

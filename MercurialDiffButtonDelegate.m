@@ -173,6 +173,10 @@
 				[self setAllTitles: sTit];
 			} else {
 				localMod = NO;
+				[dirtyLock lock];
+				dirty = YES;
+				[dirtyLock unlock];
+
 				NSString *sTit = [NSString stringWithFormat: @"%@",
 					[repository lastPathComponent]];
 	
