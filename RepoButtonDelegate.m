@@ -16,6 +16,8 @@ void callbackFunction(
 	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
 	[rbd->dirtyLock lock];
 	if (!rbd->dirty) {
+		[GrowlApplicationBridge notifyWithTitle: @"Dirty Repository" description: rbd->repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+
 		NSLog(@"Setting %@ to dirty", rbd->shortTitle);
 		rbd->dirty = YES;
 	}

@@ -71,7 +71,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	time = __TIME__;
 	
 	[GrowlApplicationBridge setGrowlDelegate: self];
-	[GrowlApplicationBridge notifyWithTitle: @"testing" description: @"testing" notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 	
 	redBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0]];
 	yellowBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0]];
