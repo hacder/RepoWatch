@@ -107,6 +107,7 @@
 	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"rebase", @"origin", nil] withName: @"Git::upstreamUpdate::rebase"];
 	[NSApp hide: self];
 	[sender setEnabled: YES];
+	[self fire: nil];
 }
 
 - (void) clickUpdate: (id) button {
