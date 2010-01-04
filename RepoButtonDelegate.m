@@ -205,6 +205,7 @@ void callbackFunction(
 	} else if (interval > 60.0) {
 		interval = 60.0;
 	}
+	[timer invalidate];
 	[timer release];
 	NSLog(@"Timer for %@ set to %f", shortTitle, interval);
 	timer = [NSTimer scheduledTimerWithTimeInterval: interval target: self selector: @selector(fire:) userInfo: nil repeats: NO];
