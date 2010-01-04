@@ -144,7 +144,7 @@ void callbackFunction(
 	[dirtyLock lock];
 	dirty = NO;
 	[dirtyLock unlock];
-	interval = 10;
+	interval = 60;
 	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;
