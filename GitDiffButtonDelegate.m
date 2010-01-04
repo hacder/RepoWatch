@@ -50,11 +50,6 @@
 		if (![string length]) {
 			upstreamMod = NO;
 			return nil;
-		} else {
-			if (!upstreamMod) {
-				[GrowlApplicationBridge notifyWithTitle: @"Upstream Modification" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-				upstreamMod = YES;
-			}
 		}
 		string = [NSString stringWithFormat: @"HEAD...%@", string];
 		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string, nil];
@@ -220,6 +215,8 @@
 		NSString *sTit;
 		localMod = NO;
 		upstreamMod = YES;
+		[GrowlApplicationBridge notifyWithTitle: @"Upstream Modification" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+
 		[[m insertItemWithTitle: @"Update from origin" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 		sTit = [NSString stringWithFormat: @"%@: %@",
 			[repository lastPathComponent],
