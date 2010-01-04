@@ -81,7 +81,10 @@
 				upstreamMod = NO;
 				return nil;
 			} else {
-				upstreamMod = YES;
+				if (!upstreamMod) {
+					[GrowlApplicationBridge notifyWithTitle: @"Upstream Modification" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+					upstreamMod = YES;
+				}
 			}
 			string = [NSString stringWithFormat: @"HEAD...%@", string];
 			arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string, nil];
