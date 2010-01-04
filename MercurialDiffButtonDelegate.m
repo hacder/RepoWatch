@@ -37,21 +37,12 @@
 		[mc->butt setAction: @selector(clickUpdate:)];
 	} else if (upstreamMod) {
 		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
-		NSTask *t = [[self taskFromArguments: arr] autorelease];
-		NSFileHandle *file = [self pipeForTask: t];
+		NSArray *resultarr = [self arrayFromResultOfArgs: arr withName: @"hg::commit::log"];
 		
 		[mc->butt setTitle: @"Update from upstream"];
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(upstreamUpdate:)];
-		@try {
-			[t launch];
-		} @catch (NSException *e) {
-			[self hideIt];
-			return;
-		}
-		
-		NSString *string = [self stringFromFile: file];
-		[file closeFile];
+		NSString *string = [resultarr objectAtIndex: 0];
 		[mc->tv insertText: string];
 		[mc->tv setEditable: NO];
 	}
@@ -62,17 +53,8 @@
 }
 
 - (void) clickUpdate: (id) button {
-	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil]] autorelease];
-	@try {
-		[t launch];
-		if (mc->commitWindow)
-			[mc->commitWindow close];
-		
-		[NSApp hide: self];
-	} @catch (NSException *e) {
-		[self hideIt];
-		return;
-	}
+	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil] withName: @"hg::clickUpdate::commit"];
+	[NSApp hide: self];
 	[self fire: nil];
 }
 
