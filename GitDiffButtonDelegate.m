@@ -105,19 +105,7 @@
 
 - (void) upstreamUpdate: (id) sender {
 	[sender setEnabled: NO];
-	NSTask *t = [[self taskFromArguments: [NSArray arrayWithObjects: @"rebase", @"origin", nil]] autorelease];
-	@try {
-		[t launch];
-		[t waitUntilExit];
-		if ([t terminationStatus] != 0)
-			NSLog(@"Git upstreamUpdate, task status: %d", [t terminationStatus]);
-		[sender setEnabled: YES];
-		[mc->commitWindow close];
-		[NSApp hide: self];
-	} @catch (NSException *e) {
-		[self hideIt];
-		return;
-	}
+	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"rebase", @"origin", nil] withName: @"Git::upstreamUpdate::rebase"];
 }
 
 - (void) clickUpdate: (id) button {
