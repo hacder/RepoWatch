@@ -30,32 +30,16 @@
 	arr = [NSArray arrayWithObjects: @"remote", nil];
 	t = [[self taskFromArguments: arr] autorelease];
 	file = [self pipeForTask: t];
-	@try {
-		NSArray *resarr = [self arrayFromResultOfArgs: arr withName: @"Git::updateRemote::remote"];
-		string = [resarr objectAtIndex: 0];
-		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		if (![string length])
-			return;
-		
-		[GrowlApplicationBridge notifyWithTitle: @"Updating Remote" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-		NSLog(@"Updating remote for %@", repository);
-		
-		t = [[self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]] autorelease];
-		@try {
-			[t launch];
-			[t waitUntilExit];
-			if ([t terminationStatus] != 0) {
-				[GrowlApplicationBridge notifyWithTitle: @"Upstream Fail" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-				NSLog(@"Failed to fetch upstream for %@!", repository);
-			}
-		} @catch (NSException *e) {
-			[self hideIt];
-			return;
-		}
-	} @catch (NSException *e) {
-		[self hideIt];
+	NSArray *resarr = [self arrayFromResultOfArgs: arr withName: @"Git::updateRemote::remote"];
+	string = [resarr objectAtIndex: 0];
+	string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	if (![string length])
 		return;
-	}
+	
+	[GrowlApplicationBridge notifyWithTitle: @"Updating Remote" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+	NSLog(@"Updating remote for %@", repository);
+	
+	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"fetch", nil] withName: @"Git::updateRemote::fetch"];
 }
 	
 - (NSString *) getDiffRemote: (BOOL)remote {
