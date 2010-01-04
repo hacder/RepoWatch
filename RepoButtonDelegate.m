@@ -15,8 +15,10 @@ void callbackFunction(
 		const FSEventStreamEventId eventIds[]) {
 	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
 	[rbd->dirtyLock lock];
-	NSLog(@"Setting %@ to dirty", rbd->shortTitle);
-	rbd->dirty = YES;
+	if (!rbd->dirty) {
+		NSLog(@"Setting %@ to dirty", rbd->shortTitle);
+		rbd->dirty = YES;
+	}
 	[rbd->dirtyLock unlock];
 }
 
@@ -184,7 +186,7 @@ void callbackFunction(
 }
 
 - (void) setupTimer {
-	NSLog(@"Setting up timer for %f on %@", interval, shortTitle);
+//	NSLog(@"Setting up timer for %f on %@", interval, shortTitle);
 	if (localMod || upstreamMod) {
 		interval = interval / 2.0;
 	} else {
