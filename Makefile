@@ -8,7 +8,7 @@ CFLAGS=-F./RepoWatch.app/Contents/Frameworks -Wall -Werror -g -arch x86_64 -arch
 OBJ = $(addsuffix .o, $(basename $(SRC)))
 
 RepoWatch: $(OBJ)
-	gcc -F./RepoWatch.app/Contents/Frameworks -framework Sparkle -framework Carbon -framework Foundation -framework AppKit -lobjc *.o -g -o RepoWatch -arch x86_64 -arch i386
+	gcc -F./RepoWatch.app/Contents/Frameworks -framework Growl -framework Sparkle -framework Carbon -framework Foundation -framework AppKit -lobjc *.o -g -o RepoWatch -arch x86_64 -arch i386
 	cp RepoWatch RepoWatch.app/Contents/MacOS/
 
 release: RepoWatch

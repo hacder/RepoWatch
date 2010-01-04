@@ -1,12 +1,13 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <Growl/Growl.h>
 #import "Scanner.h"
 #import "QuitButtonDelegate.h"
 
 @class ButtonDelegate;
 @class ODeskButtonDelegate;
 
-@interface MainController : NSObject {
+@interface MainController : NSObject <GrowlApplicationBridgeDelegate> {
 	NSStatusItem *statusItem;
 	NSMenu *theMenu;
 
@@ -20,7 +21,7 @@
 	NSTimer *demoTimer;
 	Scanner *scanner;
 	QuitButtonDelegate *quit;
-	
+
 @public	
 	NSImage *redBubble;
 	NSImage *yellowBubble;
@@ -42,4 +43,6 @@
 - (void) maybeRefresh: (ButtonDelegate *)bd;
 - (IBAction) openFile: (id) sender;
 - (void) ping;
+- (NSDictionary *)registrationDictionaryForGrowl;
+
 @end
