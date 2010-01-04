@@ -114,34 +114,6 @@
 	[self fire: nil];
 }
 
-- (int) doBranchesForMenu: (NSMenu *)m {
-	NSArray *arguments = [NSArray arrayWithObjects: @"branch", nil];
-	NSArray *branches = [self arrayFromResultOfArgs: arguments withName: @"Git::doBranchesForMenu::branches"];
-
-	int i;
-	int the_index = 0;
-	
-	for (i = 0; i < [branches count]; i++) {
-		NSString *tmp = [branches objectAtIndex: i];
-		if (tmp && [tmp length] > 0) {
-			// Leaking NSMenuItem here
-			[m insertItemWithTitle: tmp action: nil keyEquivalent: @"" atIndex: the_index++];
-			if ('*' == [tmp characterAtIndex: 0]) {
-				tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
-				[currentBranch autorelease];
-				currentBranch = tmp;
-				[currentBranch retain];
-			} else {
-				tmp = [tmp stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" \n*\r"]];
-			}
-		}
-	}
-
-	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];	
-	
-	return the_index;
-}
-
 - (int) doLogsForMenu: (NSMenu *)m atIndex: (int)the_index {
 	int i;
 	
