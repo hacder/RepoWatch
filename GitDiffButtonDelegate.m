@@ -114,35 +114,6 @@
 	[self fire: nil];
 }
 
-- (void) clickLog: (id) clicker {
-	[mc->diffCommitWindow setTitle: repository];
-	[mc->diffCommitWindow makeFirstResponder: diffCommitTV];
-	
-	NSArray *parts = [[clicker title] componentsSeparatedByString: @" "];
-	NSString *revisionID = [parts objectAtIndex: 0];
-
-	NSArray *arr = [NSArray arrayWithObjects: @"diff", revisionID, [NSString stringWithFormat: @"%@^", revisionID], nil];
-	NSTask *t = [[self taskFromArguments: arr] autorelease];
-	NSFileHandle *file = [self pipeForTask: t];
-	@try {
-		[t launch];
-		[t waitUntilExit];
-		if ([t terminationStatus] != 0)
-			NSLog(@"Git clickLog, task status: %d", [t terminationStatus]);
-		NSString *result = [self stringFromFile: file];
-		[file closeFile];
-		[diffCommitTV setString: result];
-		
-		[mc->diffCommitWindow center];
-		[NSApp activateIgnoringOtherApps: YES];
-		[mc->diffCommitWindow makeKeyAndOrderFront: NSApp];
-		[mc->diffCommitWindow makeFirstResponder: diffCommitTV];
-	} @catch (NSException *e) {
-		[self hideIt];
-		return;
-	}
-}
-
 - (int) doBranchesForMenu: (NSMenu *)m {
 	NSArray *arguments = [NSArray arrayWithObjects: @"branch", nil];
 	NSArray *branches = [self arrayFromResultOfArgs: arguments withName: @"Git::doBranchesForMenu::branches"];
