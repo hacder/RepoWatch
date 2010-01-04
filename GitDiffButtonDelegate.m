@@ -390,23 +390,4 @@
 	});
 }
 
-- (void) fire: (NSTimer *)t {
-	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self fire: nil];
-		});
-		return;
-	}
-	if (![lock tryLock])
-		return;
-	
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[self realFire];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self setupTimer];
-			[lock unlock];
-		});
-	});
-}
-
 @end

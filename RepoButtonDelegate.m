@@ -218,7 +218,30 @@ void callbackFunction(
 	NSLog(@"Beep!");
 }
 
-- (void) fire {
+- (void) fire: (NSTimer *)t {
+	NSLog(@"Calling fire on %@", repository);
+	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
+		NSLog(@"Called %@ from wrong queue, switching", repository);
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self fire: nil];
+		});
+		return;
+	}
+	if (![lock tryLock])
+		return;
+	
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		NSLog(@"Calling real fire for %@ in background", repository);
+		[self realFire];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			NSLog(@"Setting up timer for %@", repository);
+			[self setupTimer];
+			[lock unlock];
+		});
+	});
+}
+
+- (void) realFire {
 }
 
 - (void) hideIt {

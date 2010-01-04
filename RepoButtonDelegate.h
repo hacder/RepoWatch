@@ -39,6 +39,7 @@
 - (void) ignore: (id) sender;
 - (void) hideIt;
 - (void) setupTimer;
+- (void) realFire;
 
 + (NSUInteger)numLocalEdit;
 + (NSUInteger)numRemoteEdit;
