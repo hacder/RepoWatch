@@ -55,6 +55,7 @@
 - (void) clickUpdate: (id) button {
 	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil] withName: @"hg::clickUpdate::commit"];
 	[NSApp hide: self];
+	[mc->commitWindow close];
 	[self fire: nil];
 }
 

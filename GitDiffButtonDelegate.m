@@ -101,6 +101,7 @@
 	[sender setEnabled: NO];
 	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"rebase", @"origin", nil] withName: @"Git::upstreamUpdate::rebase"];
 	[NSApp hide: self];
+	[mc->commitWindow close];
 	[sender setEnabled: YES];
 	[self fire: nil];
 }
@@ -108,6 +109,7 @@
 - (void) clickUpdate: (id) button {
 	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[mc->tv textStorage] mutableString], nil] withName: @"Git::clickUpdate::commit"];
 	[NSApp hide: self];
+	[mc->commitWindow close];
 	[self fire: nil];
 }
 
