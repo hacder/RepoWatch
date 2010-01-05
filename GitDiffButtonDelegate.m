@@ -31,6 +31,8 @@
 	
 	arr = [NSArray arrayWithObjects: @"remote", nil];
 	NSArray *resarr = [self arrayFromResultOfArgs: arr withName: @"Git::updateRemote::remote"];
+	if (![resarr count])
+		return;
 	string = [resarr objectAtIndex: 0];
 	string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	if (![string length])
@@ -49,6 +51,10 @@
 	if (remote) {
 		arr = [NSArray arrayWithObjects: @"remote", nil];
 		resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::getDiffRemote::remote"];
+		if (![resultarr count]) {
+			upstreamMod = NO;
+			return nil;
+		}
 		string = [resultarr objectAtIndex: 0];
 		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		if (![string length]) {
@@ -61,6 +67,10 @@
 		arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", nil];
 	}
 	resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::getDiffRemote::diff"];
+	if (![resultarr count]) {
+		upstreamMod = NO;
+		return nil;
+	}
 	string = [resultarr objectAtIndex: 0];
 	return [self shortenDiff: string];
 }
@@ -208,6 +218,7 @@
 	NSString *string = [self getDiffRemote: NO];
 	NSArray *untracked = [self getUntracked];
 	if (untracked) {
+		NSLog(@"Untracked in %@ is %@", repository, untracked);
 		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 	}
 	

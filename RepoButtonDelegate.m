@@ -72,6 +72,13 @@ void callbackFunction(
 		}
 		[err closeFile];
 		[file closeFile];
+
+		if ([[result objectAtIndex: [result count] - 1] isEqualToString: @""]) {
+			NSMutableArray *result2 = [NSMutableArray arrayWithArray: result];
+			[result2 removeObjectAtIndex: [result2 count] - 1];
+			return result2;
+		}
+		
 		return result;
 	} @catch (NSException *e) {
 		[GrowlApplicationBridge notifyWithTitle: @"Exception" description: [e description] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
@@ -160,6 +167,7 @@ void callbackFunction(
 	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;
+	untrackedFiles = NO;
 	
 	timer = nil;
 	[self setupTimer];

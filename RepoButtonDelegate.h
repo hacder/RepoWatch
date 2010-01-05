@@ -20,6 +20,7 @@
 @public
 	BOOL localMod;
 	BOOL upstreamMod;
+	BOOL untrackedFiles;
 }
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo;
