@@ -200,6 +200,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 	
 	[theMenu setMenuChangedMessagesEnabled: NO];
 	int index = 0;
+
+	// One of these inserts is crashing.
 	for (i = 0; i < [localMods2 count]; i++) {
 		[theMenu removeItem: [[localMods2 objectAtIndex: i] getMenuItem]];
 		[theMenu insertItem: [[localMods2 objectAtIndex: i] getMenuItem] atIndex: ++index];
