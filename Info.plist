@@ -23,7 +23,7 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>10.5</string>
 	<key>CFBundleVersion</key>
-	<string>Beta 22</string>
+	<string>Beta 23</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

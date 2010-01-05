@@ -71,7 +71,7 @@ void callbackFunction(
 		[t launch];
 		
 		NSString *string = [self stringFromFile: file];
-		NSArray *result = [string componentsSeparatedByString: @"\n"];
+		NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
 		[t waitUntilExit];
 		if ([t terminationStatus] != 0) {
 			NSMutableString *command = [NSMutableString stringWithCapacity: 20];

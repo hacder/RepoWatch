@@ -213,25 +213,46 @@ NSInteger intSort(id num1, id num2, void *context) {
 	NSArray *remoteMods2 = [remoteMods sortedArrayUsingFunction: intSort context: nil];
 	NSArray *untrackedMods2 = [untrackedMods sortedArrayUsingFunction: intSort context: nil];
 	
-	[theMenu setMenuChangedMessagesEnabled: NO];
+//	[theMenu setMenuChangedMessagesEnabled: NO];
 	int index = 0;
-
+	NSMenuItem *item;
+	
 	// One of these inserts is crashing.
 	for (i = 0; i < [untrackedMods2 count]; i++) {
-		[theMenu removeItem: [[untrackedMods2 objectAtIndex: i] getMenuItem]];
-		[theMenu insertItem: [[untrackedMods2 objectAtIndex: i] getMenuItem] atIndex: ++index];
+		item = [[untrackedMods2 objectAtIndex: i] getMenuItem];
+		if (!item) {
+			NSLog(@"Menu item is bad!?");
+			continue;
+		}
+		[theMenu removeItem: item];
+		[theMenu insertItem: item atIndex: ++index];
 	}
 	for (i = 0; i < [localMods2 count]; i++) {
-		[theMenu removeItem: [[localMods2 objectAtIndex: i] getMenuItem]];
-		[theMenu insertItem: [[localMods2 objectAtIndex: i] getMenuItem] atIndex: ++index];
+		item = [[localMods2 objectAtIndex: i] getMenuItem];
+		if (!item) {
+			NSLog(@"Item is bad!?");
+			continue;
+		}
+		[theMenu removeItem: item];
+		[theMenu insertItem: item atIndex: ++index];
 	}
 	for (i = 0; i < [remoteMods2 count]; i++) {
-		[theMenu removeItem: [[remoteMods2 objectAtIndex: i] getMenuItem]];
-		[theMenu insertItem: [[remoteMods2 objectAtIndex: i] getMenuItem] atIndex: ++index];
+		item = [[remoteMods2 objectAtIndex: i] getMenuItem];
+		if (!item) {
+			NSLog(@"Item is bad!?");
+			continue;
+		}
+		[theMenu removeItem: item];
+		[theMenu insertItem: item atIndex: ++index];
 	}
 	for (i = 0; i < [upToDate2 count]; i++) {
-		[theMenu removeItem: [[upToDate2 objectAtIndex: i] getMenuItem]];
-		[theMenu insertItem: [[upToDate2 objectAtIndex: i] getMenuItem] atIndex: ++index];
+		item = [[upToDate2 objectAtIndex: i] getMenuItem];
+		if (!item) {
+			NSLog(@"Item is bad!?");
+			continue;
+		}
+		[theMenu removeItem: item];
+		[theMenu insertItem: item atIndex: ++index];
 	}
 	[theMenu setMenuChangedMessagesEnabled: YES];
 

@@ -62,7 +62,7 @@
 }
 
 - (NSArray *)getUntracked {
-	NSArray *arr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", nil] withName: @"Git::getUntracked::ls-files"];
+	NSArray *arr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", @"-z", nil] withName: @"Git::getUntracked::ls-files"];
 	NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];
 	int i;
 	for (i = 0; i < [arrmut count]; i++) {
@@ -71,7 +71,6 @@
 			[original deleteCharactersInRange: NSMakeRange(0, 1)];
 			[original deleteCharactersInRange: NSMakeRange([original length] - 1, 1)];
 		}
-		[arrmut replaceObjectAtIndex: i withObject: [NSString stringWithUTF8String: [original UTF8String]]];
 	}
 	return arrmut;
 }
