@@ -217,9 +217,9 @@
 	NSString *remoteString = [self getDiffRemote: YES];
 	NSString *string = [self getDiffRemote: NO];
 	NSArray *untracked = [self getUntracked];
-	if (untracked) {
+	if (untracked && [untracked count]) {
 		NSLog(@"Untracked in %@ is %@", repository, untracked);
-		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: [NSString stringWithFormat: @"%d untracked files in %@", [untracked count], repository] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 	}
 	
 	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
