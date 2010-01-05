@@ -218,8 +218,11 @@
 	NSString *string = [self getDiffRemote: NO];
 	NSArray *untracked = [self getUntracked];
 	if (untracked && [untracked count]) {
+		untrackedFiles = YES;
 		NSLog(@"Untracked in %@ is %@", repository, untracked);
 		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: [NSString stringWithFormat: @"%d untracked files in %@", [untracked count], repository] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+	} else {
+		untrackedFiles = NO;
 	}
 	
 	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
