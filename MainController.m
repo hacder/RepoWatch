@@ -75,6 +75,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	redBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0]];
 	yellowBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0]];
 	greenBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0]];
+	blueBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.0 green: 0.0 blue: 1.0 alpha: 1.0]];
 
 	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
 	
@@ -226,17 +227,17 @@ NSInteger intSort(id num1, id num2, void *context) {
 - (void) ping {
 	if (![scanner isDone])
 		return;
-	int localMods = [RepoButtonDelegate numLocalEdit];
-	int remoteMods = [RepoButtonDelegate numRemoteEdit];
 	
-	if (localMods || remoteMods) {
-		if (localMods)
-			[statusItem setImage: redBubble];
-		else if (remoteMods)
-			[statusItem setImage: yellowBubble];
-		
-		NSMenuItem *mi = [theMenu itemAtIndex: 1];
-		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
+	NSMenuItem *mi = [theMenu itemAtIndex: 1];
+	RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
+	if (rbd->untrackedFiles) {
+		[statusItem setImage: blueBubble];
+		[statusItem setTitle: [rbd shortTitle]];
+	} else if (rbd->localMod) {
+		[statusItem setImage: redBubble];
+		[statusItem setTitle: [rbd shortTitle]];
+	} else if (rbd->upstreamMod) {
+		[statusItem setImage: yellowBubble];
 		[statusItem setTitle: [rbd shortTitle]];
 	} else {
 		[statusItem setImage: greenBubble];

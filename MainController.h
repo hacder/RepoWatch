@@ -26,6 +26,7 @@
 	NSImage *redBubble;
 	NSImage *yellowBubble;
 	NSImage *greenBubble;
+	NSImage *blueBubble;
 	
 	IBOutlet NSWindow *commitWindow;
 	IBOutlet NSTextView *tv;

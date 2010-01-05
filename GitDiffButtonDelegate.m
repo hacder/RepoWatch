@@ -259,7 +259,9 @@
 	[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 
 	dispatch_sync(dispatch_get_main_queue(), ^{
-		if (localMod)
+		if (untrackedFiles)
+			[menuItem setOffStateImage: mc->blueBubble];
+		else if (localMod)
 			[menuItem setOffStateImage: mc->redBubble];
 		else if (upstreamMod)
 			[menuItem setOffStateImage: mc->yellowBubble];
