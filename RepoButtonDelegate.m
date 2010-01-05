@@ -81,7 +81,7 @@ void callbackFunction(
 				[command appendFormat: @" %@", [args objectAtIndex: i]];
 			}
 			[GrowlApplicationBridge notifyWithTitle: command description: [self stringFromFile: err] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-			NSLog(@"%@, task status: %d error: %@", name, [t terminationStatus], [self stringFromFile: err]);
+			NSLog(@"%@, task status: %d error: %@ full command: %@", name, [t terminationStatus], [self stringFromFile: err], command);
 		}
 		[err closeFile];
 		[file closeFile];
@@ -232,7 +232,6 @@ void callbackFunction(
 	}
 	[timer invalidate];
 	[timer release];
-	NSLog(@"Timer for %@ set to %f", shortTitle, interval);
 	timer = [NSTimer scheduledTimerWithTimeInterval: interval target: self selector: @selector(fire:) userInfo: nil repeats: NO];
 	[timer retain];
 }
@@ -252,10 +251,8 @@ void callbackFunction(
 }
 
 - (void) fire: (NSTimer *)t {
-	NSLog(@"Calling fire on %@", repository);
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		[GrowlApplicationBridge notifyWithTitle: @"Fire from wrong queue" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-		NSLog(@"Called %@ from wrong queue, switching", repository);
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self fire: nil];
 		});

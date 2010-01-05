@@ -16,15 +16,23 @@
 	return self;
 }
 
+- (void) addAll: (id) button {
+	int i;
+	for (i = 0; i < [currentUntracked count]; i++) {
+		[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"add", [currentUntracked objectAtIndex: i], nil] withName: @"git::addAll::add"];
+	}
+	[mc->untrackedWindow close];
+	[self fire: nil];
+}
+
 - (void) ignoreAll: (id) button {
 	NSString *path = [NSString stringWithFormat: @"%@/%@", repository, @".gitignore"];
-	NSLog(@"Writing to %@", path);
 	NSFileHandle *fh = [NSFileHandle fileHandleForWritingAtPath: path];
 	if (fh == nil) {
 		[@".gitignore\n" writeToFile: path atomically: NO encoding: NSASCIIStringEncoding error: nil];
 		fh = [NSFileHandle fileHandleForWritingAtPath: path];
 		if (fh == nil)
-			NSLog(@"No file handle, oops");
+			return;
 	}
 	[fh truncateFileAtOffset: [fh seekToEndOfFile]];
 	int i;
@@ -32,7 +40,6 @@
 		NSString *fileName = [currentUntracked objectAtIndex: i];
 		[fh writeData: [fileName dataUsingEncoding: NSUTF8StringEncoding]];
 		[fh writeData: [@"\n" dataUsingEncoding: NSASCIIStringEncoding]];
-		NSLog(@"Writing %@ to .gitignore", fileName);
 	}
 	[fh synchronizeFile];
 	[fh closeFile];
@@ -48,12 +55,25 @@
 	[mc->untrackedWindow center];
 	[mc->untrackedIgnoreAll setAction: @selector(ignoreAll:)];
 	[mc->untrackedIgnoreAll setTarget: self];
+	[mc->untrackedAddAll setAction: @selector(addAll:)];
+	[mc->untrackedAddAll setTarget: self];
 	[NSApp activateIgnoringOtherApps: YES];
 	[mc->untrackedWindow makeKeyAndOrderFront: NSApp];	
 }
 
 - (NSArray *)getUntracked {
-	return [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", nil] withName: @"Git::getUntracked::ls-files"];
+	NSArray *arr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", nil] withName: @"Git::getUntracked::ls-files"];
+	NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];
+	int i;
+	for (i = 0; i < [arrmut count]; i++) {
+		NSMutableString *original = [NSMutableString stringWithString: [arrmut objectAtIndex: i]];
+		if ([original characterAtIndex: 0] == '"' && [original characterAtIndex: [original length] - 1] == '"') {
+			[original deleteCharactersInRange: NSMakeRange(0, 1)];
+			[original deleteCharactersInRange: NSMakeRange([original length] - 1, 1)];
+		}
+		[arrmut replaceObjectAtIndex: i withObject: [NSString stringWithUTF8String: [original UTF8String]]];
+	}
+	return arrmut;
 }
 
 - (NSTask *)taskFromArguments: (NSArray *)args {
