@@ -22,6 +22,10 @@ void callbackFunction(
 	[rbd->dirtyLock unlock];
 }
 
+- (NSArray *)getUntracked {
+	return nil;
+}
+
 - (NSString *)shortenDiff: (NSString *)diff {
 	NSArray *parts = [diff componentsSeparatedByString: @", "];
 	if ([parts count] == 3) {

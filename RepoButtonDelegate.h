@@ -40,6 +40,7 @@
 - (void) hideIt;
 - (void) setupTimer;
 - (void) realFire;
+- (NSArray *)getUntracked;
 
 + (NSUInteger)numLocalEdit;
 + (NSUInteger)numRemoteEdit;

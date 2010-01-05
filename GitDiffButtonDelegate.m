@@ -16,6 +16,10 @@
 	return self;
 }
 
+- (NSArray *)getUntracked {
+	return [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", nil] withName: @"Git::getUntracked::ls-files"];
+}
+
 - (NSTask *)taskFromArguments: (NSArray *)args {
 	NSString *lp = [NSString stringWithFormat: @"%s", git];
 	return [self baseTask: lp fromArguments: args];
@@ -202,6 +206,10 @@
 	
 	NSString *remoteString = [self getDiffRemote: YES];
 	NSString *string = [self getDiffRemote: NO];
+	NSArray *untracked = [self getUntracked];
+	if (untracked) {
+		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+	}
 	
 	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
 
