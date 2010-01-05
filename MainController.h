@@ -42,6 +42,8 @@
 	IBOutlet NSWindow *untrackedWindow;
 	IBOutlet NSTableView *untrackedTable;
 	IBOutlet NSButton *untrackedButton;
+	IBOutlet NSButton *untrackedAddAll;
+	IBOutlet NSButton *untrackedIgnoreAll;
 }
 
 - init;

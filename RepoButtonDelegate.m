@@ -22,7 +22,17 @@ void callbackFunction(
 	[rbd->dirtyLock unlock];
 }
 
-- (void)dealWithUntracked {
+- (void)dealWithUntracked: (id) menuItem {
+}
+
+- (NSInteger) numberOfRowsInTableView: (NSTableView *)tv {
+	return [currentUntracked count];
+}
+
+- (id)tableView: (NSTableView *)tvv objectValueForTableColumn: (NSTableColumn *)column row: (NSInteger) row {
+	if ([[tvv tableColumns] indexOfObject: column] != 1)
+		return @"";
+	return [currentUntracked objectAtIndex: row];
 }
 
 - (NSArray *)getUntracked {

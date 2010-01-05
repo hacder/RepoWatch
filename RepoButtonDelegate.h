@@ -13,6 +13,7 @@
 	BOOL dirty;
 	NSTimeInterval interval;
 	NSTimer *timer;
+	NSArray *currentUntracked;
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
@@ -27,6 +28,8 @@
 - (void) commit: (id) menuItem;
 - (void) pull: (id) menuItem;
 - (void) dealWithUntracked: (id) menuItem;
+- (NSInteger) numberOfRowsInTableView: (NSTableView *)tv;
+- (id)tableView: (NSTableView *)tvv objectValueForTableColumn: (NSTableColumn *)column row: (NSInteger) row;
 - (void) clickUpdate: (id) button;
 - (NSFileHandle *)pipeForTask: (NSTask *)t;
 - (NSFileHandle *)errForTask: (NSTask *)t;

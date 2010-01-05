@@ -16,6 +16,42 @@
 	return self;
 }
 
+- (void) ignoreAll: (id) button {
+	NSString *path = [NSString stringWithFormat: @"%@/%@", repository, @".gitignore"];
+	NSLog(@"Writing to %@", path);
+	NSFileHandle *fh = [NSFileHandle fileHandleForWritingAtPath: path];
+	if (fh == nil) {
+		[@".gitignore\n" writeToFile: path atomically: NO encoding: NSASCIIStringEncoding error: nil];
+		fh = [NSFileHandle fileHandleForWritingAtPath: path];
+		if (fh == nil)
+			NSLog(@"No file handle, oops");
+	}
+	[fh truncateFileAtOffset: [fh seekToEndOfFile]];
+	int i;
+	for (i = 0; i < [currentUntracked count]; i++) {
+		NSString *fileName = [currentUntracked objectAtIndex: i];
+		[fh writeData: [fileName dataUsingEncoding: NSUTF8StringEncoding]];
+		[fh writeData: [@"\n" dataUsingEncoding: NSASCIIStringEncoding]];
+		NSLog(@"Writing %@ to .gitignore", fileName);
+	}
+	[fh synchronizeFile];
+	[fh closeFile];
+	[mc->untrackedWindow close];
+	[self fire: nil];
+}
+
+- (void) dealWithUntracked: (id) menuItem {
+	[currentUntracked release];
+	currentUntracked = [self getUntracked];
+	[currentUntracked retain];
+	[mc->untrackedTable setDataSource: self];
+	[mc->untrackedWindow center];
+	[mc->untrackedIgnoreAll setAction: @selector(ignoreAll:)];
+	[mc->untrackedIgnoreAll setTarget: self];
+	[NSApp activateIgnoringOtherApps: YES];
+	[mc->untrackedWindow makeKeyAndOrderFront: NSApp];	
+}
+
 - (NSArray *)getUntracked {
 	return [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", nil] withName: @"Git::getUntracked::ls-files"];
 }
@@ -99,7 +135,6 @@
 	[mc->commitWindow center];
 	[NSApp activateIgnoringOtherApps: YES];
 	[mc->commitWindow makeKeyAndOrderFront: NSApp];
-	[mc->commitWindow makeFirstResponder: mc->tv];
 }
 
 - (void) commit: (id) menuItem {
@@ -285,6 +320,8 @@
 	}
 	if (localMod)
 		[[m insertItemWithTitle: @"Commit" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+	if (untrackedFiles)
+		[[m insertItemWithTitle: @"Untracked Files" action: @selector(dealWithUntracked:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 	[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 	[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
