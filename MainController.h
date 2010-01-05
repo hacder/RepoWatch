@@ -36,7 +36,11 @@
 	IBOutlet NSButton *undoSingleButton;
 	IBOutlet NSButton *changeCommitButton;
 	IBOutlet NSButton *goBackToHereButton;
-	IBOutlet NSTextView *diffCommitTextView;	
+	IBOutlet NSTextView *diffCommitTextView;
+	
+	IBOutlet NSWindow *untrackedWindow;
+	IBOutlet NSTableView *untrackedTable;
+	IBOutlet NSButton *untrackedButton;
 }
 
 - init;
