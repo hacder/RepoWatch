@@ -22,6 +22,9 @@ void callbackFunction(
 	[rbd->dirtyLock unlock];
 }
 
+- (void)dealWithUntracked {
+}
+
 - (NSArray *)getUntracked {
 	return nil;
 }
@@ -328,6 +331,9 @@ void callbackFunction(
 }
 
 - (void) commit: (id) menuItem {
+}
+
+- (void) pull: (id) menuItem {
 }
 
 - (void) clickUpdate: (id) button {

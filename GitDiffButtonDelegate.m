@@ -75,7 +75,37 @@
 	return [self shortenDiff: string];
 }
 
+- (void) pull: (id) menuItem {
+	[mc->commitWindow setTitle: repository];
+	[mc->commitWindow makeFirstResponder: mc->tv];
+
+	NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %s", nil];
+	NSArray *resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::commit::log"];
+	
+	[mc->butt setTitle: @"Update from upstream"];
+	[mc->butt setTarget: self];
+	[mc->butt setAction: @selector(upstreamUpdate:)];
+
+	NSString *string = [resultarr objectAtIndex: 0];
+	[mc->tv setString: string];
+	[mc->tv setEditable: NO];
+		
+	arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
+	resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::commit::diff"];
+	string = [resultarr objectAtIndex: 0];
+	[mc->diffView setString: string];
+	[mc->diffView setEditable: NO];
+
+	[mc->commitWindow center];
+	[NSApp activateIgnoringOtherApps: YES];
+	[mc->commitWindow makeKeyAndOrderFront: NSApp];
+	[mc->commitWindow makeFirstResponder: mc->tv];
+}
+
 - (void) commit: (id) menuItem {
+	if (!localMod)
+		return;
+		
 	[mc->commitWindow setTitle: repository];
 	[mc->commitWindow makeFirstResponder: mc->tv];
 
@@ -87,23 +117,6 @@
 		[mc->butt setTitle: @"Do Commit"];
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(clickUpdate:)];
-	} else if (upstreamMod) {
-		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %s", nil];
-		NSArray *resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::commit::log"];
-		
-		[mc->butt setTitle: @"Update from upstream"];
-		[mc->butt setTarget: self];
-		[mc->butt setAction: @selector(upstreamUpdate:)];
-
-		NSString *string = [resultarr objectAtIndex: 0];
-		[mc->tv setString: string];
-		[mc->tv setEditable: NO];
-			
-		arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
-		resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::commit::diff"];
-		string = [resultarr objectAtIndex: 0];
-		[mc->diffView setString: string];
-		[mc->diffView setEditable: NO];
 	}
 	[mc->commitWindow center];
 	[NSApp activateIgnoringOtherApps: YES];
@@ -166,11 +179,6 @@
 }
 
 - (void) noMods {
-	localMod = NO;
-	upstreamMod = NO;
-	[dirtyLock lock];
-	dirty = NO;
-	[dirtyLock unlock];
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		NSString *s3;
 		if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
@@ -190,8 +198,6 @@
 	NSString *sTit;
 	[GrowlApplicationBridge notifyWithTitle: @"Local Modifications" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 
-	localMod = YES;
-	upstreamMod = NO;
 	[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 	if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 		sTit = [NSString stringWithFormat: @"%@: %@",
@@ -214,15 +220,33 @@
 - (void) realFire {
 	int the_index = 0;
 	
+	[dirtyLock lock];
+	dirty = NO;
+	[dirtyLock unlock];
+	
 	NSString *remoteString = [self getDiffRemote: YES];
 	NSString *string = [self getDiffRemote: NO];
 	NSArray *untracked = [self getUntracked];
-	if (untracked && [untracked count]) {
+
+	if (untracked && [untracked count])
 		untrackedFiles = YES;
+	else
+		untrackedFiles = NO;
+	
+	if (!remoteString || [remoteString isEqual: @""])
+		upstreamMod = NO;
+	else
+		upstreamMod = YES;
+		
+	if (string == nil || [string isEqual: @""])
+		localMod = NO;
+	else
+		localMod = YES;
+			
+
+	if (untrackedFiles) {
 		NSLog(@"Untracked in %@ is %@", repository, untracked);
 		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: [NSString stringWithFormat: @"%d untracked files in %@", [untracked count], repository] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-	} else {
-		untrackedFiles = NO;
 	}
 	
 	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
@@ -230,8 +254,15 @@
 	the_index = [self doLogsForMenu: m atIndex: the_index];
 	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
 
-	if (!remoteString || [remoteString isEqual: @""]) {
-		if (string == nil || [string isEqual: @""]) {
+	if (untrackedFiles) {
+		NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [repository lastPathComponent], [untracked count]];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setTitle: s];
+			[self setShortTitle: s];
+			[menuItem setHidden: NO];
+		});
+	} else if (!upstreamMod) {
+		if (!localMod) {
 			[self noMods];
 		} else {
 			[self localModsWithMenu: m index: the_index string: string];
@@ -239,8 +270,6 @@
 	} else {
 		// There is a remote diff.
 		NSString *sTit;
-		localMod = NO;
-		upstreamMod = YES;
 		[GrowlApplicationBridge notifyWithTitle: @"Upstream Modification" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 
 		[[m insertItemWithTitle: @"Update from origin" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
@@ -254,6 +283,8 @@
 			[menuItem setHidden: NO];
 		});
 	}
+	if (localMod)
+		[[m insertItemWithTitle: @"Commit" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 	[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 	[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];

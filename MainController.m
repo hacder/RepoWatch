@@ -28,10 +28,20 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			if (!rbd)
 				continue;
 
-			if (!(rbd->localMod || rbd->upstreamMod))
-				continue;
-
-			[rbd commit: nil];
+			if (rbd->localMod) {
+				[rbd commit: nil];
+				return noErr;
+			}
+			
+			if (rbd->upstreamMod) {
+				[rbd pull: nil];
+				return noErr;
+			}
+			
+			if (rbd->untrackedFiles) {
+				[rbd dealWithUntracked: nil];
+				return noErr;
+			}
 			return noErr;
 		}
 	}
@@ -181,13 +191,16 @@ NSInteger intSort(id num1, id num2, void *context) {
 		return;
 	NSMutableArray *localMods = [NSMutableArray arrayWithCapacity: 10];
 	NSMutableArray *remoteMods = [NSMutableArray arrayWithCapacity: 10];
+	NSMutableArray *untrackedMods = [NSMutableArray arrayWithCapacity: 10];
 	NSMutableArray *upToDate = [NSMutableArray arrayWithCapacity: 10];
 	
 	NSArray *arr = [RepoButtonDelegate getRepos];
 	int i;
 	for (i = 0; i < [arr count]; i++) {
 		RepoButtonDelegate *bd2 = [arr objectAtIndex: i];
-		if (bd2->localMod)
+		if (bd2->untrackedFiles)
+			[untrackedMods addObject: bd2];
+		else if (bd2->localMod)
 			[localMods addObject: bd2];
 		else if (bd2->upstreamMod)
 			[remoteMods addObject: bd2];
@@ -198,11 +211,16 @@ NSInteger intSort(id num1, id num2, void *context) {
 	NSArray *localMods2 = [localMods sortedArrayUsingFunction: intSort context: nil];
 	NSArray *upToDate2 = [upToDate sortedArrayUsingFunction: intSort context: nil];
 	NSArray *remoteMods2 = [remoteMods sortedArrayUsingFunction: intSort context: nil];
+	NSArray *untrackedMods2 = [untrackedMods sortedArrayUsingFunction: intSort context: nil];
 	
 	[theMenu setMenuChangedMessagesEnabled: NO];
 	int index = 0;
 
 	// One of these inserts is crashing.
+	for (i = 0; i < [untrackedMods2 count]; i++) {
+		[theMenu removeItem: [[untrackedMods2 objectAtIndex: i] getMenuItem]];
+		[theMenu insertItem: [[untrackedMods2 objectAtIndex: i] getMenuItem] atIndex: ++index];
+	}
 	for (i = 0; i < [localMods2 count]; i++) {
 		[theMenu removeItem: [[localMods2 objectAtIndex: i] getMenuItem]];
 		[theMenu insertItem: [[localMods2 objectAtIndex: i] getMenuItem] atIndex: ++index];
