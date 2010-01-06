@@ -269,6 +269,9 @@ NSInteger intSort(id num1, id num2, void *context) {
 	
 	NSMenuItem *mi = [theMenu itemAtIndex: 1];
 	RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
+	if (!rbd)
+		return;
+
 	if (rbd->untrackedFiles) {
 		[statusItem setImage: blueBubble];
 		[statusItem setTitle: [rbd shortTitle]];
