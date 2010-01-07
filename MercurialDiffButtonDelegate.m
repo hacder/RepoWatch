@@ -17,7 +17,26 @@
 	[t setArguments: args];
 
 	return t;
-}	
+}
+
+- (NSArray *)getUntracked {
+	NSArray *arr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"status", @"-u", nil] withName: @"Mercurial::getUntracked::status"];
+	NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];
+	int i;
+	for (i = 0; i < [arrmut count]; i++) {
+		NSMutableString *original = [NSMutableString stringWithString: [arrmut objectAtIndex: i]];
+		if ([original characterAtIndex: 0] == '?' && [original characterAtIndex: 1] == ' ') {
+			[original deleteCharactersInRange: NSMakeRange(0, 2)];
+		}
+		if ([original characterAtIndex: 0] == '"' && [original characterAtIndex: [original length] - 1] == '"') {
+			[original deleteCharactersInRange: NSMakeRange(0, 1)];
+			[original deleteCharactersInRange: NSMakeRange([original length] - 1, 1)];
+		}
+	}
+	NSLog(@"Mercurial untracked: %@", arrmut);
+	return arrmut;
+}
+
 
 - (void) beep: (id) something {
 }
@@ -89,6 +108,13 @@
 	int the_index = 0;
 	NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];	
 	int i;
+
+	NSArray *untracked = [self getUntracked];
+
+	if (untracked && [untracked count])
+		untrackedFiles = YES;
+	else
+		untrackedFiles = NO;
 	
 	NSArray *logs = [self
 		arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|age} {desc}\n", nil]
@@ -139,7 +165,15 @@
 		NSString *s2 = [arr objectAtIndex: [arr count] - 1];
 		s2 = [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	
-		if (![s2 isEqual: @"0 files changed"]) {
+
+		if (untrackedFiles) {
+			NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [repository lastPathComponent], [untracked count]];
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[self setTitle: s];
+				[self setShortTitle: s];
+				[menuItem setHidden: NO];
+			});
+		} else if (![s2 isEqual: @"0 files changed"]) {
 			localMod = YES;
 			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index] setTarget: self];
 			NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [self shortenDiff: s2]];
