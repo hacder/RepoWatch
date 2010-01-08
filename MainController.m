@@ -272,6 +272,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 	if (!rbd)
 		return;
 
+	NSApplication *app = [NSApplication sharedApplication];
 	if (rbd->untrackedFiles) {
 		[statusItem setImage: blueBubble];
 		[statusItem setTitle: [rbd shortTitle]];
@@ -285,6 +286,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 		[statusItem setImage: greenBubble];
 		[statusItem setTitle: @""];
 	}
+	[app setApplicationIconImage: [statusItem image]];
 }
 
 @end
