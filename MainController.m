@@ -28,6 +28,11 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			if (!rbd)
 				continue;
 
+			if (rbd->untrackedFiles) {
+				[rbd dealWithUntracked: nil];
+				return noErr;
+			}
+
 			if (rbd->localMod) {
 				[rbd commit: nil];
 				return noErr;
@@ -38,10 +43,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 				return noErr;
 			}
 			
-			if (rbd->untrackedFiles) {
-				[rbd dealWithUntracked: nil];
-				return noErr;
-			}
 			return noErr;
 		}
 	}
