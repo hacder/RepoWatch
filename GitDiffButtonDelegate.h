@@ -2,7 +2,7 @@
 #import <AppKit/AppKit.h>
 #import "RepoButtonDelegate.h"
 
-@interface GitDiffButtonDelegate : RepoButtonDelegate <NSTableViewDataSource> {
+@interface GitDiffButtonDelegate : RepoButtonDelegate {
 	char *git;
 	NSString *currentBranch;
 }

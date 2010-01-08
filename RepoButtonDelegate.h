@@ -3,7 +3,7 @@
 #import "MainController.h"
 #import "ButtonDelegate.h"
 
-@interface RepoButtonDelegate : ButtonDelegate {
+@interface RepoButtonDelegate : ButtonDelegate <NSTableViewDataSource> {
 	NSString *repository;
 	NSLock *lock;
 	NSButton *butt;
@@ -43,6 +43,7 @@
 - (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args;
 - (NSTask *)taskFromArguments: (NSArray *)args;
 - (void) ignore: (id) sender;
+- (void) ignoreAll: (id) sender;
 - (void) hideIt;
 - (void) setupTimer;
 - (void) realFire;

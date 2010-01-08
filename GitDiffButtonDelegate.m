@@ -47,20 +47,6 @@
 	[self fire: nil];
 }
 
-- (void) dealWithUntracked: (id) menuItem {
-	[currentUntracked release];
-	currentUntracked = [self getUntracked];
-	[currentUntracked retain];
-	[mc->untrackedTable setDataSource: self];
-	[mc->untrackedWindow center];
-	[mc->untrackedIgnoreAll setAction: @selector(ignoreAll:)];
-	[mc->untrackedIgnoreAll setTarget: self];
-	[mc->untrackedAddAll setAction: @selector(addAll:)];
-	[mc->untrackedAddAll setTarget: self];
-	[NSApp activateIgnoringOtherApps: YES];
-	[mc->untrackedWindow makeKeyAndOrderFront: NSApp];	
-}
-
 - (NSArray *)getUntracked {
 	NSArray *arr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", @"-z", nil] withName: @"Git::getUntracked::ls-files"];
 	NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];

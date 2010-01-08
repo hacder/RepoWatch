@@ -22,7 +22,21 @@ void callbackFunction(
 	[rbd->dirtyLock unlock];
 }
 
-- (void)dealWithUntracked: (id) menuItem {
+- (void) dealWithUntracked: (id) menuItem {
+	[currentUntracked release];
+	currentUntracked = [self getUntracked];
+	[currentUntracked retain];
+	[mc->untrackedTable setDataSource: self];
+	[mc->untrackedWindow center];
+	[mc->untrackedIgnoreAll setAction: @selector(ignoreAll:)];
+	[mc->untrackedIgnoreAll setTarget: self];
+	[mc->untrackedAddAll setAction: @selector(addAll:)];
+	[mc->untrackedAddAll setTarget: self];
+	[NSApp activateIgnoringOtherApps: YES];
+	[mc->untrackedWindow makeKeyAndOrderFront: NSApp];	
+}
+
+- (void) ignoreAll: (id) sender {
 }
 
 - (NSInteger) numberOfRowsInTableView: (NSTableView *)tv {

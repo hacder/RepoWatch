@@ -19,6 +19,28 @@
 	return t;
 }
 
+- (void) ignoreAll: (id) button {
+	NSString *path = [NSString stringWithFormat: @"%@/%@", repository, @".hgignore"];
+	NSFileHandle *fh = [NSFileHandle fileHandleForWritingAtPath: path];
+	if (fh == nil) {
+		[@".hgignore\n" writeToFile: path atomically: NO encoding: NSASCIIStringEncoding error: nil];
+		fh = [NSFileHandle fileHandleForWritingAtPath: path];
+		if (fh == nil)
+			return;
+	}
+	[fh truncateFileAtOffset: [fh seekToEndOfFile]];
+	int i;
+	for (i = 0; i < [currentUntracked count]; i++) {
+		NSString *fileName = [currentUntracked objectAtIndex: i];
+		[fh writeData: [fileName dataUsingEncoding: NSUTF8StringEncoding]];
+		[fh writeData: [@"\n" dataUsingEncoding: NSASCIIStringEncoding]];
+	}
+	[fh synchronizeFile];
+	[fh closeFile];
+	[mc->untrackedWindow close];
+	[self fire: nil];
+}
+
 - (NSArray *)getUntracked {
 	NSArray *arr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"status", @"-u", nil] withName: @"Mercurial::getUntracked::status"];
 	NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];
@@ -32,6 +54,7 @@
 			[original deleteCharactersInRange: NSMakeRange(0, 1)];
 			[original deleteCharactersInRange: NSMakeRange([original length] - 1, 1)];
 		}
+		[arrmut replaceObjectAtIndex: i withObject: original];
 	}
 	NSLog(@"Mercurial untracked: %@", arrmut);
 	return arrmut;
