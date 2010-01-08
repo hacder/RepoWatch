@@ -19,6 +19,15 @@
 	return t;
 }
 
+- (void) addAll: (id) button {
+	int i;
+	for (i = 0; i < [currentUntracked count]; i++) {
+		[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"add", [currentUntracked objectAtIndex: i], nil] withName: @"hg::addAll::add"];
+	}
+	[mc->untrackedWindow close];
+	[self fire: nil];
+}
+
 - (void) ignoreAll: (id) button {
 	NSString *path = [NSString stringWithFormat: @"%@/%@", repository, @".hgignore"];
 	NSFileHandle *fh = [NSFileHandle fileHandleForWritingAtPath: path];
