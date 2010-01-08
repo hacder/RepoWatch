@@ -143,38 +143,21 @@ char *find_execable(const char *filename) {
 	hg = find_execable("hg");
 	NSLog(@"Git: %s Mercurial: %s", git, hg);
 	
-	NSTask *task = [[NSTask alloc] init];
-	[task setLaunchPath: [NSString stringWithFormat: @"%s", git]];
-	[task setArguments: [NSArray arrayWithObjects: @"--version", nil]];
-	NSPipe *pipe = [NSPipe pipe];
-	[task setStandardOutput: pipe];
-	NSFileHandle *file = [pipe fileHandleForReading];	
-	[task launch];
-	NSData *data = [file readDataToEndOfFile];
-	NSString *string = [[[NSString alloc] initWithData: data
-			encoding: NSUTF8StringEncoding] autorelease];
-	NSLog(@"Git version: %d", [string intValue]);
+	if (git) {
+		NSTask *task = [[NSTask alloc] init];
+		[task setLaunchPath: [NSString stringWithFormat: @"%s", git]];
+		[task setArguments: [NSArray arrayWithObjects: @"--version", nil]];
+		NSPipe *pipe = [NSPipe pipe];
+		[task setStandardOutput: pipe];
+		NSFileHandle *file = [pipe fileHandleForReading];	
+		[task launch];
+		NSData *data = [file readDataToEndOfFile];
+		NSString *string = [[[NSString alloc] initWithData: data
+				encoding: NSUTF8StringEncoding] autorelease];
+		NSLog(@"Git version: %d", [string intValue]);
+		[file closeFile];
+	}
 
-/* Take away auto-scan for now.
-	FSEventStreamRef stream;
-	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
-	CFStringRef myPath = (CFStringRef)[@"~" stringByExpandingTildeInPath];
-	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
-	CFAbsoluteTime latency = 1.0;
-	stream = FSEventStreamCreate(NULL,
-		&mc_callbackFunction,
-		&fsesc,
-		pathsToWatch,
-		kFSEventStreamEventIdSinceNow,
-		latency,
-		kFSEventStreamCreateFlagNone
-	);
-	
-	FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
-	FSEventStreamStart(stream);
-	CFRelease(pathsToWatch);
-*/
-	
 	NSDictionary *dict;
 	dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
 	for (NSString *key in dict) {
