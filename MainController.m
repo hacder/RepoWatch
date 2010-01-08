@@ -48,15 +48,16 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	return noErr;
 }
 
-- (NSImage *)getBubbleOfColor: (NSColor *)highlightColor {
-	int size = 15;
+- (NSImage *)getBubbleOfColor: (NSColor *)highlightColor andSize: (int) size {
+	float lineWidth = 2 * (size / 15.0);
+	
 	NSColor *color = [highlightColor blendedColorWithFraction: 0.75 ofColor: [NSColor whiteColor]];
 	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
 	[ret lockFocus];
-	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(1.0, 1.0, size - 2.0, size - 2.0)];
+	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(lineWidth / 2, lineWidth / 2, size - lineWidth, size - lineWidth)];
 	NSGradient *aGradient = [[[NSGradient alloc] initWithStartingColor: color endingColor: highlightColor] autorelease];
 	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.2, 0.2)];
-	[path setLineWidth: 2];
+	[path setLineWidth: lineWidth];
 	
 	[[color blendedColorWithFraction: 0.75 ofColor: [NSColor blackColor]] set];
 	[path stroke];
@@ -82,10 +83,10 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	
 	[GrowlApplicationBridge setGrowlDelegate: self];
 	
-	redBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0]];
-	yellowBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0]];
-	greenBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0]];
-	blueBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.0 green: 0.0 blue: 1.0 alpha: 1.0]];
+	redBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0] andSize: 15];
+	yellowBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0] andSize: 15];
+	greenBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0] andSize: 15];
+	blueBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.0 green: 0.0 blue: 1.0 alpha: 1.0] andSize: 15];
 
 	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
 	
@@ -274,19 +275,38 @@ NSInteger intSort(id num1, id num2, void *context) {
 
 	NSApplication *app = [NSApplication sharedApplication];
 	if (rbd->untrackedFiles) {
+		[app setApplicationIconImage:
+			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.0 green: 0.0 blue: 1.0 alpha: 1.0] andSize:
+				[[app dockTile] size].height
+			]	
+		];
 		[statusItem setImage: blueBubble];
 		[statusItem setTitle: [rbd shortTitle]];
 	} else if (rbd->localMod) {
+		[app setApplicationIconImage:
+			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0] andSize:
+				[[app dockTile] size].height
+			]	
+		];
 		[statusItem setImage: redBubble];
 		[statusItem setTitle: [rbd shortTitle]];
 	} else if (rbd->upstreamMod) {
+		[app setApplicationIconImage:
+			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0] andSize:
+				[[app dockTile] size].height
+			]	
+		];
 		[statusItem setImage: yellowBubble];
 		[statusItem setTitle: [rbd shortTitle]];
 	} else {
+		[app setApplicationIconImage:
+			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0] andSize:
+				[[app dockTile] size].height
+			]	
+		];
 		[statusItem setImage: greenBubble];
 		[statusItem setTitle: @""];
 	}
-	[app setApplicationIconImage: [statusItem image]];
 }
 
 @end
