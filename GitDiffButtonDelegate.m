@@ -180,9 +180,7 @@
 
 - (void) upstreamUpdate: (id) sender {
 	[sender setEnabled: NO];
-	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"stash", @"save", nil] withName: @"Git::upstreamUpdate::stash-save"];
 	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"rebase", @"origin", nil] withName: @"Git::upstreamUpdate::rebase"];
-	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"stash", @"pop", nil] withName: @"Git::upstreamUpdate::stash-pop"];
 	[NSApp hide: self];
 	[mc->commitWindow close];
 	[sender setEnabled: YES];
