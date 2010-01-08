@@ -304,6 +304,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 				[[app dockTile] size].height
 			]	
 		];
+		[[[app applicationIconImage] TIFFRepresentation] writeToFile: @"/tmp/appicon.tiff" atomically: YES];
 		[statusItem setImage: greenBubble];
 		[statusItem setTitle: @""];
 	}
