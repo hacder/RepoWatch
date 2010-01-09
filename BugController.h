@@ -7,6 +7,6 @@
 	IBOutlet NSWindow *window;
 }
 
-- (IBAction) submitBug: (id) sender;
+- (IBAction) submitBug: (id) sender;  
 
 @end
