@@ -271,10 +271,6 @@ void callbackFunction(
 }
 
 - (void) fire: (NSTimer *)t {
-	dispatch_debug(
-		dispatch_get_current_queue(),
-		"stupid debug"
-	);
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		[GrowlApplicationBridge notifyWithTitle: @"Fire from wrong queue" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -292,7 +288,6 @@ void callbackFunction(
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setupTimer];
 			[lock unlock];
-			dispatch_debug(dispatch_get_current_queue(), "stupid debug 2");
 		});
 	});
 }
