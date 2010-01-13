@@ -287,11 +287,13 @@ void callbackFunction(
 	}
 	
 	dispatch_async(sync_queue, ^{
+		[ThreadCounter enterSection];
 		[self realFire];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setupTimer];
 			[lock unlock];
 		});
+		[ThreadCounter exitSection];
 	});
 }
 

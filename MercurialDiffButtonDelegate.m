@@ -65,7 +65,6 @@
 		}
 		[arrmut replaceObjectAtIndex: i withObject: original];
 	}
-	NSLog(@"Mercurial untracked: %@", arrmut);
 	return arrmut;
 }
 
