@@ -239,16 +239,20 @@ void callbackFunction(
 }
 
 - (void) setupTimer {
+	float minTime = 1.0 * ([RepoButtonDelegate numLocalEdit] + [RepoButtonDelegate numRemoteEdit] + 1);
+	float maxTime = 60.0;
+	NSLog(@"Setting up timer from %f to %f", minTime, maxTime);
+	
 	if (localMod || upstreamMod) {
 		interval = interval / 2.0;
 	} else {
 		interval += 1.0;
 	}
 	
-	if (interval < 2.0) {
-		interval = 2.0;
-	} else if (interval > 60.0) {
-		interval = 60.0;
+	if (interval < minTime) {
+		interval = minTime;
+	} else if (interval > maxTime) {
+		interval = maxTime;
 	}
 	[timer invalidate];
 	[timer release];
