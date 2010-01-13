@@ -10,7 +10,6 @@ static dispatch_queue_t sync_queue;
 
 + (void) setupQueue {
 	sync_queue = dispatch_queue_create("com.doomstick.RepoWatch.repository_tasks", NULL);
-	dispatch_set_target_queue(sync_queue, dispatch_get_global_queue(0, 0));
 }
 
 void callbackFunction(
@@ -272,6 +271,10 @@ void callbackFunction(
 }
 
 - (void) fire: (NSTimer *)t {
+	dispatch_debug(
+		dispatch_get_current_queue(),
+		"stupid debug"
+	);
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		[GrowlApplicationBridge notifyWithTitle: @"Fire from wrong queue" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -289,6 +292,7 @@ void callbackFunction(
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setupTimer];
 			[lock unlock];
+			dispatch_debug(dispatch_get_current_queue(), "stupid debug 2");
 		});
 	});
 }
