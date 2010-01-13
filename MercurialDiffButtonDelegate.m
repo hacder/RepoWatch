@@ -236,11 +236,13 @@
 			[menuItem setSubmenu: m];
 		});
 	} @catch (NSException *e) {
-		[self hideIt];
-		[self setupTimer];
-		return;
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self hideIt];
+		});
 	}
-	[self setupTimer];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self setupTimer];
+	});
 }
 
 @end
