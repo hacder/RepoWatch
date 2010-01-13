@@ -54,5 +54,6 @@
 + (NSUInteger)numUpToDate;
 + (BOOL) alreadyHasPath: (NSString *)path;
 + (NSArray *) getRepos;
++ (void) setupQueue;
 
 @end

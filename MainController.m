@@ -83,6 +83,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	time = __TIME__;
 	
 	[GrowlApplicationBridge setGrowlDelegate: self];
+	[RepoButtonDelegate setupQueue];
 	
 	redBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0] andSize: 15];
 	yellowBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0] andSize: 15];

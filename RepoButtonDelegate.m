@@ -6,6 +6,12 @@
 @implementation RepoButtonDelegate
 
 static NSMutableArray *repos;
+static dispatch_queue_t sync_queue;
+
++ (void) setupQueue {
+	sync_queue = dispatch_queue_create("com.doomstick.RepoWatch.repository_tasks", NULL);
+	dispatch_set_target_queue(sync_queue, dispatch_get_global_queue(0, 0));
+}
 
 void callbackFunction(
 		ConstFSEventStreamRef streamRef,
@@ -278,14 +284,12 @@ void callbackFunction(
 		return;
 	}
 	
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[ThreadCounter enterSection];
+	dispatch_async(sync_queue, ^{
 		[self realFire];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setupTimer];
 			[lock unlock];
 		});
-		[ThreadCounter exitSection];
 	});
 }
 
