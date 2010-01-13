@@ -2,6 +2,7 @@
 #import "RepoButtonDelegate.h"
 #import "Scanner.h"
 #import "MercurialDiffButtonDelegate.h"
+#import "ThreadCounter.h"
 #import <dirent.h>
 #import <sys/stat.h>
 
@@ -197,11 +198,13 @@ char *find_execable(const char *filename) {
 
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[ThreadCounter enterSection];
 		[self searchAllPaths];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			NSLog(@"Done searching");
 			[lock unlock];
 		});
+		[ThreadCounter exitSection];
 	});
 }
 
