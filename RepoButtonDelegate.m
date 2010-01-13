@@ -273,8 +273,10 @@ void callbackFunction(
 		});
 		return;
 	}
-	if (![lock tryLock])
+	if (![lock tryLock]) {
+		NSLog(@"Trying to run while already locked: %@", repository);
 		return;
+	}
 	
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[ThreadCounter enterSection];
