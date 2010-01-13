@@ -11,7 +11,6 @@ static int max_threads = 0;
 
 + (void) exitSection {
 	num_threads--;
-	NSLog(@"Exiting section, currently %d threads", num_threads);
 }
 
 + (void) enterSection {
@@ -20,7 +19,6 @@ static int max_threads = 0;
 		max_threads = num_threads;
 		NSLog(@"Just broke thread count record: %d", num_threads);
 	}
-	NSLog(@"Entering section, currently %d threads", num_threads);
 }
 
 @end 
