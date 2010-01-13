@@ -2,7 +2,8 @@
 
 SRC = icons.m ButtonDelegate.m RepoButtonDelegate.m Scanner.m \
 	MainController.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
-	QuitButtonDelegate.m SeparatorButtonDelegate.m BugController.m
+	QuitButtonDelegate.m SeparatorButtonDelegate.m BugController.m \
+	ThreadCounter.m
 
 CFLAGS=-F./RepoWatch.app/Contents/Frameworks -Wall -Werror -g -arch x86_64 -arch i386
 OBJ = $(addsuffix .o, $(basename $(SRC)))

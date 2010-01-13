@@ -1,4 +1,5 @@
 #import "RepoButtonDelegate.h"
+#import "ThreadCounter.h"
 #import <dispatch/dispatch.h>
 #import <sys/time.h>
 
@@ -276,11 +277,13 @@ void callbackFunction(
 		return;
 	
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[ThreadCounter enterSection];
 		[self realFire];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setupTimer];
 			[lock unlock];
 		});
+		[ThreadCounter exitSection];
 	});
 }
 
