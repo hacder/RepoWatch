@@ -275,6 +275,10 @@ NSInteger intSort(id num1, id num2, void *context) {
 	if (!rbd)
 		return;
 
+	int noString = [[NSUserDefaults standardUserDefaults] integerForKey: @"suppressText"];
+	if (noString)
+		[statusItem setTitle: @""];
+
 	NSApplication *app = [NSApplication sharedApplication];
 	if (rbd->untrackedFiles) {
 		[app setApplicationIconImage:
@@ -283,7 +287,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 			]	
 		];
 		[statusItem setImage: blueBubble];
-		[statusItem setTitle: [rbd shortTitle]];
+		if (!noString)
+			[statusItem setTitle: [rbd shortTitle]];
 	} else if (rbd->localMod) {
 		[app setApplicationIconImage:
 			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0] andSize:
@@ -291,7 +296,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 			]	
 		];
 		[statusItem setImage: redBubble];
-		[statusItem setTitle: [rbd shortTitle]];
+		if (!noString)
+			[statusItem setTitle: [rbd shortTitle]];
 	} else if (rbd->upstreamMod) {
 		[app setApplicationIconImage:
 			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0] andSize:
@@ -299,7 +305,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 			]	
 		];
 		[statusItem setImage: yellowBubble];
-		[statusItem setTitle: [rbd shortTitle]];
+		if (!noString)
+			[statusItem setTitle: [rbd shortTitle]];
 	} else {
 		[app setApplicationIconImage:
 			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0] andSize:
