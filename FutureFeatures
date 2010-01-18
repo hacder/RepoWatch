@@ -6,3 +6,18 @@ Future Features
 3. Plugin To Do Whatever
 4. Project time tracking, based on new edits. Very rough, but better than
    nothing.
+
+
+Working on Now
+--------------
+1. Num seconds since last seen update.
+
+
+
+
+Time Tracker
+------------
+
+1. Manual Start of timer
+2. Manual Stop of timer
+3. Automatic start/stop based on diff lines changing

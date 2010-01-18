@@ -235,7 +235,7 @@ void callbackFunction(
 	FSEventStreamStart(stream);
 	CFRelease(pathsToWatch);
 
-	return self; 
+	return self;
 }
 
 - (NSString *)getShort {
@@ -274,7 +274,6 @@ void callbackFunction(
 }
 
 - (void) beep: (id) something {
-	NSLog(@"Beep!");
 }
 
 - (void) fire: (NSTimer *)t {
