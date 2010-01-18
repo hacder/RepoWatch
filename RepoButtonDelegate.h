@@ -25,6 +25,7 @@
 }
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo;
+- (NSString *) getShort;
 - (void) commit: (id) menuItem;
 - (void) pull: (id) menuItem;
 - (void) dealWithUntracked: (id) menuItem;

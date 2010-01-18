@@ -7,7 +7,6 @@
 	NSMenu *menu;
 	NSStatusItem *statusItem;
 	MainController *mc;
-@public
 	NSString *shortTitle;
 	NSMenuItem *menuItem;
 	NSString *title;

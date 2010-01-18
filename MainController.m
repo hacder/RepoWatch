@@ -6,7 +6,6 @@
 #import "MercurialDiffButtonDelegate.h"
 #import "RepoButtonDelegate.h"
 #import "Scanner.h"
-#import "eSellerate.h"
 #import <Sparkle/Sparkle.h>
 #import <Carbon/Carbon.h>
 
@@ -85,10 +84,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	
 	[GrowlApplicationBridge setGrowlDelegate: self];
 	[RepoButtonDelegate setupQueue];
-	
-	eSellerate_ErrorCode err = eSellerate_InstallEngine();
-	if (err == eSellerate_FAILURE)
-		exit(-1);
 	
 	redBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0] andSize: 15];
 	yellowBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0] andSize: 15];
@@ -191,7 +186,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 }
 
 NSInteger intSort(id num1, id num2, void *context) {
-	return [((RepoButtonDelegate *)num1)->shortTitle caseInsensitiveCompare: ((RepoButtonDelegate *)num2)->shortTitle];
+	return [[((RepoButtonDelegate *)num1) getShort] caseInsensitiveCompare: [((RepoButtonDelegate *)num2) getShort]];
 }
 
 - (void) maybeRefresh: (ButtonDelegate *)bd {

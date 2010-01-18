@@ -238,6 +238,10 @@ void callbackFunction(
 	return self; 
 }
 
+- (NSString *)getShort {
+	return shortTitle;
+}
+
 - (void) setupTimer {
 	float minTime = 1.0 * ([RepoButtonDelegate numLocalEdit] + [RepoButtonDelegate numRemoteEdit] + 1);
 	float maxTime = 60.0;
