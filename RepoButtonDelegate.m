@@ -100,8 +100,9 @@ void callbackFunction(
 			for (i = 0; i < [args count]; i++) {
 				[command appendFormat: @" %@", [args objectAtIndex: i]];
 			}
-			[GrowlApplicationBridge notifyWithTitle: command description: [self stringFromFile: err] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-			NSLog(@"%@, task status: %d error: %@ full command: %@", name, [t terminationStatus], [self stringFromFile: err], command);
+			NSString *errStr = [self stringFromFile: err];
+			[GrowlApplicationBridge notifyWithTitle: command description: errStr notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+			NSLog(@"%@, task status: %d error: %@ full command: %@", name, [t terminationStatus], errStr, command);
 		}
 		[err closeFile];
 		[file closeFile];
