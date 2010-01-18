@@ -274,9 +274,6 @@ void callbackFunction(
 	return result;
 }
 
-- (void) beep: (id) something {
-}
-
 - (void) fire: (NSTimer *)t {
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		[GrowlApplicationBridge notifyWithTitle: @"Fire from wrong queue" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
