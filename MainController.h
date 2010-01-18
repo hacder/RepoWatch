@@ -23,11 +23,6 @@
 	QuitButtonDelegate *quit;
 
 @public	
-	NSImage *redBubble;
-	NSImage *yellowBubble;
-	NSImage *greenBubble;
-	NSImage *blueBubble;
-	
 	IBOutlet NSWindow *commitWindow;
 	IBOutlet NSTextView *tv;
 	IBOutlet NSButton *butt;

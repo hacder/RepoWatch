@@ -1,0 +1,33 @@
+#import "BubbleFactory.h"
+
+@implementation BubbleFactory
+
+static 
+
++ (NSImage *)getBubbleOfColor: (NSColor *)highlightColor andSize: (int) size {
+	float lineWidth = 2 * (size / 15.0);
+	
+	NSColor *color = [highlightColor blendedColorWithFraction: 0.75 ofColor: [NSColor whiteColor]];
+	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
+	[ret lockFocus];
+	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(lineWidth / 2, lineWidth / 2, size - lineWidth, size - lineWidth)];
+	NSGradient *aGradient = [[[NSGradient alloc] initWithStartingColor: color endingColor: highlightColor] autorelease];
+	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.2, 0.2)];
+	[path setLineWidth: lineWidth];
+	
+	[[color blendedColorWithFraction: 0.75 ofColor: [NSColor blackColor]] set];
+	[path stroke];
+	[ret unlockFocus];
+	return ret;
+}
+
++ (NSImage *) getRed {
+	return [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0] andSize: 15];
+//	yellowBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0] andSize: 15];
+//	greenBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0] andSize: 15];
+//	blueBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.0 green: 0.0 blue: 1.0 alpha: 1.0] andSize: 15];
+}
+
+
+
+@end
