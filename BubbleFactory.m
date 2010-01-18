@@ -28,7 +28,7 @@
 }
 
 + (NSImage *) getGreenOfSize: (int)size {
-	return [BubbleFactory getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0] andSize: size];
+	return [BubbleFactory getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 0.0] andSize: size];
 }
 
 + (NSImage *) getBlueOfSize: (int)size {
