@@ -1,4 +1,5 @@
 #import "MercurialDiffButtonDelegate.h"
+#import "BubbleFactory.h"
 
 @implementation MercurialDiffButtonDelegate
 
@@ -227,11 +228,11 @@
 
 		dispatch_async(dispatch_get_main_queue(), ^{
 			if (localMod)
-				[menuItem setOffStateImage: mc->redBubble];
+				[menuItem setOffStateImage: [BubbleFactory getRedOfSize: 15]];
 			else if (upstreamMod)
-				[menuItem setOffStateImage: mc->yellowBubble];
+				[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 15]];
 			else
-				[menuItem setOffStateImage: mc->greenBubble];
+				[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 15]];
 			[menuItem setSubmenu: m];
 		});
 	} @catch (NSException *e) {

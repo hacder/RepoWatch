@@ -2,8 +2,6 @@
 
 @implementation BubbleFactory
 
-static 
-
 + (NSImage *)getBubbleOfColor: (NSColor *)highlightColor andSize: (int) size {
 	float lineWidth = 2 * (size / 15.0);
 	
@@ -21,13 +19,20 @@ static
 	return ret;
 }
 
-+ (NSImage *) getRed {
-	return [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0] andSize: 15];
-//	yellowBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0] andSize: 15];
-//	greenBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0] andSize: 15];
-//	blueBubble = [self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.0 green: 0.0 blue: 1.0 alpha: 1.0] andSize: 15];
++ (NSImage *) getRedOfSize: (int)size {
+	return [BubbleFactory getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0] andSize: size];
 }
 
++ (NSImage *) getYellowOfSize: (int)size {
+	return  [BubbleFactory getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0] andSize: size];
+}
 
++ (NSImage *) getGreenOfSize: (int)size {
+	return [BubbleFactory getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.0] andSize: size];
+}
+
++ (NSImage *) getBlueOfSize: (int)size {
+	return [BubbleFactory getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.0 green: 0.0 blue: 1.0 alpha: 1.0] andSize: size];
+}
 
 @end

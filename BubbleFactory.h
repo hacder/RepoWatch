@@ -4,9 +4,11 @@
 @interface BubbleFactory : NSObject {
 }
 
-+ (NSImage *) getRed;
-+ (NSImage *) getGreen;
-+ (NSImage *) getBlue;
-+ (NSImage *) getYellow;
++ (NSImage *) getRedOfSize: (int)size;
++ (NSImage *) getGreenOfSize: (int)size;
++ (NSImage *) getBlueOfSize: (int)size;
++ (NSImage *) getYellowOfSize: (int)size;
+
++ (NSImage *)getBubbleOfColor: (NSColor *)highlightColor andSize: (int) size;
 
 @end

@@ -1,4 +1,5 @@
 #import "GitDiffButtonDelegate.h"
+#import "BubbleFactory.h"
 
 @implementation GitDiffButtonDelegate
 
@@ -333,13 +334,13 @@
 
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		if (untrackedFiles)
-			[menuItem setOffStateImage: mc->blueBubble];
+			[menuItem setOffStateImage: [BubbleFactory getBlueOfSize: 15]];
 		else if (localMod)
-			[menuItem setOffStateImage: mc->redBubble];
+			[menuItem setOffStateImage: [BubbleFactory getRedOfSize: 15]];
 		else if (upstreamMod)
-			[menuItem setOffStateImage: mc->yellowBubble];
+			[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 15]];
 		else
-			[menuItem setOffStateImage: mc->greenBubble];
+			[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 15]];
 		[menuItem setSubmenu: m];
 	});
 }
