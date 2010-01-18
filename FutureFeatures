@@ -10,7 +10,11 @@ Future Features
 
 Working on Now
 --------------
-1. Num seconds since last seen update.
+1. Nag screen
+2. Startup Configuration Screen
+3. Handle huge repository numbers gracefully (start using a time delay in the scanner as we find more
+   and more repositories. this should make the initial HIGH cpu spike ease off)
+4. 
 
 
 

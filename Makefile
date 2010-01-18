@@ -5,7 +5,7 @@ SRC = icons.m ButtonDelegate.m RepoButtonDelegate.m Scanner.m \
 	QuitButtonDelegate.m SeparatorButtonDelegate.m BugController.m \
 	ThreadCounter.m BubbleFactory.m
 
-CFLAGS=-F./RepoWatch.app/Contents/Frameworks -Wall -Werror -g -arch x86_64 -arch i386
+CFLAGS=-F./RepoWatch.app/Contents/Frameworks -Wall -g -arch x86_64 -arch i386
 OBJ = $(addsuffix .o, $(basename $(SRC)))
 
 RepoWatch: $(OBJ) Info.plist

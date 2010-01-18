@@ -224,8 +224,6 @@ char *find_execable(const char *filename) {
 			break;
 		if ([paths count] > high_count)
 			high_count = [paths count];
-		if ([paths count] > 100000)
-			break;
 		curPath = [paths objectAtIndex: 0];
 		[paths removeObjectAtIndex: 0];
 	
@@ -245,6 +243,14 @@ char *find_execable(const char *filename) {
 				NSString *s = [[NSString stringWithFormat: @"%@/%@", curPath, [contents objectAtIndex: i]] stringByStandardizingPath];
 				[paths addObject: s];
 			}
+		}
+		if ([paths count] > 1000) {
+			int delay = [paths count] / 1000;
+			struct timespec ts;
+			ts.tv_nsec = delay;
+			ts.tv_sec = 0;
+			NSLog(@"Delaying for %d.%d seconds to ease off on CPU usage, %d paths to go", 0, delay, [paths count]);
+			nanosleep(&ts, NULL);
 		}
 	}
 	NSLog(@"High count: %d", high_count);
