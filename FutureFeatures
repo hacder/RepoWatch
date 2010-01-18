@@ -25,3 +25,10 @@ Time Tracker
 1. Manual Start of timer
 2. Manual Stop of timer
 3. Automatic start/stop based on diff lines changing
+
+
+Preferences:
+	* Auto-scan or not
+	* Green or clear bubble
+	* Extra menu text or not
+	
