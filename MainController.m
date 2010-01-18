@@ -171,6 +171,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 - (void) maybeRefresh: (ButtonDelegate *)bd {
 	if (![scanner isDone])
 		return;
+	
+	NSLog(@"maybeRefresh");
 	NSMutableArray *localMods = [NSMutableArray arrayWithCapacity: 10];
 	NSMutableArray *remoteMods = [NSMutableArray arrayWithCapacity: 10];
 	NSMutableArray *untrackedMods = [NSMutableArray arrayWithCapacity: 10];

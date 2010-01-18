@@ -262,7 +262,7 @@ char *find_execable(const char *filename) {
 	if ([contents containsObject: @".git"]) {
 		if (git) {
 			[self addCachedRepoPath: path];
-			[[GitDiffButtonDelegate alloc] initWithTitle: path
+			[[GitDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
 				menu: menu statusItem: statusItem mainController: mc
 				gitPath: git repository: path];
 			return YES;
@@ -270,7 +270,7 @@ char *find_execable(const char *filename) {
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
 			[self addCachedRepoPath: path];
-			[[MercurialDiffButtonDelegate alloc] initWithTitle: path
+			[[MercurialDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
 				menu: menu statusItem: statusItem mainController: mc
 				hgPath: hg repository: path];
 			return YES;
