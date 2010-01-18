@@ -18,7 +18,6 @@
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
 	FSEventStreamRef stream;
-@public
 	BOOL localMod;
 	BOOL upstreamMod;
 	BOOL untrackedFiles;
@@ -26,6 +25,9 @@
 
 - initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo;
 - (NSString *) getShort;
+- (BOOL) hasUntracked;
+- (BOOL) hasUpstream;
+- (BOOL) hasLocal;
 - (void) commit: (id) menuItem;
 - (void) pull: (id) menuItem;
 - (void) dealWithUntracked: (id) menuItem;

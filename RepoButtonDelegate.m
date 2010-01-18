@@ -352,6 +352,18 @@ void callbackFunction(
 	return ret;
 }
 
+- (BOOL) hasUntracked {
+	return untrackedFiles;
+}
+
+- (BOOL) hasUpstream {
+	return upstreamMod;
+}
+
+- (BOOL) hasLocal {
+	return localMod;
+}
+
 + (BOOL) alreadyHasPath: (NSString *)path {
 	int i = 0;
 	for (i = 0; i < [repos count]; i++) {

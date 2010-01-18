@@ -28,17 +28,17 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			if (!rbd)
 				continue;
 
-			if (rbd->untrackedFiles) {
+			if ([rbd hasUntracked]) {
 				[rbd dealWithUntracked: nil];
 				return noErr;
 			}
 
-			if (rbd->localMod) {
+			if ([rbd hasLocal]) {
 				[rbd commit: nil];
 				return noErr;
 			}
 			
-			if (rbd->upstreamMod) {
+			if ([rbd hasUpstream]) {
 				[rbd pull: nil];
 				return noErr;
 			}
@@ -201,11 +201,11 @@ NSInteger intSort(id num1, id num2, void *context) {
 	int i;
 	for (i = 0; i < [arr count]; i++) {
 		RepoButtonDelegate *bd2 = [arr objectAtIndex: i];
-		if (bd2->untrackedFiles)
+		if ([bd2 hasUntracked])
 			[untrackedMods addObject: bd2];
-		else if (bd2->localMod)
+		else if ([bd2 hasLocal])
 			[localMods addObject: bd2];
-		else if (bd2->upstreamMod)
+		else if ([bd2 hasUpstream])
 			[remoteMods addObject: bd2];
 		else
 			[upToDate addObject: bd2];
@@ -216,7 +216,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 	NSArray *remoteMods2 = [remoteMods sortedArrayUsingFunction: intSort context: nil];
 	NSArray *untrackedMods2 = [untrackedMods sortedArrayUsingFunction: intSort context: nil];
 	
-//	[theMenu setMenuChangedMessagesEnabled: NO];
 	int index = 0;
 	NSMenuItem *item;
 	
@@ -280,7 +279,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 		[statusItem setTitle: @""];
 
 	NSApplication *app = [NSApplication sharedApplication];
-	if (rbd->untrackedFiles) {
+	if ([rbd hasUntracked]) {
 		[app setApplicationIconImage:
 			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 0.0 green: 0.0 blue: 1.0 alpha: 1.0] andSize:
 				[[app dockTile] size].height
@@ -289,7 +288,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 		[statusItem setImage: blueBubble];
 		if (!noString)
 			[statusItem setTitle: [rbd shortTitle]];
-	} else if (rbd->localMod) {
+	} else if ([rbd hasLocal]) {
 		[app setApplicationIconImage:
 			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0] andSize:
 				[[app dockTile] size].height
@@ -298,7 +297,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 		[statusItem setImage: redBubble];
 		if (!noString)
 			[statusItem setTitle: [rbd shortTitle]];
-	} else if (rbd->upstreamMod) {
+	} else if ([rbd hasUpstream]) {
 		[app setApplicationIconImage:
 			[self getBubbleOfColor: [NSColor colorWithCalibratedRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.0] andSize:
 				[[app dockTile] size].height
