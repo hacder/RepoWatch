@@ -93,7 +93,7 @@
 		[mc->butt setTitle: @"Update from upstream"];
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(upstreamUpdate:)];
-		NSString *string = [resultarr objectAtIndex: 0];
+		NSString *string = [resultarr componentsJoinedByString: @"\n"];
 		[mc->tv insertText: string];
 		[mc->tv setEditable: NO];
 	}
