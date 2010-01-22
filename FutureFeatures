@@ -7,6 +7,11 @@ Future Features
 4. Project time tracking, based on new edits. Very rough, but better than
    nothing.
 
+Before Next Beta
+----------------
+1. Think that the upstream diff screen only shows the first line of either
+   text box. Fix that.
+2. Make upstream updates happen more than just at start.
 
 Working on Now
 --------------
@@ -15,9 +20,6 @@ Working on Now
 3. Handle huge repository numbers gracefully (start using a time delay in the scanner as we find more
    and more repositories. this should make the initial HIGH cpu spike ease off)
 4. License manager.
-
-
-
 
 Time Tracker
 ------------

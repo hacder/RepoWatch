@@ -172,74 +172,76 @@ NSInteger intSort(id num1, id num2, void *context) {
 	if (![scanner isDone])
 		return;
 	
-	NSLog(@"maybeRefresh");
-	NSMutableArray *localMods = [NSMutableArray arrayWithCapacity: 10];
-	NSMutableArray *remoteMods = [NSMutableArray arrayWithCapacity: 10];
-	NSMutableArray *untrackedMods = [NSMutableArray arrayWithCapacity: 10];
-	NSMutableArray *upToDate = [NSMutableArray arrayWithCapacity: 10];
-	
-	NSArray *arr = [RepoButtonDelegate getRepos];
-	int i;
-	for (i = 0; i < [arr count]; i++) {
-		RepoButtonDelegate *bd2 = [arr objectAtIndex: i];
-		if ([bd2 hasUntracked])
-			[untrackedMods addObject: bd2];
-		else if ([bd2 hasLocal])
-			[localMods addObject: bd2];
-		else if ([bd2 hasUpstream])
-			[remoteMods addObject: bd2];
-		else
-			[upToDate addObject: bd2];
-	}
-	
-	NSArray *localMods2 = [localMods sortedArrayUsingFunction: intSort context: nil];
-	NSArray *upToDate2 = [upToDate sortedArrayUsingFunction: intSort context: nil];
-	NSArray *remoteMods2 = [remoteMods sortedArrayUsingFunction: intSort context: nil];
-	NSArray *untrackedMods2 = [untrackedMods sortedArrayUsingFunction: intSort context: nil];
-	
-	int index = 0;
-	NSMenuItem *item;
-	
-	// One of these inserts is crashing.
-	for (i = 0; i < [untrackedMods2 count]; i++) {
-		item = [[untrackedMods2 objectAtIndex: i] getMenuItem];
-		if (!item) {
-			NSLog(@"Menu item is bad!?");
-			continue;
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSLog(@"maybeRefresh");
+		NSMutableArray *localMods = [NSMutableArray arrayWithCapacity: 10];
+		NSMutableArray *remoteMods = [NSMutableArray arrayWithCapacity: 10];
+		NSMutableArray *untrackedMods = [NSMutableArray arrayWithCapacity: 10];
+		NSMutableArray *upToDate = [NSMutableArray arrayWithCapacity: 10];
+		
+		NSArray *arr = [RepoButtonDelegate getRepos];
+		int i;
+		for (i = 0; i < [arr count]; i++) {
+			RepoButtonDelegate *bd2 = [arr objectAtIndex: i];
+			if ([bd2 hasUntracked])
+				[untrackedMods addObject: bd2];
+			else if ([bd2 hasLocal])
+				[localMods addObject: bd2];
+			else if ([bd2 hasUpstream])
+				[remoteMods addObject: bd2];
+			else
+				[upToDate addObject: bd2];
 		}
-		[theMenu removeItem: item];
-		[theMenu insertItem: item atIndex: ++index];
-	}
-	for (i = 0; i < [localMods2 count]; i++) {
-		item = [[localMods2 objectAtIndex: i] getMenuItem];
-		if (!item) {
-			NSLog(@"Item is bad!?");
-			continue;
+		
+		NSArray *localMods2 = [localMods sortedArrayUsingFunction: intSort context: nil];
+		NSArray *upToDate2 = [upToDate sortedArrayUsingFunction: intSort context: nil];
+		NSArray *remoteMods2 = [remoteMods sortedArrayUsingFunction: intSort context: nil];
+		NSArray *untrackedMods2 = [untrackedMods sortedArrayUsingFunction: intSort context: nil];
+		
+		int index = 0;
+		NSMenuItem *item;
+		
+		// One of these inserts is crashing.
+		for (i = 0; i < [untrackedMods2 count]; i++) {
+			item = [[untrackedMods2 objectAtIndex: i] getMenuItem];
+			if (!item) {
+				NSLog(@"Menu item is bad!?");
+				continue;
+			}
+			[theMenu removeItem: item];
+			[theMenu insertItem: item atIndex: ++index];
 		}
-		[theMenu removeItem: item];
-		[theMenu insertItem: item atIndex: ++index];
-	}
-	for (i = 0; i < [remoteMods2 count]; i++) {
-		item = [[remoteMods2 objectAtIndex: i] getMenuItem];
-		if (!item) {
-			NSLog(@"Item is bad!?");
-			continue;
+		for (i = 0; i < [localMods2 count]; i++) {
+			item = [[localMods2 objectAtIndex: i] getMenuItem];
+			if (!item) {
+				NSLog(@"Item is bad!?");
+				continue;
+			}
+			[theMenu removeItem: item];
+			[theMenu insertItem: item atIndex: ++index];
 		}
-		[theMenu removeItem: item];
-		[theMenu insertItem: item atIndex: ++index];
-	}
-	for (i = 0; i < [upToDate2 count]; i++) {
-		item = [[upToDate2 objectAtIndex: i] getMenuItem];
-		if (!item) {
-			NSLog(@"Item is bad!?");
-			continue;
+		for (i = 0; i < [remoteMods2 count]; i++) {
+			item = [[remoteMods2 objectAtIndex: i] getMenuItem];
+			if (!item) {
+				NSLog(@"Item is bad!?");
+				continue;
+			}
+			[theMenu removeItem: item];
+			[theMenu insertItem: item atIndex: ++index];
 		}
-		[theMenu removeItem: item];
-		[theMenu insertItem: item atIndex: ++index];
-	}
-	[theMenu setMenuChangedMessagesEnabled: YES];
-
-	[self ping];
+		for (i = 0; i < [upToDate2 count]; i++) {
+			item = [[upToDate2 objectAtIndex: i] getMenuItem];
+			if (!item) {
+				NSLog(@"Item is bad!?");
+				continue;
+			}
+			[theMenu removeItem: item];
+			[theMenu insertItem: item atIndex: ++index];
+		}
+		[theMenu setMenuChangedMessagesEnabled: YES];
+	
+		[self ping];
+	});
 }
 
 - (void) timeout: (id) sender {
@@ -250,36 +252,38 @@ NSInteger intSort(id num1, id num2, void *context) {
 	if (![scanner isDone])
 		return;
 	
-	NSMenuItem *mi = [theMenu itemAtIndex: 1];
-	RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
-	if (!rbd)
-		return;
-
-	int noString = [[NSUserDefaults standardUserDefaults] integerForKey: @"suppressText"];
-	if (noString)
-		[statusItem setTitle: @""];
-
-	NSApplication *app = [NSApplication sharedApplication];
-	if ([rbd hasUntracked]) {
-		[app setApplicationIconImage: [BubbleFactory getBlueOfSize: [[app dockTile] size].height]];
-		[statusItem setImage: [BubbleFactory getBlueOfSize: 15]];
-		if (!noString)
-			[statusItem setTitle: [rbd shortTitle]];
-	} else if ([rbd hasLocal]) {
-		[app setApplicationIconImage: [BubbleFactory getRedOfSize: [[app dockTile] size].height]];
-		[statusItem setImage: [BubbleFactory getRedOfSize: 15]];
-		if (!noString)
-			[statusItem setTitle: [rbd shortTitle]];
-	} else if ([rbd hasUpstream]) {
-		[app setApplicationIconImage: [BubbleFactory getYellowOfSize: [[app dockTile] size].height]];
-		[statusItem setImage: [BubbleFactory getYellowOfSize: 15]];
-		if (!noString)
-			[statusItem setTitle: [rbd shortTitle]];
-	} else {
-		[app setApplicationIconImage: [BubbleFactory getGreenOfSize: [[app dockTile] size].height]];
-		[statusItem setImage: [BubbleFactory getGreenOfSize: 15]];
-		[statusItem setTitle: @""];
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSMenuItem *mi = [theMenu itemAtIndex: 1];
+		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
+		if (!rbd)
+			return;
+	
+		int noString = [[NSUserDefaults standardUserDefaults] integerForKey: @"suppressText"];
+		if (noString)
+			[statusItem setTitle: @""];
+	
+		NSApplication *app = [NSApplication sharedApplication];
+		if ([rbd hasUntracked]) {
+			[app setApplicationIconImage: [BubbleFactory getBlueOfSize: [[app dockTile] size].height]];
+			[statusItem setImage: [BubbleFactory getBlueOfSize: 15]];
+			if (!noString)
+				[statusItem setTitle: [rbd shortTitle]];
+		} else if ([rbd hasLocal]) {
+			[app setApplicationIconImage: [BubbleFactory getRedOfSize: [[app dockTile] size].height]];
+			[statusItem setImage: [BubbleFactory getRedOfSize: 15]];
+			if (!noString)
+				[statusItem setTitle: [rbd shortTitle]];
+		} else if ([rbd hasUpstream]) {
+			[app setApplicationIconImage: [BubbleFactory getYellowOfSize: [[app dockTile] size].height]];
+			[statusItem setImage: [BubbleFactory getYellowOfSize: 15]];
+			if (!noString)
+				[statusItem setTitle: [rbd shortTitle]];
+		} else {
+			[app setApplicationIconImage: [BubbleFactory getGreenOfSize: [[app dockTile] size].height]];
+			[statusItem setImage: [BubbleFactory getGreenOfSize: 15]];
+			[statusItem setTitle: @""];
+		}
+	});
 }
 
 @end

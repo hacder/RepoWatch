@@ -20,7 +20,8 @@
 - (void) addAll: (id) button {
 	int i;
 	for (i = 0; i < [currentUntracked count]; i++) {
-		[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"add", [currentUntracked objectAtIndex: i], nil] withName: @"git::addAll::add"];
+		[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"add", [currentUntracked objectAtIndex: i], nil]
+			withName: @"git::addAll::add"];
 	}
 	[mc->untrackedWindow close];
 	[self fire: nil];
@@ -49,7 +50,8 @@
 }
 
 - (NSArray *)getUntracked {
-	NSArray *arr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", @"-z", nil] withName: @"Git::getUntracked::ls-files"];
+	NSArray *arr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", @"-z", nil]
+		withName: @"Git::getUntracked::ls-files"];
 	NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];
 	int i;
 	for (i = 0; i < [arrmut count]; i++) {
@@ -128,13 +130,13 @@
 	[mc->butt setTarget: self];
 	[mc->butt setAction: @selector(upstreamUpdate:)];
 
-	NSString *string = [resultarr objectAtIndex: 0];
+	NSString *string = [resultarr componentsJoinedByString: @"\n"];
 	[mc->tv setString: string];
 	[mc->tv setEditable: NO];
 		
 	arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
 	resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::commit::diff"];
-	string = [resultarr objectAtIndex: 0];
+	string = [resultarr componentsJoinedByString: @"\n"];
 	[mc->diffView setString: string];
 	[mc->diffView setEditable: NO];
 
@@ -175,7 +177,8 @@
 }
 
 - (void) clickUpdate: (id) button {
-	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[mc->tv textStorage] mutableString], nil] withName: @"Git::clickUpdate::commit"];
+	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[mc->tv textStorage] mutableString], nil]
+		withName: @"Git::clickUpdate::commit"];
 	[NSApp hide: self];
 	[mc->commitWindow close];
 	[self fire: nil];
