@@ -20,6 +20,32 @@
 	return t;
 }
 
+- (void) pull: (id) menuItem {
+	[mc->commitWindow setTitle: repository];
+	[mc->commitWindow makeFirstResponder: mc->tv];
+
+	NSArray *resultarr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"in", @"--template", @"{node|short} {desc}\n", nil]
+			withName: @"hg::in::add"];
+
+	[mc->butt setTitle: @"Update from upstream"];
+	[mc->butt setTarget: self];
+	[mc->butt setAction: @selector(upstreamUpdate:)];
+
+	NSString *string = [resultarr componentsJoinedByString: @"\n"];
+	[mc->tv setString: string];
+	[mc->tv setEditable: NO];
+		
+	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
+	resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::commit::diff"];
+	string = [resultarr componentsJoinedByString: @"\n"];
+	[mc->diffView setString: string];
+	[mc->diffView setEditable: NO];
+
+	[mc->commitWindow center];
+	[NSApp activateIgnoringOtherApps: YES];
+	[mc->commitWindow makeKeyAndOrderFront: NSApp];
+}
+
 - (void) addAll: (id) button {
 	int i;
 	for (i = 0; i < [currentUntracked count]; i++) {
@@ -221,7 +247,7 @@
 		
 			[self setAllTitles: sTit];
 		} else if (upstreamMod) {
-			[[m insertItemWithTitle: @"Update From Origin (hg)" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+			[[m insertItemWithTitle: @"Update From Origin (hg)" action: @selector(pull:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 			sTit = [NSString stringWithFormat: @"%@: %@",
 				[repository lastPathComponent],
 				[string stringByTrimmingCharactersInSet:
