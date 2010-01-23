@@ -93,6 +93,7 @@
 	NSString *string;
 	
 	if (remote) {
+		NSLog(@"Checking upstream... for %@", repository);
 		arr = [NSArray arrayWithObjects: @"remote", nil];
 		resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::getDiffRemote::remote"];
 		if (![resultarr count]) {
