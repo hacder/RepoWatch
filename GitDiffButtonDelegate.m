@@ -93,7 +93,20 @@
 	NSString *string;
 	
 	if (remote) {
-		NSLog(@"Checking upstream... for %@", repository);
+		if (!lastRemote) {
+			lastRemote = [NSDate date];
+			[lastRemote retain];
+		} else {
+			if ([lastRemote timeIntervalSinceNow] > 3600) {
+				[lastRemote release];
+				lastRemote = [NSDate date];
+				[lastRemote retain];
+			} else {
+				NSLog(@"Short circuiting diff remote, not enough time has passed.");
+				return nil;
+			}
+		}
+		NSLog(@"Actually running get diff remote.");
 		arr = [NSArray arrayWithObjects: @"remote", nil];
 		resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::getDiffRemote::remote"];
 		if (![resultarr count]) {

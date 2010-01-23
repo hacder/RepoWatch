@@ -14,6 +14,7 @@
 	NSTimeInterval interval;
 	NSTimer *timer;
 	NSArray *currentUntracked;
+	NSDate *lastRemote;
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
