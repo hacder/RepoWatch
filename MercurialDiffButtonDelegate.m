@@ -35,8 +35,8 @@
 	[mc->tv setString: string];
 	[mc->tv setEditable: NO];
 		
-	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
-	resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::commit::diff"];
+	NSArray *arr = [NSArray arrayWithObjects: @"in", @"-p", nil];
+	resultarr = [self arrayFromResultOfArgs: arr withName: @"hg::pull::diff"];
 	string = [resultarr componentsJoinedByString: @"\n"];
 	[mc->diffView setString: string];
 	[mc->diffView setEditable: NO];
