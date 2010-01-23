@@ -20,6 +20,15 @@
 	return t;
 }
 
+- (void) upstreamUpdate: (id) sender {
+	[sender setEnabled: NO];
+	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"pull", nil] withName: @"hg::pull"];
+	[NSApp hide: self];
+	[mc->commitWindow close];
+	[sender setEnabled: YES];
+	[self fire: nil];
+}
+
 - (void) pull: (id) menuItem {
 	[mc->commitWindow setTitle: repository];
 	[mc->commitWindow makeFirstResponder: mc->tv];
