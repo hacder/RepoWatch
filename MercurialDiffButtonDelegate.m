@@ -87,6 +87,7 @@
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(clickUpdate:)];
 	} else if (upstreamMod) {
+		NSLog(@"Here!");
 		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
 		NSArray *resultarr = [self arrayFromResultOfArgs: arr withName: @"hg::commit::log"];
 		
@@ -137,6 +138,14 @@
 	[t2 setStandardOutput: pipe2];
 	
 	NSFileHandle *file = [pipe2 fileHandleForReading];
+	
+	NSArray *remoteDiff = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"in", @"--template", @"{node|short} {desc}\n", nil]
+			withName: @"hg::in::add"];
+
+	upstreamMod = NO;
+	if (remoteDiff && [remoteDiff count])
+		upstreamMod = YES;
+	
 	int the_index = 0;
 	NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];	
 	int i;
@@ -197,7 +206,7 @@
 		NSString *s2 = [arr objectAtIndex: [arr count] - 1];
 		s2 = [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	
-
+		NSString *sTit;
 		if (untrackedFiles) {
 			NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [repository lastPathComponent], [untracked count]];
 			dispatch_async(dispatch_get_main_queue(), ^{
@@ -211,13 +220,24 @@
 			NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [self shortenDiff: s2]];
 		
 			[self setAllTitles: sTit];
+		} else if (upstreamMod) {
+			[[m insertItemWithTitle: @"Update From Origin (hg)" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+			sTit = [NSString stringWithFormat: @"%@: %@",
+				[repository lastPathComponent],
+				[string stringByTrimmingCharactersInSet:
+					[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+			dispatch_sync(dispatch_get_main_queue(), ^{
+				[self setTitle: sTit];
+				[self setShortTitle: sTit];
+				[menuItem setHidden: NO];
+			});
 		} else {
 			localMod = NO;
 			[dirtyLock lock];
 			dirty = YES;
 			[dirtyLock unlock];
 
-			NSString *sTit = [NSString stringWithFormat: @"%@",
+			sTit = [NSString stringWithFormat: @"%@",
 				[repository lastPathComponent]];
 
 			[self setAllTitles: sTit];

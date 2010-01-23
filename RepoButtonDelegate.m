@@ -103,6 +103,7 @@ void callbackFunction(
 			NSString *errStr = [self stringFromFile: err];
 			[GrowlApplicationBridge notifyWithTitle: command description: errStr notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 			NSLog(@"%@, task status: %d error: %@ full command: %@", name, [t terminationStatus], errStr, command);
+			return nil;
 		}
 		[err closeFile];
 		[file closeFile];

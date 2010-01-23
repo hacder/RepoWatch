@@ -82,8 +82,6 @@
 	if (![string length])
 		return;
 	
-	NSLog(@"Updating remote for %@", repository);
-	
 	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"fetch", nil] withName: @"Git::updateRemote::fetch"];
 }
 	
@@ -134,6 +132,7 @@
 }
 
 - (void) pull: (id) menuItem {
+	NSLog(@"Pull!!");
 	[mc->commitWindow setTitle: repository];
 	[mc->commitWindow makeFirstResponder: mc->tv];
 
@@ -304,7 +303,8 @@
 
 	if (untrackedFiles) {
 		NSLog(@"Untracked in %@ is %@", repository, untracked);
-		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: [NSString stringWithFormat: @"%d untracked files in %@", [untracked count], repository] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
+		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: [NSString stringWithFormat: @"%d untracked files in %@", [untracked count], repository]
+			notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 	}
 	
 	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
@@ -330,7 +330,7 @@
 		NSString *sTit;
 		[GrowlApplicationBridge notifyWithTitle: @"Upstream Modification" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 
-		[[m insertItemWithTitle: @"Update from origin" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+		[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
 		sTit = [NSString stringWithFormat: @"%@: %@",
 			[repository lastPathComponent],
 			[remoteString stringByTrimmingCharactersInSet:
