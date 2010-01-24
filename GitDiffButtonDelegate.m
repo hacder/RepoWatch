@@ -255,7 +255,8 @@
 	NSString *sTit;
 	[GrowlApplicationBridge notifyWithTitle: @"Local Modifications" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 
-	[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+	[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++]
+		setTarget: self];
 	if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 		sTit = [NSString stringWithFormat: @"%@: %@",
 			[repository lastPathComponent],
@@ -330,7 +331,8 @@
 		NSString *sTit;
 		[GrowlApplicationBridge notifyWithTitle: @"Upstream Modification" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 
-		[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+		[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: the_index++]
+			setTarget: self];
 		sTit = [NSString stringWithFormat: @"%@: %@",
 			[repository lastPathComponent],
 			[remoteString stringByTrimmingCharactersInSet:
@@ -342,12 +344,17 @@
 		});
 	}
 	if (localMod)
-		[[m insertItemWithTitle: @"Commit" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+		[[m insertItemWithTitle: @"Commit" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++]
+			setTarget: self];
 	if (untrackedFiles)
-		[[m insertItemWithTitle: @"Untracked Files" action: @selector(dealWithUntracked:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-	[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-	[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
+		[[m insertItemWithTitle: @"Untracked Files" action: @selector(dealWithUntracked:) keyEquivalent: @"" atIndex: the_index++]
+			setTarget: self];
+	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++]
+		setTarget: self];
+	[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: the_index++]
+		setTarget: self];
+	[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: the_index++]
+		setTarget: self];
 
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		if (untrackedFiles)
