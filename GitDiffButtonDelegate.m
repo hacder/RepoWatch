@@ -100,7 +100,6 @@
 				lastRemote = [NSDate date];
 				[lastRemote retain];
 			} else {
-				NSLog(@"Short circuiting diff remote, not enough time has passed.");
 				return nil;
 			}
 		}
