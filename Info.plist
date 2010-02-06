@@ -15,7 +15,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.0</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>10.6</string>
+	<string>10.6.0</string>
 	<key>CFBundleVersion</key>
 	<string>Beta 26</string>
 	<key>NSMainNibFile</key>
