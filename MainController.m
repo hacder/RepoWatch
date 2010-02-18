@@ -63,21 +63,10 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 - init {
 	self = [super init];
-	date = __DATE__;
-	time = __TIME__;
 	
 	[GrowlApplicationBridge setGrowlDelegate: self];
 	[RepoButtonDelegate setupQueue];
 	
-	NSDate *expires = [NSDate dateWithNaturalLanguageString: [NSString stringWithFormat: @"%s", date]];
-	
-	// 30 days from compilation.
-	expires = [NSDate dateWithTimeInterval: 3600 * 24 * 30 sinceDate: expires];
-	demoTimer = [[NSTimer alloc] initWithFireDate: expires interval: 10 target: self selector: @selector(timeout:) userInfo: nil repeats: NO];
-	[demoTimer retain];
-	[[NSRunLoop currentRunLoop] addTimer: demoTimer forMode: NSDefaultRunLoopMode];
-	
-	NSLog(@"Expires at: %@\n", expires);
 	NSStatusBar *bar = [NSStatusBar systemStatusBar];
 	statusItem = [bar statusItemWithLength: NSVariableStatusItemLength];
 	[statusItem retain];
