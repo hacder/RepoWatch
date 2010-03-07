@@ -145,7 +145,7 @@ char *find_execable(const char *filename) {
 	NSLog(@"Git: %s Mercurial: %s", git, hg);
 	
 	if (git) {
-		NSTask *task = [[NSTask alloc] init];
+		NSTask *task = [[[NSTask alloc] init] autorelease];
 		[task setLaunchPath: [NSString stringWithFormat: @"%s", git]];
 		[task setArguments: [NSArray arrayWithObjects: @"--version", nil]];
 		NSPipe *pipe = [NSPipe pipe];

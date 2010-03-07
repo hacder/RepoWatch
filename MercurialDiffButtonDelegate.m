@@ -11,7 +11,7 @@
 }
 
 - (NSTask *)taskFromArguments: (NSArray *)args {
-	NSTask *t = [[NSTask alloc] init];
+	NSTask *t = [[[NSTask alloc] init] autorelease];
 	NSString *lp = [NSString stringWithFormat: @"%s", hg];
 	[t setLaunchPath: lp];
 	[t setCurrentDirectoryPath: repository];
@@ -161,7 +161,7 @@
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
 	
-	NSTask *t2 = [[NSTask alloc] init];
+	NSTask *t2 = [[[NSTask alloc] init] autorelease];
 	[t2 setLaunchPath: @"/usr/bin/diffstat"];
 	[t2 setStandardInput: pipe];
 	
@@ -173,6 +173,7 @@
 	[t launch];
 	[t2 launch];
 	NSData *data = [file readDataToEndOfFile];
+	[file closeFile];
 	NSCharacterSet *cs = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 	NSString *utf8String = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
 	NSString *string = [utf8String stringByTrimmingCharactersInSet: cs];

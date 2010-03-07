@@ -83,7 +83,7 @@ void callbackFunction(
 }
 
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name {
-	NSTask *t = [[self taskFromArguments: args] autorelease];
+	NSTask *t = [self taskFromArguments: args];
 	NSFileHandle *file = [self pipeForTask: t];
 	NSFileHandle *err = [self errForTask: t];
 
@@ -153,6 +153,7 @@ void callbackFunction(
 	[t setLaunchPath: task];
 	[t setCurrentDirectoryPath: repository];
 	[t setArguments: args];
+	[t autorelease];
 	return t;
 }
 
@@ -267,7 +268,7 @@ void callbackFunction(
 
 - (NSString *)getDiff {
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
-	NSTask *t = [[self taskFromArguments: arr] autorelease];
+	NSTask *t = [self taskFromArguments: arr];
 	NSFileHandle *file = [self pipeForTask: t];
 	[t launch];
 	NSString *result = [self stringFromFile: file];
