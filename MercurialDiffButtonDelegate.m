@@ -155,13 +155,7 @@
 	});
 }
 
-- (void) realFire {
-	NSTask *t = [[NSTask alloc] init];
-	NSString *lp = [NSString stringWithFormat: @"%s", hg];
-	[t setLaunchPath: lp];
-	[t setCurrentDirectoryPath: repository];
-	[t setArguments: [NSArray arrayWithObjects: @"diff", nil]];
-
+- (NSString *) diffStatOfTask: (NSTask *)t {
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
 	
@@ -174,24 +168,76 @@
 	
 	NSFileHandle *file = [pipe2 fileHandleForReading];
 	
-	NSArray *remoteDiff = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"in", @"--template", @"{node|short} {desc}\n", nil]
-			withName: @"hg::in::add"];
+	[t launch];
+	[t2 launch];
+	NSData *data = [file readDataToEndOfFile];
+	NSCharacterSet *cs = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+	NSString *utf8String = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
+	NSString *string = [utf8String stringByTrimmingCharactersInSet: cs];
 
-	upstreamMod = NO;
-	if (remoteDiff && [remoteDiff count])
-		upstreamMod = YES;
+	return string;
+}
+
+- (NSString *) lastGoodComponentOfString: (NSString *)s {
+	NSArray *arr = [s componentsSeparatedByString: @"\n"];
+	NSString *s2 = [arr objectAtIndex: [arr count] - 1];
+	s2 = [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	return s2;
+}
+
+- (void) handleUntracked {
+	NSArray *untracked = [self getUntracked];
+	if (untracked && [untracked count]) {
+		untrackedFiles = YES;
+		NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [repository lastPathComponent], [untracked count]];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setTitle: s];
+			[self setShortTitle: s];
+			[menuItem setHidden: NO];
+		});
+	} else {
+		untrackedFiles = NO;	
+	}	
+}
+
+- (void) handleLocalForMenu: (NSMenu *)m {
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", nil]];
+	NSString *localChanges = [self lastGoodComponentOfString: [self diffStatOfTask: t]];
+	if (![localChanges isEqual: @"0 files changed"]) {
+		localMod = YES;
+		[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
+		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [self shortenDiff: localChanges]];
+		[self setAllTitles: sTit];
+	} else {
+		localMod = NO;
+	}	
+}
+
+- (void) handleRemoteForMenu: (NSMenu *)m {
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"incoming", @"-p", nil]];
+	NSString *remoteDiffSt = [self diffStatOfTask: t];
 	
-	int the_index = 0;
-	NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];	
+	NSString *s2 = [self lastGoodComponentOfString: remoteDiffSt];
+	if (![s2 isEqual: @"0 files changed"]) {
+		upstreamMod = YES;
+		[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
+		NSString *sTit = [NSString stringWithFormat: @"%@: %@",
+			[repository lastPathComponent],
+			[s2 stringByTrimmingCharactersInSet:
+				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[self setTitle: sTit];
+			[self setShortTitle: sTit];
+			[menuItem setHidden: NO];
+		});
+	} else {
+		upstreamMod = NO;
+	}
+}
+
+- (void) handleLogsForMenu: (NSMenu *)m {
 	int i;
 
-	NSArray *untracked = [self getUntracked];
-
-	if (untracked && [untracked count])
-		untrackedFiles = YES;
-	else
-		untrackedFiles = NO;
-	
 	NSArray *logs = [self
 		arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|age} {desc}\n", nil]
 		withName: @"Mercurial::fire::logs"];
@@ -201,7 +247,6 @@
 	if ([logs count] == 0) {
 		mi = [[NSMenuItem alloc] initWithTitle: @"No history for this project" action: nil keyEquivalent: @""];
 		[m addItem: mi];
-		the_index++;
 	} else {
 		for (i = 0; i < [logs count]; i++) {
 			NSString *tmp = [logs objectAtIndex: i];
@@ -218,83 +263,36 @@
 				[mi autorelease];
 				[mi setAttributedTitle: attr];
 				[m addItem: mi];
-				the_index++;
 			}
 		}
 	}
-	
-	[m insertItem: [NSMenuItem separatorItem] atIndex: the_index++];
+}
 
-	[t autorelease];
-	[t2 autorelease];
+- (void) realFire {
+	NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];	
+
+	[self handleLogsForMenu: m];
+	[m insertItem: [NSMenuItem separatorItem] atIndex: [m numberOfItems]];
+	[self handleUntracked];
+	[self handleLocalForMenu: m];
+	[self handleRemoteForMenu: m];
 	
-	@try {
-		[t launch];
-		[t2 launch];
+	if (!untrackedFiles && !localMod && !upstreamMod)
+		[self setAllTitles: [NSString stringWithFormat: @"%@", [repository lastPathComponent]]];
 		
-		NSData *data = [file readDataToEndOfFile];
-		NSCharacterSet *cs = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-		NSString *utf8String = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
-		NSString *string = [utf8String stringByTrimmingCharactersInSet: cs];
+	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
+	[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
+	[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
 
-		NSArray *arr = [string componentsSeparatedByString: @"\n"];
-		NSString *s2 = [arr objectAtIndex: [arr count] - 1];
-		s2 = [s2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	
-		NSString *sTit;
-		if (untrackedFiles) {
-			NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [repository lastPathComponent], [untracked count]];
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[self setTitle: s];
-				[self setShortTitle: s];
-				[menuItem setHidden: NO];
-			});
-		} else if (![s2 isEqual: @"0 files changed"]) {
-			localMod = YES;
-			[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index] setTarget: self];
-			NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [self shortenDiff: s2]];
-		
-			[self setAllTitles: sTit];
-		} else if (upstreamMod) {
-			[[m insertItemWithTitle: @"Update From Origin (hg)" action: @selector(pull:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-			sTit = [NSString stringWithFormat: @"%@: %@",
-				[repository lastPathComponent],
-				[string stringByTrimmingCharactersInSet:
-					[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
-			dispatch_sync(dispatch_get_main_queue(), ^{
-				[self setTitle: sTit];
-				[self setShortTitle: sTit];
-				[menuItem setHidden: NO];
-			});
-		} else {
-			localMod = NO;
-			[dirtyLock lock];
-			dirty = YES;
-			[dirtyLock unlock];
-
-			sTit = [NSString stringWithFormat: @"%@",
-				[repository lastPathComponent]];
-
-			[self setAllTitles: sTit];
-		}
-		[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-		[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-		[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: the_index++] setTarget: self];
-
-		dispatch_async(dispatch_get_main_queue(), ^{
-			if (localMod)
-				[menuItem setOffStateImage: [BubbleFactory getRedOfSize: 15]];
-			else if (upstreamMod)
-				[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 15]];
-			else
-				[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 15]];
-			[menuItem setSubmenu: m];
-		});
-	} @catch (NSException *e) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self hideIt];
-		});
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		if (localMod)
+			[menuItem setOffStateImage: [BubbleFactory getRedOfSize: 15]];
+		else if (upstreamMod)
+			[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 15]];
+		else
+			[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 15]];
+		[menuItem setSubmenu: m];
+	});
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[self setupTimer];
 	});
