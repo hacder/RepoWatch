@@ -140,10 +140,12 @@
 }
 
 - (void) clickUpdate: (id) button {
-	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil] withName: @"hg::clickUpdate::commit"];
 	[NSApp hide: self];
 	[mc->commitWindow close];
-	[self fire: nil];
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil] withName: @"hg::clickUpdate::commit"];
+		[self fire: nil];
+	});
 }
 
 - (void) setAllTitles: (NSString *)s {
@@ -292,8 +294,6 @@
 		else
 			[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 15]];
 		[menuItem setSubmenu: m];
-	});
-	dispatch_async(dispatch_get_main_queue(), ^{
 		[self setupTimer];
 	});
 }
