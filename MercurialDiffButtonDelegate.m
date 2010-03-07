@@ -223,8 +223,8 @@
 		[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
 		NSString *sTit = [NSString stringWithFormat: @"%@: %@",
 			[repository lastPathComponent],
-			[s2 stringByTrimmingCharactersInSet:
-				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+			[self shortenDiff: [s2 stringByTrimmingCharactersInSet:
+				[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
 		dispatch_sync(dispatch_get_main_queue(), ^{
 			[self setTitle: sTit];
 			[self setShortTitle: sTit];
