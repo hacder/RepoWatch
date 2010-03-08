@@ -317,7 +317,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 				return;
 			animationTimer = [NSTimer scheduledTimerWithTimeInterval: 0.1 target: self selector: @selector(animationUpdate:) userInfo: nil repeats: YES];
 		} else {
-			[animationTimer invalidate];
+			if (animationTimer)
+				[animationTimer invalidate];
 			animationTimer = nil;
 			[currentRotation autorelease];
 			currentRotation = [NSNumber numberWithFloat: 0.0];
