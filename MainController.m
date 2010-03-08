@@ -244,11 +244,16 @@ NSInteger intSort(id num1, id num2, void *context) {
 
 + (NSImage*)rotateImage: (NSImage*)orig byDegrees: (float)deg {
 	NSImage *rotated = [[NSImage alloc] initWithSize:[orig size]];
+	NSRect rect;
+	rect.size = orig.size;
+	rect.origin = NSZeroPoint;
 	[rotated lockFocus];
 	NSAffineTransform *transform = [NSAffineTransform transform];
+	[transform translateXBy: [orig size].width * 0.5 yBy: [orig size].height * 0.5];
 	[transform rotateByDegrees:deg];
+	[transform translateXBy: [orig size].width * -0.5 yBy: [orig size].height * -0.5];
 	[transform concat];
-	[orig drawAtPoint:NSZeroPoint fromRect:NSZeroRect operation:NSCompositeCopy fraction:1.0];
+	[orig drawAtPoint: NSZeroPoint fromRect: rect operation:NSCompositeCopy fraction:1.0];
 	[rotated unlockFocus];
 	[orig autorelease];
 	return [rotated autorelease];
@@ -302,7 +307,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 
 - (void) animationUpdate: (id) timer {
 	if (currentRotation) {
-		float newVal = [currentRotation floatValue] + 1.0;
+		float newVal = [currentRotation floatValue] + 10.0;
 		[currentRotation autorelease];
 		currentRotation = [NSNumber numberWithFloat: newVal];
 		[currentRotation retain];
@@ -317,14 +322,15 @@ NSInteger intSort(id num1, id num2, void *context) {
 			// We already have an animation timer, so let's just keep using that one.
 			if (animationTimer)
 				return;
-			animationTimer = [NSTimer scheduledTimerWithTimeInterval: 0.1 target: self selector: @selector(animationUpdate:) userInfo: nil repeats: YES];
-//		} else {
-//			if (animationTimer)
-//				[animationTimer invalidate];
-//			animationTimer = nil;
-//			[currentRotation autorelease];
-//			currentRotation = [NSNumber numberWithFloat: 0.0];
-//			[currentRotation retain];
+			animationTimer = [NSTimer scheduledTimerWithTimeInterval: 0.01 target: self selector: @selector(animationUpdate:) userInfo: nil repeats: YES];
+		} else {
+			if (animationTimer)
+				[animationTimer invalidate];
+			animationTimer = nil;
+			[currentRotation autorelease];
+			currentRotation = [NSNumber numberWithFloat: 0.0];
+			[self animationUpdate: nil];
+			[currentRotation retain];
 		}
 	}
 }
