@@ -260,7 +260,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) setProperIconForButton: (RepoButtonDelegate *)rbd atRotationOf: (NSNumber *)rot withString: (BOOL)withString {
-		NSLog(@"Animation update: %@", rot);
 		NSApplication *app = [NSApplication sharedApplication];
 		if ([rbd hasUntracked]) {
 			[app setApplicationIconImage: [[BubbleFactory getBlueOfSize: [[app dockTile] size].height] autorelease]];
@@ -322,8 +321,10 @@ NSInteger intSort(id num1, id num2, void *context) {
 			// We already have an animation timer, so let's just keep using that one.
 			if (animationTimer)
 				return;
+			NSLog(@"Starting animation");
 			animationTimer = [NSTimer scheduledTimerWithTimeInterval: 0.01 target: self selector: @selector(animationUpdate:) userInfo: nil repeats: YES];
 		} else {
+			NSLog(@"Ending animation");
 			if (animationTimer)
 				[animationTimer invalidate];
 			animationTimer = nil;
