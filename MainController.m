@@ -321,13 +321,13 @@ NSInteger intSort(id num1, id num2, void *context) {
 			if (animationTimer)
 				return;
 			animationTimer = [NSTimer scheduledTimerWithTimeInterval: 0.1 target: self selector: @selector(animationUpdate:) userInfo: nil repeats: YES];
-		} else {
-			if (animationTimer)
-				[animationTimer invalidate];
-			animationTimer = nil;
-			[currentRotation autorelease];
-			currentRotation = [NSNumber numberWithFloat: 0.0];
-			[currentRotation retain];
+//		} else {
+//			if (animationTimer)
+//				[animationTimer invalidate];
+//			animationTimer = nil;
+//			[currentRotation autorelease];
+//			currentRotation = [NSNumber numberWithFloat: 0.0];
+//			[currentRotation retain];
 		}
 	}
 }
