@@ -329,8 +329,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 			animationTimer = nil;
 			[currentRotation autorelease];
 			currentRotation = [NSNumber numberWithFloat: 0.0];
-			[self animationUpdate: nil];
 			[currentRotation retain];
+			[self animationUpdate: nil];
 		}
 	}
 }
