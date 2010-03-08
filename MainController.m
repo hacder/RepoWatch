@@ -300,7 +300,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 
 - (void) animationUpdate: (id) timer {
 	if (currentRotation) {
-		float newVal = [currentRotation floatValue] + 1.0;
+		float newVal = [currentRotation floatValue] + 5.0;
 		[currentRotation autorelease];
 		currentRotation = [NSNumber numberWithFloat: newVal];
 		[currentRotation retain];
