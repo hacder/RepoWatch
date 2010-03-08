@@ -240,13 +240,18 @@ NSInteger intSort(id num1, id num2, void *context) {
 	[NSApp terminate: self];
 }
 
+#define PI 3.14159
+
 + (NSImage*)rotateImage: (NSImage*)orig byDegrees: (float)deg {
 	NSImage *rotated = [[NSImage alloc] initWithSize:[orig size]];
 	[rotated lockFocus];
 	NSAffineTransform *transform = [NSAffineTransform transform];
 	[transform rotateByDegrees:deg];
 	[transform concat];
-	[orig drawAtPoint:NSZeroPoint fromRect:NSZeroRect operation:NSCompositeCopy fraction:1.0];
+	NSPoint p;
+	p.x = [orig size].height * sin(((180 - deg) / 180) * PI);
+	p.y = [orig size].width * sin(((180 - deg) / 180) * PI);
+	[orig drawAtPoint:p fromRect:NSZeroRect operation:NSCompositeCopy fraction:1.0];
 	[rotated unlockFocus];
 	[orig autorelease];
 	return [rotated autorelease];
