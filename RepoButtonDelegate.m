@@ -296,6 +296,7 @@ void callbackFunction(
 	}
 	
 	[self setAnimating: YES];
+	NSLog(@"%@", repository);
 	dispatch_async(sync_queue, ^{
 		[ThreadCounter enterSection];
 		[self realFire];
