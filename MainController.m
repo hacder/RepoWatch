@@ -64,6 +64,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 - init {
 	self = [super init];
 	activeBD = nil;
+	currentRotation = [NSNumber numberWithFloat: 0.0];
+	[currentRotation retain];
 	
 	[GrowlApplicationBridge setGrowlDelegate: self];
 	[RepoButtonDelegate setupQueue];
@@ -238,6 +240,43 @@ NSInteger intSort(id num1, id num2, void *context) {
 	[NSApp terminate: self];
 }
 
++ (NSImage*)rotateImage: (NSImage*)orig byDegrees: (float)deg {
+	NSImage *rotated = [[NSImage alloc] initWithSize:[orig size]];
+	[rotated lockFocus];
+	NSAffineTransform *transform = [NSAffineTransform transform];
+	[transform rotateByDegrees:deg];
+	[transform concat];
+	[orig drawAtPoint:NSZeroPoint fromRect:NSZeroRect operation:NSCompositeCopy fraction:1.0];
+	[rotated unlockFocus];
+	[orig autorelease];
+	return [rotated autorelease];
+}
+
+- (void) setProperIconForButton: (RepoButtonDelegate *)rbd atRotationOf: (NSNumber *)rot withString: (BOOL)withString {
+		NSLog(@"Animation update: %@", rot);
+		NSApplication *app = [NSApplication sharedApplication];
+		if ([rbd hasUntracked]) {
+			[app setApplicationIconImage: [[BubbleFactory getBlueOfSize: [[app dockTile] size].height] autorelease]];
+			[statusItem setImage: [MainController rotateImage: [BubbleFactory getBlueOfSize: 15] byDegrees: [rot floatValue]]];
+			if (withString)
+				[statusItem setTitle: [rbd shortTitle]];
+		} else if ([rbd hasLocal]) {
+			[app setApplicationIconImage: [[BubbleFactory getRedOfSize: [[app dockTile] size].height] autorelease]];
+			[statusItem setImage: [MainController rotateImage: [BubbleFactory getRedOfSize: 15] byDegrees: [rot floatValue]]];
+			if (withString)
+				[statusItem setTitle: [rbd shortTitle]];
+		} else if ([rbd hasUpstream]) {
+			[app setApplicationIconImage: [[BubbleFactory getYellowOfSize: [[app dockTile] size].height] autorelease]];
+			[statusItem setImage: [[BubbleFactory getYellowOfSize: 15] autorelease]];
+			if (withString)
+				[statusItem setTitle: [rbd shortTitle]];
+		} else {
+			[app setApplicationIconImage: [[BubbleFactory getGreenOfSize: [[app dockTile] size].height] autorelease]];
+			[statusItem setImage: [[BubbleFactory getGreenOfSize: 15] autorelease]];
+			[statusItem setTitle: @""];
+		}	
+}
+
 - (void) ping {
 	if (![scanner isDone])
 		return;
@@ -254,34 +293,36 @@ NSInteger intSort(id num1, id num2, void *context) {
 		int noString = [[NSUserDefaults standardUserDefaults] integerForKey: @"suppressText"];
 		if (noString)
 			[statusItem setTitle: @""];
-	
-		NSApplication *app = [NSApplication sharedApplication];
-		if ([rbd hasUntracked]) {
-			[app setApplicationIconImage: [BubbleFactory getBlueOfSize: [[app dockTile] size].height]];
-			[statusItem setImage: [BubbleFactory getBlueOfSize: 15]];
-			if (!noString)
-				[statusItem setTitle: [rbd shortTitle]];
-		} else if ([rbd hasLocal]) {
-			[app setApplicationIconImage: [BubbleFactory getRedOfSize: [[app dockTile] size].height]];
-			[statusItem setImage: [BubbleFactory getRedOfSize: 15]];
-			if (!noString)
-				[statusItem setTitle: [rbd shortTitle]];
-		} else if ([rbd hasUpstream]) {
-			[app setApplicationIconImage: [BubbleFactory getYellowOfSize: [[app dockTile] size].height]];
-			[statusItem setImage: [BubbleFactory getYellowOfSize: 15]];
-			if (!noString)
-				[statusItem setTitle: [rbd shortTitle]];
-		} else {
-			[app setApplicationIconImage: [BubbleFactory getGreenOfSize: [[app dockTile] size].height]];
-			[statusItem setImage: [BubbleFactory getGreenOfSize: 15]];
-			[statusItem setTitle: @""];
-		}
+		
+		[self setProperIconForButton: rbd atRotationOf: currentRotation withString: !noString];
 	});
+}
+
+- (void) animationUpdate: (id) timer {
+	if (currentRotation) {
+		float newVal = [currentRotation floatValue] + 1.0;
+		[currentRotation autorelease];
+		currentRotation = [NSNumber numberWithFloat: newVal];
+		[currentRotation retain];
+	}
+	if (activeBD)
+		[self setProperIconForButton: (RepoButtonDelegate *)activeBD atRotationOf: currentRotation withString: [[NSUserDefaults standardUserDefaults] integerForKey: @"suppressText"]];
 }
 
 - (void) setAnimatingFor: (ButtonDelegate *)bd to: (BOOL)b {
 	if (activeBD && activeBD == bd) {
-		NSLog(@"I should be animating?: %d", b);
+		if (b) {
+			// We already have an animation timer, so let's just keep using that one.
+			if (animationTimer)
+				return;
+			animationTimer = [NSTimer scheduledTimerWithTimeInterval: 0.1 target: self selector: @selector(animationUpdate:) userInfo: nil repeats: YES];
+		} else {
+			[animationTimer invalidate];
+			animationTimer = nil;
+			[currentRotation autorelease];
+			currentRotation = [NSNumber numberWithFloat: 0.0];
+			[currentRotation retain];
+		}
 	}
 }
 

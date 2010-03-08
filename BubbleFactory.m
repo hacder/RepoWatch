@@ -16,7 +16,6 @@
 	[[color blendedColorWithFraction: 0.75 ofColor: [NSColor blackColor]] set];
 	[path stroke];
 	[ret unlockFocus];
-	[ret autorelease];
 	return ret;
 }
 

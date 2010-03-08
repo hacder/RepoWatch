@@ -294,6 +294,7 @@
 			[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 15]];
 		else
 			[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 15]];
+		[[menuItem offStateImage] autorelease];
 		[menuItem setSubmenu: m];
 		[self setupTimer];
 	});

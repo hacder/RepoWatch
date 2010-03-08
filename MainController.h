@@ -18,7 +18,8 @@
 	char *date;
 	char *time;
 	
-	NSTimer *demoTimer;
+	NSTimer *animationTimer;
+	NSNumber *currentRotation;
 	Scanner *scanner;
 	QuitButtonDelegate *quit;
 	ButtonDelegate *activeBD;
