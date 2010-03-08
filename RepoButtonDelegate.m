@@ -295,15 +295,15 @@ void callbackFunction(
 		return;
 	}
 	
+	[self setAnimating: YES];
 	dispatch_async(sync_queue, ^{
 		[ThreadCounter enterSection];
-		[self setAnimating: YES];
 		[self realFire];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setupTimer];
+			[self setAnimating: NO];
 			[lock unlock];
 		});
-		[self setAnimating: NO];
 		[ThreadCounter exitSection];
 	});
 }
