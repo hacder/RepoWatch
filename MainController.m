@@ -63,6 +63,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 - init {
 	self = [super init];
+	activeBD = nil;
 	
 	[GrowlApplicationBridge setGrowlDelegate: self];
 	[RepoButtonDelegate setupQueue];
@@ -71,7 +72,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	statusItem = [bar statusItemWithLength: NSVariableStatusItemLength];
 	[statusItem retain];
 	
-	[statusItem setTitle: NSLocalizedString(@"RepoWatch", @"")];
+	[statusItem setTitle: NSLocalizedString(@"Starting Up...", @"")];
 	[statusItem setHighlightMode: YES];
 	theMenu = [[[NSMenu alloc] initWithTitle: @"Testing"] retain];
 	[theMenu setAutoenablesItems: NO];
@@ -244,8 +245,11 @@ NSInteger intSort(id num1, id num2, void *context) {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSMenuItem *mi = [theMenu itemAtIndex: 1];
 		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
-		if (!rbd)
+		if (!rbd) {
+			activeBD = nil;
 			return;
+		}
+		activeBD = rbd;
 	
 		int noString = [[NSUserDefaults standardUserDefaults] integerForKey: @"suppressText"];
 		if (noString)
@@ -273,6 +277,12 @@ NSInteger intSort(id num1, id num2, void *context) {
 			[statusItem setTitle: @""];
 		}
 	});
+}
+
+- (void) setAnimatingFor: (ButtonDelegate *)bd to: (BOOL)b {
+	if (activeBD && activeBD == bd) {
+		NSLog(@"I should be animating?: %d", b);
+	}
 }
 
 @end

@@ -21,6 +21,7 @@
 	NSTimer *demoTimer;
 	Scanner *scanner;
 	QuitButtonDelegate *quit;
+	ButtonDelegate *activeBD;
 
 @public	
 	IBOutlet NSWindow *commitWindow;
@@ -46,5 +47,6 @@
 - (IBAction) openFile: (id) sender;
 - (void) ping;
 - (NSDictionary *)registrationDictionaryForGrowl;
+- (void) setAnimatingFor: (ButtonDelegate *)bd to: (BOOL)b;
 
 @end

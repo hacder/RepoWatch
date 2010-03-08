@@ -193,8 +193,14 @@ void callbackFunction(
 	return nil;
 }
 
+- (void) setAnimating: (BOOL)b {
+	animating = b;
+	[mc setAnimatingFor: self to: b];
+}
+
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
+	animating = NO;
 	dirtyLock = [[NSLock alloc] init];
 	[dirtyLock lock];
 	dirty = NO;
@@ -291,11 +297,13 @@ void callbackFunction(
 	
 	dispatch_async(sync_queue, ^{
 		[ThreadCounter enterSection];
+		[self setAnimating: YES];
 		[self realFire];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setupTimer];
 			[lock unlock];
 		});
+		[self setAnimating: NO];
 		[ThreadCounter exitSection];
 	});
 }
