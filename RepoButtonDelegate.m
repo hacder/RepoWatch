@@ -261,6 +261,9 @@ void callbackFunction(
 		interval += 1.0;
 	}
 	
+	if (!localMod)
+		minTime *= 5;
+	
 	if (interval < minTime) {
 		interval = minTime;
 	} else if (interval > maxTime) {
