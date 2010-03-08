@@ -277,6 +277,8 @@
 - (void) realFire {
 	int the_index = 0;
 	
+	NSLog(@"realFire in git");
+	
 	[dirtyLock lock];
 	dirty = NO;
 	[dirtyLock unlock];
