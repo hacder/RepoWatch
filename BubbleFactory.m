@@ -5,7 +5,7 @@
 + (NSImage *)getBubbleOfColor: (NSColor *)highlightColor andSize: (int) size {
 	float lineWidth = 2 * (size / 15.0);
 	
-	NSColor *color = [highlightColor blendedColorWithFraction: 0.75 ofColor: [NSColor whiteColor]];
+	NSColor *color = [highlightColor blendedColorWithFraction: 0.75 ofColor: [NSColor blackColor]];
 	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
 	[ret lockFocus];
 	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(lineWidth / 2, lineWidth / 2, size - lineWidth, size - lineWidth)];

@@ -325,7 +325,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 			currentRotation = [NSNumber numberWithFloat: 0.0];
 			[currentRotation retain];
 			NSLog(@"Starting animation");
-			animationTimer = [NSTimer scheduledTimerWithTimeInterval: 0.01 target: self selector: @selector(animationUpdate:) userInfo: nil repeats: YES];
+			animationTimer = [NSTimer scheduledTimerWithTimeInterval: 0.05 target: self selector: @selector(animationUpdate:) userInfo: nil repeats: YES];
 		} else {
 			NSLog(@"Ending animation");
 			if (animationTimer)
