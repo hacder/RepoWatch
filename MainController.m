@@ -272,12 +272,12 @@ NSInteger intSort(id num1, id num2, void *context) {
 				[statusItem setTitle: [rbd shortTitle]];
 		} else if ([rbd hasUpstream]) {
 			[app setApplicationIconImage: [[BubbleFactory getYellowOfSize: [[app dockTile] size].height] autorelease]];
-			[statusItem setImage: [[BubbleFactory getYellowOfSize: 15] autorelease]];
+			[statusItem setImage: [MainController rotateImage: [BubbleFactory getYellowOfSize: 15] byDegrees: [rot floatValue]]];
 			if (withString)
 				[statusItem setTitle: [rbd shortTitle]];
 		} else {
 			[app setApplicationIconImage: [[BubbleFactory getGreenOfSize: [[app dockTile] size].height] autorelease]];
-			[statusItem setImage: [[BubbleFactory getGreenOfSize: 15] autorelease]];
+			[statusItem setImage: [MainController rotateImage: [BubbleFactory getGreenOfSize: 15] byDegrees: [rot floatValue]]];
 			[statusItem setTitle: @""];
 		}	
 }
