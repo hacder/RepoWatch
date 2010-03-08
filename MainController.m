@@ -248,10 +248,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 	NSAffineTransform *transform = [NSAffineTransform transform];
 	[transform rotateByDegrees:deg];
 	[transform concat];
-	NSPoint p;
-	p.y = [orig size].height * sin(((180 - deg) / 180) * PI);
-	p.x = [orig size].width * sin(((180 - deg) / 180) * PI);
-	[orig drawAtPoint:p fromRect:NSZeroRect operation:NSCompositeCopy fraction:1.0];
+	[orig drawAtPoint:NSZeroPoint fromRect:NSZeroRect operation:NSCompositeCopy fraction:1.0];
 	[rotated unlockFocus];
 	[orig autorelease];
 	return [rotated autorelease];
@@ -305,7 +302,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 
 - (void) animationUpdate: (id) timer {
 	if (currentRotation) {
-		float newVal = [currentRotation floatValue] + 20.0;
+		float newVal = [currentRotation floatValue] + 1.0;
 		[currentRotation autorelease];
 		currentRotation = [NSNumber numberWithFloat: newVal];
 		[currentRotation retain];
