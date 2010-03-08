@@ -249,8 +249,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 	[transform rotateByDegrees:deg];
 	[transform concat];
 	NSPoint p;
-	p.x = [orig size].height * sin(((180 - deg) / 180) * PI);
-	p.y = [orig size].width * sin(((180 - deg) / 180) * PI);
+	p.y = [orig size].height * sin(((180 - deg) / 180) * PI);
+	p.x = [orig size].width * sin(((180 - deg) / 180) * PI);
 	[orig drawAtPoint:p fromRect:NSZeroRect operation:NSCompositeCopy fraction:1.0];
 	[rotated unlockFocus];
 	[orig autorelease];
