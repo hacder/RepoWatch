@@ -306,13 +306,17 @@ NSInteger intSort(id num1, id num2, void *context) {
 
 - (void) animationUpdate: (id) timer {
 	if (currentRotation) {
-		float newVal = [currentRotation floatValue] + 10.0;
+		float newVal = [currentRotation floatValue] + 5.0;
 		[currentRotation autorelease];
 		currentRotation = [NSNumber numberWithFloat: newVal];
 		[currentRotation retain];
 	}
 	if (activeBD)
-		[self setProperIconForButton: (RepoButtonDelegate *)activeBD atRotationOf: currentRotation withString: [[NSUserDefaults standardUserDefaults] integerForKey: @"suppressText"]];
+		[self
+			setProperIconForButton: (RepoButtonDelegate *)activeBD
+			atRotationOf: currentRotation
+			withString: [[NSUserDefaults standardUserDefaults]
+			integerForKey: @"suppressText"]];
 }
 
 - (void) setAnimatingFor: (ButtonDelegate *)bd to: (BOOL)b {
@@ -325,7 +329,13 @@ NSInteger intSort(id num1, id num2, void *context) {
 			currentRotation = [NSNumber numberWithFloat: 0.0];
 			[currentRotation retain];
 			NSLog(@"Starting animation");
-			animationTimer = [NSTimer scheduledTimerWithTimeInterval: 0.05 target: self selector: @selector(animationUpdate:) userInfo: nil repeats: YES];
+			animationTimer =
+				[NSTimer
+					scheduledTimerWithTimeInterval: 0.05
+					target: self
+					selector: @selector(animationUpdate:)
+					userInfo: nil
+					repeats: YES];
 		} else {
 			NSLog(@"Ending animation");
 			if (animationTimer)
