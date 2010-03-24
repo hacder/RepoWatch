@@ -7,6 +7,7 @@
 
 static NSMutableArray *repos;
 static dispatch_queue_t sync_queue;
+static NSMutableArray *lastCommands;
 
 + (void) setupQueue {
 	sync_queue = dispatch_queue_create("com.doomstick.RepoWatch.repository_tasks", NULL);
@@ -154,6 +155,14 @@ void callbackFunction(
 	[t setCurrentDirectoryPath: repository];
 	[t setArguments: args];
 	[t autorelease];
+	
+	NSString *taskString = [NSString stringWithFormat: @"%@ %@", repository, task];
+	int i;
+	for (i = 0; i < [args count]; i++) {
+		taskString = [NSString stringWithFormat: @"%@ %@", taskString, [args objectAtIndex: i]];
+	}
+	NSLog(@"Task string: %@", taskString);
+	
 	return t;
 }
 
@@ -222,6 +231,11 @@ void callbackFunction(
 		[repos retain];
 	}
 	[repos addObject: self];
+
+	if (!lastCommands) {
+		lastCommands = [NSMutableArray arrayWithCapacity: 10];
+		[lastCommands retain];
+	}
 
 	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
 	CFStringRef myPath = (CFStringRef)repository;
