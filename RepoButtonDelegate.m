@@ -163,8 +163,10 @@ void callbackFunction(
 	}
 	[lastCommands addObject: taskString];
 	[singleRepoLastCommands addObject: taskString];
+
 	NSLog(@"Task string: %@", taskString);
 	NSLog(@"I know about %d commands", [lastCommands count]);
+	NSLog(@"For just %@ I know about %d commands", repository, [singleRepoLastCommands count]);
 	
 	return t;
 }
@@ -274,20 +276,22 @@ void callbackFunction(
 	float minTime = 1.0 * ([RepoButtonDelegate numLocalEdit] + [RepoButtonDelegate numRemoteEdit] + 1);
 	float maxTime = 60.0;
 	
-	if (localMod || upstreamMod) {
+	if (minTime < 5.0)
+		minTime = 5.0;
+	
+	if (localMod || upstreamMod)
 		interval = interval / 2.0;
-	} else {
+	else
 		interval += 1.0;
-	}
 	
 	if (!localMod)
 		minTime *= 5;
 	
-	if (interval < minTime) {
+	if (interval < minTime)
 		interval = minTime;
-	} else if (interval > maxTime) {
+	else if (interval > maxTime)
 		interval = maxTime;
-	}
+
 	[timer invalidate];
 	[timer release];
 	timer = [NSTimer scheduledTimerWithTimeInterval: interval target: self selector: @selector(fire:) userInfo: nil repeats: NO];

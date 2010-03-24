@@ -281,26 +281,30 @@
 	dirty = NO;
 	[dirtyLock unlock];
 	
-	NSString *remoteString = [self getDiffRemote: YES];
-	NSString *string = [self getDiffRemote: NO];
-	NSArray *untracked = [self getUntracked];
-
-	if (untracked && [untracked count])
-		untrackedFiles = YES;
-	else
-		untrackedFiles = NO;
+	NSArray *untracked;
+	NSString *string;
+	NSString *remoteString;
 	
-	if (!remoteString || [remoteString isEqual: @""])
-		upstreamMod = NO;
-	else
-		upstreamMod = YES;
-		
-	if (string == nil || [string isEqual: @""])
-		localMod = NO;
-	else
-		localMod = YES;
-			
+	untracked = [self getUntracked];
+	if (untracked && [untracked count]) {
+		untrackedFiles = YES;
+	} else {
+		untrackedFiles = NO;
+		string = [self getDiffRemote: NO];
+		if (string == nil || [string isEqual: @""]) {
+			localMod = NO;
 
+			remoteString = [self getDiffRemote: YES];
+			if (!remoteString || [remoteString isEqual: @""]) {
+				upstreamMod = NO;
+			} else {
+				upstreamMod = YES;
+			}
+		} else {
+			localMod = YES;
+		}
+	}
+		
 	if (untrackedFiles) {
 		NSLog(@"Untracked in %@ is %@", repository, untracked);
 		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: [NSString stringWithFormat: @"%d untracked files in %@", [untracked count], repository]
