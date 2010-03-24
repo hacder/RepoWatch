@@ -1,5 +1,6 @@
 #import "MercurialDiffButtonDelegate.h"
 #import "BubbleFactory.h"
+#import "RepoHelper.h"
 
 @implementation MercurialDiffButtonDelegate
 
@@ -209,7 +210,7 @@
 	if (![localChanges isEqual: @"0 files changed"]) {
 		localMod = YES;
 		[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
-		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [self shortenDiff: localChanges]];
+		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [RepoHelper shortenDiff: localChanges]];
 		[self setAllTitles: sTit];
 	} else {
 		localMod = NO;
@@ -226,7 +227,7 @@
 		[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
 		NSString *sTit = [NSString stringWithFormat: @"%@: %@",
 			[repository lastPathComponent],
-			[self shortenDiff: [s2 stringByTrimmingCharactersInSet:
+			[RepoHelper shortenDiff: [s2 stringByTrimmingCharactersInSet:
 				[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
 		dispatch_sync(dispatch_get_main_queue(), ^{
 			[self setTitle: sTit];

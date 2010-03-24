@@ -1,5 +1,6 @@
 #import "GitDiffButtonDelegate.h"
 #import "BubbleFactory.h"
+#import "RepoHelper.h"
 
 @implementation GitDiffButtonDelegate
 
@@ -128,7 +129,7 @@
 		return nil;
 	}
 	string = [resultarr objectAtIndex: 0];
-	return [self shortenDiff: string];
+	return [RepoHelper shortenDiff: string];
 }
 
 - (void) pull: (id) menuItem {

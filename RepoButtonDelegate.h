@@ -32,18 +32,17 @@
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;
 - (BOOL) hasLocal;
+
 - (void) commit: (id) menuItem;
 - (void) pull: (id) menuItem;
 - (void) dealWithUntracked: (id) menuItem;
+
 - (NSInteger) numberOfRowsInTableView: (NSTableView *)tv;
 - (id)tableView: (NSTableView *)tvv objectValueForTableColumn: (NSTableColumn *)column row: (NSInteger) row;
+
 - (void) clickUpdate: (id) button;
-- (NSFileHandle *)pipeForTask: (NSTask *)t;
-- (NSFileHandle *)errForTask: (NSTask *)t;
-- (NSString *)stringFromFile: (NSFileHandle *)file;
 - (NSTask *)taskFromArguments: (NSArray *)args; 
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name;
-- (NSString *)shortenDiff: (NSString *)diff;
 - (NSString *)getDiff;
 - (void) openInFinder: (id) sender;
 - (void) openInTerminal: (id) sender;

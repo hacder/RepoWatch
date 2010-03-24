@@ -1,5 +1,6 @@
 #import "RepoButtonDelegate.h"
 #import "ThreadCounter.h"
+#import "RepoHelper.h"
 #import <dispatch/dispatch.h>
 #import <sys/time.h>
 
@@ -60,38 +61,15 @@ void callbackFunction(
 	return nil;
 }
 
-- (NSString *)shortenDiff: (NSString *)diff {
-	NSArray *parts = [diff componentsSeparatedByString: @", "];
-	if ([parts count] == 3) {
-		int num_files = [[parts objectAtIndex: 0] intValue];
-		int num_plus = [[parts objectAtIndex: 1] intValue];
-		int num_minus = [[parts objectAtIndex: 2] intValue];
-		
-		if (!num_plus && !num_minus)
-			return nil;
-		NSString *ret = [NSString stringWithFormat: @"%d files, +%d -%d", num_files, num_plus, num_minus];
-		return ret;
-	} else {
-		return diff;
-	}
-}
-
-- (NSString *)stringFromFile: (NSFileHandle *)file {
-	NSData *data = [file readDataToEndOfFile];
-	NSString *string = [[[NSString alloc] initWithData: data
-			encoding: NSUTF8StringEncoding] autorelease];
-	return string;
-}
-
 - (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name {
 	NSTask *t = [self taskFromArguments: args];
-	NSFileHandle *file = [self pipeForTask: t];
-	NSFileHandle *err = [self errForTask: t];
+	NSFileHandle *file = [RepoHelper pipeForTask: t];
+	NSFileHandle *err = [RepoHelper errForTask: t];
 
 	@try {
 		[t launch];
 		
-		NSString *string = [self stringFromFile: file];
+		NSString *string = [RepoHelper stringFromFile: file];
 		NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
 		[t waitUntilExit];
 		if ([t terminationStatus] != 0) {
@@ -101,7 +79,7 @@ void callbackFunction(
 			for (i = 0; i < [args count]; i++) {
 				[command appendFormat: @" %@", [args objectAtIndex: i]];
 			}
-			NSString *errStr = [self stringFromFile: err];
+			NSString *errStr = [RepoHelper stringFromFile: err];
 			NSLog(@"%@, task status: %d error: %@ full command: %@", name, [t terminationStatus], errStr, command);
 			return nil;
 		}
@@ -119,20 +97,6 @@ void callbackFunction(
 		NSLog(@"Got exception: %@", e);
 	}
 	return nil;
-}
-
-- (NSFileHandle *)pipeForTask: (NSTask *)t {
-	NSPipe *pipe = [NSPipe pipe];
-	[t setStandardOutput: pipe];
-	NSFileHandle *file = [pipe fileHandleForReading];
-	return file;
-}
-
-- (NSFileHandle *)errForTask: (NSTask *)t {
-	NSPipe *pipe = [NSPipe pipe];
-	[t setStandardError: pipe];
-	NSFileHandle *file = [pipe fileHandleForReading];
-	return file;
 }
 
 - (void) openInFinder: (id) sender {
@@ -299,9 +263,9 @@ void callbackFunction(
 - (NSString *)getDiff {
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
 	NSTask *t = [self taskFromArguments: arr];
-	NSFileHandle *file = [self pipeForTask: t];
+	NSFileHandle *file = [RepoHelper pipeForTask: t];
 	[t launch];
-	NSString *result = [self stringFromFile: file];
+	NSString *result = [RepoHelper stringFromFile: file];
 	[file closeFile];
 	return result;
 }
