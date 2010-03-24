@@ -15,6 +15,7 @@
 	NSTimer *timer;
 	NSArray *currentUntracked;
 	NSDate *lastRemote;
+	NSMutableArray *singleRepoLastCommands;
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;

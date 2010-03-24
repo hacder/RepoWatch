@@ -162,6 +162,7 @@ void callbackFunction(
 		taskString = [NSString stringWithFormat: @"%@ %@", taskString, [args objectAtIndex: i]];
 	}
 	[lastCommands addObject: taskString];
+	[singleRepoLastCommands addObject: taskString];
 	NSLog(@"Task string: %@", taskString);
 	NSLog(@"I know about %d commands", [lastCommands count]);
 	
@@ -211,6 +212,8 @@ void callbackFunction(
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
+	singleRepoLastCommands = [NSMutableArray arrayWithCapacity: 10];
+	[singleRepoLastCommands retain];
 	animating = NO;
 	dirtyLock = [[NSLock alloc] init];
 	[dirtyLock lock];
