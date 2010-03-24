@@ -3,7 +3,8 @@
 
 @implementation GitDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc gitPath: (char *)gitPath repository: (NSString *)rep {
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc
+		gitPath: (char *)gitPath repository: (NSString *)rep {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	git = gitPath;
 	[menuItem setHidden: YES];
@@ -252,8 +253,6 @@
 
 - (void) localModsWithMenu: (NSMenu *)m index: (int)the_index string: (NSString *)string {
 	NSString *sTit;
-	[GrowlApplicationBridge notifyWithTitle: @"Local Modifications" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-
 	[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++]
 		setTarget: self];
 	if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
@@ -305,12 +304,6 @@
 		}
 	}
 		
-	if (untrackedFiles) {
-		NSLog(@"Untracked in %@ is %@", repository, untracked);
-		[GrowlApplicationBridge notifyWithTitle: @"Untracked Files" description: [NSString stringWithFormat: @"%d untracked files in %@", [untracked count], repository]
-			notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-	}
-	
 	NSMenu *m = [[[NSMenu alloc] initWithTitle: @"Testing"] autorelease];
 
 	the_index = [self doLogsForMenu: m atIndex: the_index];
@@ -332,26 +325,28 @@
 	} else {
 		// There is a remote diff.
 		NSString *sTit;
-		[GrowlApplicationBridge notifyWithTitle: @"Upstream Modification" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
-
 		[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: the_index++]
 			setTarget: self];
 		sTit = [NSString stringWithFormat: @"%@: %@",
 			[repository lastPathComponent],
 			[remoteString stringByTrimmingCharactersInSet:
 				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+
 		dispatch_sync(dispatch_get_main_queue(), ^{
 			[self setTitle: sTit];
 			[self setShortTitle: sTit];
 			[menuItem setHidden: NO];
 		});
 	}
+	
 	if (localMod)
 		[[m insertItemWithTitle: @"Commit" action: @selector(commit:) keyEquivalent: @"" atIndex: the_index++]
 			setTarget: self];
+
 	if (untrackedFiles)
 		[[m insertItemWithTitle: @"Untracked Files" action: @selector(dealWithUntracked:) keyEquivalent: @"" atIndex: the_index++]
 			setTarget: self];
+
 	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: the_index++]
 		setTarget: self];
 	[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: the_index++]

@@ -1,13 +1,12 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <Growl/Growl.h>
 #import "Scanner.h"
 #import "QuitButtonDelegate.h"
 
 @class ButtonDelegate;
 @class ODeskButtonDelegate;
 
-@interface MainController : NSObject <GrowlApplicationBridgeDelegate> {
+@interface MainController : NSObject {
 	NSStatusItem *statusItem;
 	NSMenu *theMenu;
 
@@ -48,7 +47,6 @@
 - (void) maybeRefresh: (ButtonDelegate *)bd;
 - (IBAction) openFile: (id) sender;
 - (void) ping;
-- (NSDictionary *)registrationDictionaryForGrowl;
 - (void) setAnimatingFor: (ButtonDelegate *)bd to: (BOOL)b;
 
 @end

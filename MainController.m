@@ -50,24 +50,12 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	return noErr;
 }
 
-- (NSDictionary *)registrationDictionaryForGrowl {
-	NSDictionary *dict = [NSDictionary
-		dictionaryWithObjects:
-			[NSArray arrayWithObjects: 
-				[NSArray arrayWithObjects: @"testing", nil], nil]
-		forKeys:
-			[NSArray arrayWithObjects: GROWL_NOTIFICATIONS_ALL, nil]
-	];
-	return dict;
-}
-
 - init {
 	self = [super init];
 	activeBD = nil;
 	currentRotation = [NSNumber numberWithFloat: 0.0];
 	[currentRotation retain];
 	
-	[GrowlApplicationBridge setGrowlDelegate: self];
 	[RepoButtonDelegate setupQueue];
 	
 	NSStatusBar *bar = [NSStatusBar systemStatusBar];

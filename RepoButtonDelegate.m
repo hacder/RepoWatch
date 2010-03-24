@@ -102,7 +102,6 @@ void callbackFunction(
 				[command appendFormat: @" %@", [args objectAtIndex: i]];
 			}
 			NSString *errStr = [self stringFromFile: err];
-			[GrowlApplicationBridge notifyWithTitle: command description: errStr notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 			NSLog(@"%@, task status: %d error: %@ full command: %@", name, [t terminationStatus], errStr, command);
 			return nil;
 		}
@@ -117,7 +116,6 @@ void callbackFunction(
 		
 		return result;
 	} @catch (NSException *e) {
-		[GrowlApplicationBridge notifyWithTitle: @"Exception" description: [e description] notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 		NSLog(@"Got exception: %@", e);
 	}
 	return nil;
@@ -310,7 +308,6 @@ void callbackFunction(
 
 - (void) fire: (NSTimer *)t {
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
-		[GrowlApplicationBridge notifyWithTitle: @"Fire from wrong queue" description: repository notificationName: @"testing" iconData: nil priority: 1.0 isSticky: NO clickContext: nil];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self fire: nil];
 		});
