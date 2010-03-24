@@ -161,7 +161,9 @@ void callbackFunction(
 	for (i = 0; i < [args count]; i++) {
 		taskString = [NSString stringWithFormat: @"%@ %@", taskString, [args objectAtIndex: i]];
 	}
+	[lastCommands addObject: taskString];
 	NSLog(@"Task string: %@", taskString);
+	NSLog(@"I know about %d commands", [lastCommands count]);
 	
 	return t;
 }
