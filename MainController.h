@@ -41,6 +41,7 @@
 	IBOutlet NSButton *untrackedButton;
 	IBOutlet NSButton *untrackedAddAll;
 	IBOutlet NSButton *untrackedIgnoreAll;
+	IBOutlet NSTableView *fileList;
 }
 
 - init;
