@@ -123,7 +123,6 @@
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(clickUpdate:)];
 	} else if (upstreamMod) {
-		NSLog(@"Here!");
 		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
 		NSArray *resultarr = [self arrayFromResultOfArgs: arr withName: @"hg::commit::log"];
 		

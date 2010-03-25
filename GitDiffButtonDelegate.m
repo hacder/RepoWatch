@@ -105,7 +105,6 @@
 				return nil;
 			}
 		}
-		NSLog(@"Actually running get diff remote.");
 		arr = [NSArray arrayWithObjects: @"remote", nil];
 		resultarr = [self arrayFromResultOfArgs: arr withName: @"Git::getDiffRemote::remote"];
 		if (![resultarr count]) {
@@ -133,7 +132,6 @@
 }
 
 - (void) pull: (id) menuItem {
-	NSLog(@"Pull!!");
 	[mc->commitWindow setTitle: repository];
 	[mc->commitWindow makeFirstResponder: mc->tv];
 
@@ -209,7 +207,6 @@
 	NSMenuItem *mi;
 
 	if ([logs count] == 1 && [[logs objectAtIndex: 0] isEqualToString: @""]) {
-		NSLog(@"%@: Thinks that there is no log: %@", repository, logs);
 		mi = [[NSMenuItem alloc] initWithTitle: @"No history for this project" action: nil keyEquivalent: @""];
 		[m addItem: mi];
 		the_index++;

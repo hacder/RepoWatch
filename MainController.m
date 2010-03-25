@@ -153,7 +153,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 		return;
 	
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSLog(@"maybeRefresh");
 		NSMutableArray *localMods = [NSMutableArray arrayWithCapacity: 10];
 		NSMutableArray *remoteMods = [NSMutableArray arrayWithCapacity: 10];
 		NSMutableArray *untrackedMods = [NSMutableArray arrayWithCapacity: 10];
@@ -185,7 +184,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 		for (i = 0; i < [untrackedMods2 count]; i++) {
 			item = [[untrackedMods2 objectAtIndex: i] getMenuItem];
 			if (!item) {
-				NSLog(@"Menu item is bad!?");
 				continue;
 			}
 			[theMenu removeItem: item];
@@ -194,7 +192,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 		for (i = 0; i < [localMods2 count]; i++) {
 			item = [[localMods2 objectAtIndex: i] getMenuItem];
 			if (!item) {
-				NSLog(@"Item is bad!?");
 				continue;
 			}
 			[theMenu removeItem: item];
@@ -203,7 +200,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 		for (i = 0; i < [remoteMods2 count]; i++) {
 			item = [[remoteMods2 objectAtIndex: i] getMenuItem];
 			if (!item) {
-				NSLog(@"Item is bad!?");
 				continue;
 			}
 			[theMenu removeItem: item];
@@ -212,7 +208,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 		for (i = 0; i < [upToDate2 count]; i++) {
 			item = [[upToDate2 objectAtIndex: i] getMenuItem];
 			if (!item) {
-				NSLog(@"Item is bad!?");
 				continue;
 			}
 			[theMenu removeItem: item];
@@ -316,7 +311,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 			[currentRotation autorelease];
 			currentRotation = [NSNumber numberWithFloat: 0.0];
 			[currentRotation retain];
-			NSLog(@"Starting animation");
 			animationTimer =
 				[NSTimer
 					scheduledTimerWithTimeInterval: 0.05
@@ -325,7 +319,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 					userInfo: nil
 					repeats: YES];
 		} else {
-			NSLog(@"Ending animation");
 			if (animationTimer)
 				[animationTimer invalidate];
 			animationTimer = nil;
