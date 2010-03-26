@@ -251,25 +251,25 @@ NSInteger intSort(id num1, id num2, void *context) {
 	if ([rbd hasUntracked]) {
 		[app setApplicationIconImage: [[BubbleFactory getBlueOfSize: [[app dockTile] size].height] autorelease]];
 		if (!isRotating)
-			[statusItem setImage: [MainController rotateImage: [BubbleFactory getBlueOfSize: 15] byDegrees: [rot floatValue]]];
+			[statusItem setImage: [BubbleFactory getBlueOfSize: 15]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasLocal]) {
 		[app setApplicationIconImage: [[BubbleFactory getRedOfSize: [[app dockTile] size].height] autorelease]];
 		if (!isRotating)
-			[statusItem setImage: [MainController rotateImage: [BubbleFactory getRedOfSize: 15] byDegrees: [rot floatValue]]];
+			[statusItem setImage: [BubbleFactory getRedOfSize: 15]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasUpstream]) {
 		[app setApplicationIconImage: [[BubbleFactory getYellowOfSize: [[app dockTile] size].height] autorelease]];
 		if (!isRotating)
-			[statusItem setImage: [MainController rotateImage: [BubbleFactory getYellowOfSize: 15] byDegrees: [rot floatValue]]];
+			[statusItem setImage: [BubbleFactory getYellowOfSize: 15]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else {
 		[app setApplicationIconImage: [[BubbleFactory getGreenOfSize: [[app dockTile] size].height] autorelease]];
 		if (!isRotating)
-			[statusItem setImage: [MainController rotateImage: [BubbleFactory getGreenOfSize: 15] byDegrees: [rot floatValue]]];
+			[statusItem setImage: [BubbleFactory getGreenOfSize: 15]];
 		[statusItem setTitle: @""];
 	}
 	if (isRotating) {
