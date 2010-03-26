@@ -243,35 +243,43 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) setProperIconForButton: (RepoButtonDelegate *)rbd atRotationOf: (NSNumber *)rot withString: (BOOL)withString {
+	BOOL isRotating = NO;
+	if (rot < [NSNumber numberWithFloat: 1.0] && rot > [NSNumber numberWithFloat: -1.0])
+		isRotating = YES;
+
 	NSApplication *app = [NSApplication sharedApplication];
 	if ([rbd hasUntracked]) {
 		[app setApplicationIconImage: [[BubbleFactory getBlueOfSize: [[app dockTile] size].height] autorelease]];
-		[statusItem setImage: [MainController rotateImage: [BubbleFactory getBlueOfSize: 15] byDegrees: [rot floatValue]]];
+		if (!isRotating)
+			[statusItem setImage: [MainController rotateImage: [BubbleFactory getBlueOfSize: 15] byDegrees: [rot floatValue]]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasLocal]) {
 		[app setApplicationIconImage: [[BubbleFactory getRedOfSize: [[app dockTile] size].height] autorelease]];
-		[statusItem setImage: [MainController rotateImage: [BubbleFactory getRedOfSize: 15] byDegrees: [rot floatValue]]];
+		if (!isRotating)
+			[statusItem setImage: [MainController rotateImage: [BubbleFactory getRedOfSize: 15] byDegrees: [rot floatValue]]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasUpstream]) {
 		[app setApplicationIconImage: [[BubbleFactory getYellowOfSize: [[app dockTile] size].height] autorelease]];
-		[statusItem setImage: [MainController rotateImage: [BubbleFactory getYellowOfSize: 15] byDegrees: [rot floatValue]]];
+		if (!isRotating)
+			[statusItem setImage: [MainController rotateImage: [BubbleFactory getYellowOfSize: 15] byDegrees: [rot floatValue]]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else {
 		[app setApplicationIconImage: [[BubbleFactory getGreenOfSize: [[app dockTile] size].height] autorelease]];
-		[statusItem setImage: [MainController rotateImage: [BubbleFactory getGreenOfSize: 15] byDegrees: [rot floatValue]]];
+		if (!isRotating)
+			[statusItem setImage: [MainController rotateImage: [BubbleFactory getGreenOfSize: 15] byDegrees: [rot floatValue]]];
 		[statusItem setTitle: @""];
 	}
-	NSLog(@"Rotation: %@", rot);
-	if (rot < [NSNumber numberWithFloat: 1.0] && rot > [NSNumber numberWithFloat: -1.0])
+	if (isRotating) {
 		[statusItem setImage:
 			[MainController rotateImage:
 				[[NSImage imageNamed: NSImageNameRefreshTemplate] retain]
 				byDegrees: [rot floatValue]
 			]
 		];
+	}
 }
 
 - (void) ping {
