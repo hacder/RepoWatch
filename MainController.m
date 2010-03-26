@@ -265,7 +265,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 		[statusItem setTitle: @""];
 	}
 	NSLog(@"Rotation: %@", rot);
-	if (rot != [NSNumber numberWithFloat: 0.0])
+	if (rot < [NSNumber numberWithFloat: 1.0] && rot > [NSNumber numberWithFloat: -1.0])
 		[statusItem setImage:
 			[MainController rotateImage:
 				[[NSImage imageNamed: NSImageNameRefreshTemplate] retain]
@@ -296,8 +296,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) animationUpdate: (id) timer {
-	if (currentRotation) {
-		float newVal = [currentRotation floatValue] + 5.0;
+	if (timer) {
+		float newVal = [currentRotation floatValue] - 5.0;
 		[currentRotation autorelease];
 		currentRotation = [NSNumber numberWithFloat: newVal];
 		[currentRotation retain];
