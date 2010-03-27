@@ -320,8 +320,6 @@
 	NSArray *untracked;
 //	NSString *string;
 	
-	NSLog(@"git real fire");
-
 	untracked = [self getUntracked];
 	if (untracked && [untracked count]) {
 		untrackedFiles = YES;
