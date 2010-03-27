@@ -162,6 +162,10 @@ void callbackFunction(
 }
 
 - (void) checkLocal: (NSTimer *) t {
+	// If we call this manually with no timer, don't schedule a new timer.
+	if (!t)
+		return;
+		
 	[timer release];
 	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
 	[timer retain];
