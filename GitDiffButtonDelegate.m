@@ -230,7 +230,7 @@
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
 		[NSApp hide: self];
 		[mc->commitWindow close];
-		[self fire: nil];
+		[self realFire];
 	}];
 }
 
