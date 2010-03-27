@@ -20,7 +20,7 @@
 }
 
 - (void) checkLocal: (NSTimer *)ti {
-	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", nil];
+	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", @"HEAD", nil];
 	NSTask *t = [self taskFromArguments: arr];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
 		if (![resultarr count]) {
