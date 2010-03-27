@@ -236,8 +236,10 @@
 }
 
 - (void) doLogsForMenu: (NSMenu *)m {
+	NSLog(@"doLogsForMenu");
 	NSTask *t =
-		[self taskFromArguments: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=format:%h %ar %s", @"--abbrev-commit", nil]];
+		[self taskFromArguments:
+			[NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=format:%h %ar %s", @"--abbrev-commit", nil]];
 	[tq addTask: t withCallback: ^(NSArray *logs) {
 		NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
 		NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
