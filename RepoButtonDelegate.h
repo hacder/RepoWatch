@@ -2,20 +2,23 @@
 #import <AppKit/AppKit.h>
 #import "MainController.h"
 #import "ButtonDelegate.h"
+#import "TaskQueue.h"
+
+// The general class for Repository types. This needs to be renamed, cleaned up, and made
+// more powerful. Eventually I want the ability to easily add new repository types, and this
+// class being powerful and general is the main way that will happen.
 
 @interface RepoButtonDelegate : ButtonDelegate <NSTableViewDataSource> {
 	NSString *repository;
 	NSLock *lock;
+	NSString *upstreamName;
 	NSButton *butt;
 	NSTextView *tv;
 	NSWindow *window;
-	NSLock *dirtyLock;
-	BOOL dirty;
 	NSTimeInterval interval;
 	NSTimer *timer;
 	NSArray *currentUntracked;
 	NSDate *lastRemote;
-	NSMutableArray *singleRepoLastCommands;
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
@@ -24,11 +27,16 @@
 	BOOL upstreamMod;
 	BOOL untrackedFiles;
 	BOOL animating;
+	TaskQueue *tq;
 }
 
-- initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo;
-- (void) setAnimating: (BOOL)b;
+- initWithTitle: (NSString *)t menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc
+		repository: (NSString *)repo;
+- (void)setupUpstream;
+- (void) checkLocal: (NSTimer *) t;
 - (NSString *) getShort;
+
+- (void) setAnimating: (BOOL)b;
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;
 - (BOOL) hasLocal;
@@ -42,7 +50,6 @@
 
 - (void) clickUpdate: (id) button;
 - (NSTask *)taskFromArguments: (NSArray *)args; 
-- (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name;
 - (NSString *)getDiff;
 - (void) openInFinder: (id) sender;
 - (void) openInTerminal: (id) sender;
@@ -50,8 +57,6 @@
 - (NSTask *)taskFromArguments: (NSArray *)args;
 - (void) ignore: (id) sender;
 - (void) ignoreAll: (id) sender;
-- (void) hideIt;
-- (void) setupTimer;
 - (void) realFire;
 - (NSArray *)getUntracked;
 
@@ -60,6 +65,5 @@
 + (NSUInteger)numUpToDate;
 + (BOOL) alreadyHasPath: (NSString *)path;
 + (NSArray *) getRepos;
-+ (void) setupQueue;
 
 @end

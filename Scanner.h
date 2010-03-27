@@ -2,6 +2,9 @@
 #import <AppKit/AppKit.h>
 #import "ButtonDelegate.h"
 
+// Scans directories for repositories. Also responsible for finding the executables
+// for git and mercurial (this responsibility needs to go elsewhere).
+
 @interface Scanner : ButtonDelegate {
 	NSLock *lock;
 	char *git;

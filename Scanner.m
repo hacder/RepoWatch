@@ -2,7 +2,6 @@
 #import "RepoButtonDelegate.h"
 #import "Scanner.h"
 #import "MercurialDiffButtonDelegate.h"
-#import "ThreadCounter.h"
 #import <dirent.h>
 #import <sys/stat.h>
 
@@ -138,27 +137,10 @@ char *find_execable(const char *filename) {
 	done = NO;
 	lock = [[NSLock alloc] init];	
 
-	NSLog(@"Path is: %s", getenv("PATH"));
-
 	git = find_execable("git");
 	hg = find_execable("hg");
 	NSLog(@"Git: %s Mercurial: %s", git, hg);
 	
-	if (git) {
-		NSTask *task = [[[NSTask alloc] init] autorelease];
-		[task setLaunchPath: [NSString stringWithFormat: @"%s", git]];
-		[task setArguments: [NSArray arrayWithObjects: @"--version", nil]];
-		NSPipe *pipe = [NSPipe pipe];
-		[task setStandardOutput: pipe];
-		NSFileHandle *file = [pipe fileHandleForReading];	
-		[task launch];
-		NSData *data = [file readDataToEndOfFile];
-		NSString *string = [[[NSString alloc] initWithData: data
-				encoding: NSUTF8StringEncoding] autorelease];
-		NSLog(@"Git version: %d", [string intValue]);
-		[file closeFile];
-	}
-
 	NSDictionary *dict;
 	dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
 	for (NSString *key in dict) {
@@ -181,6 +163,8 @@ char *find_execable(const char *filename) {
 }
 
 - (void) beep: (id) something {
+	done = NO;
+	[statusItem setTitle: @"Scanning..."];
 	[self findSupportedSCMS];
 }
 
@@ -198,13 +182,13 @@ char *find_execable(const char *filename) {
 
 	// This crawls the file system. It can be quite slow in bad edge cases. Let's put it in the background.
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[ThreadCounter enterSection];
 		[self searchAllPaths];
 		dispatch_async(dispatch_get_main_queue(), ^{
-			NSLog(@"Done searching");
+			[statusItem setTitle: @"Done scanning"];
 			[lock unlock];
+			done = YES;
+			[mc ping];
 		});
-		[ThreadCounter exitSection];
 	});
 }
 
@@ -244,8 +228,9 @@ char *find_execable(const char *filename) {
 				[paths addObject: s];
 			}
 		}
+		[statusItem setTitle: [NSString stringWithFormat: @"Scanning %d directories", [paths count]]];
 		if ([paths count] > 1000) {
-			int delay = [paths count] / 1000;
+			int delay = [paths count] / 100;
 			struct timespec ts;
 			ts.tv_nsec = delay;
 			ts.tv_sec = 0;

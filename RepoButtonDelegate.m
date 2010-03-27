@@ -1,5 +1,4 @@
 #import "RepoButtonDelegate.h"
-#import "ThreadCounter.h"
 #import "RepoHelper.h"
 #import <dispatch/dispatch.h>
 #import <sys/time.h>
@@ -7,11 +6,12 @@
 @implementation RepoButtonDelegate
 
 static NSMutableArray *repos;
-static dispatch_queue_t sync_queue;
-static NSMutableArray *lastCommands;
 
-+ (void) setupQueue {
-	sync_queue = dispatch_queue_create("com.doomstick.RepoWatch.repository_tasks", NULL);
+- (void) addMenuItem {
+	menuItem = [menu insertItemWithTitle: title action: @selector(beep:) keyEquivalent: @"" atIndex: 1];
+	[menuItem retain];
+	[menuItem setTarget: self];
+	[menuItem setAction: @selector(beep:)];
 }
 
 void callbackFunction(
@@ -21,13 +21,15 @@ void callbackFunction(
 		void *eventPaths,
 		const FSEventStreamEventFlags eventFlags[],
 		const FSEventStreamEventId eventIds[]) {
-	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
-	[rbd->dirtyLock lock];
-	if (!rbd->dirty) {
-		NSLog(@"Setting %@ to dirty", rbd->shortTitle);
-		rbd->dirty = YES;
-	}
-	[rbd->dirtyLock unlock];
+//	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
+//	[rbd->dirtyLock lock];
+//	if (!rbd->dirty)
+//		rbd->dirty = YES;
+//	[rbd->dirtyLock unlock];
+}
+
+- (void) setupUpstream {
+	upstreamName = nil;
 }
 
 - (void) dealWithUntracked: (id) menuItem {
@@ -61,48 +63,46 @@ void callbackFunction(
 	return nil;
 }
 
-- (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name {
-	NSTask *t = [self taskFromArguments: args];
-	NSFileHandle *file = [RepoHelper pipeForTask: t];
-	NSFileHandle *err = [RepoHelper errForTask: t];
-
-	@try {
-		[t launch];
-		
-		NSString *string = [RepoHelper stringFromFile: file];
-		NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
-		[t waitUntilExit];
-		if ([t terminationStatus] != 0) {
-			NSMutableString *command = [NSMutableString stringWithCapacity: 20];
-			[command appendFormat: @"%@: %@", [t currentDirectoryPath], [t launchPath]];
-			int i;
-			for (i = 0; i < [args count]; i++) {
-				[command appendFormat: @" %@", [args objectAtIndex: i]];
-			}
-			NSString *errStr = [RepoHelper stringFromFile: err];
-			NSLog(@"%@, task status: %d error: %@ full command: %@", name, [t terminationStatus], errStr, command);
-			return nil;
-		}
-		[err closeFile];
-		[file closeFile];
-
-		if ([[result objectAtIndex: [result count] - 1] isEqualToString: @""]) {
-			NSMutableArray *result2 = [NSMutableArray arrayWithArray: result];
-			[result2 removeObjectAtIndex: [result2 count] - 1];
-			return result2;
-		}
-		
-		return result;
-	} @catch (NSException *e) {
-		NSLog(@"Got exception: %@", e);
-	}
-	return nil;
-}
+//- (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name {
+//	NSTask *t = [self taskFromArguments: args];
+//	NSFileHandle *file = [RepoHelper pipeForTask: t];
+//	NSFileHandle *err = [RepoHelper errForTask: t];
+//
+//	@try {
+//		[t launch];
+//		NSString *string = [RepoHelper stringFromFile: file];
+//		NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
+//		[t waitUntilExit];
+//		if ([t terminationStatus] != 0) {
+//			NSMutableString *command = [NSMutableString stringWithCapacity: 20];
+//			[command appendFormat: @"%@: %@", [t currentDirectoryPath], [t launchPath]];
+//			int i;
+//			for (i = 0; i < [args count]; i++) {
+//				[command appendFormat: @" %@", [args objectAtIndex: i]];
+//			}
+//			NSString *errStr = [RepoHelper stringFromFile: err];
+//			NSLog(@"%@, task status: %d error: %@ full command: %@", name, [t terminationStatus], errStr, command);
+//			return nil;
+//		}
+//		[err closeFile];
+//		[file closeFile];
+//
+//		if ([[result objectAtIndex: [result count] - 1] isEqualToString: @""]) {
+//			NSMutableArray *result2 = [NSMutableArray arrayWithArray: result];
+//			[result2 removeObjectAtIndex: [result2 count] - 1];
+//			return result2;
+//		}
+//		
+//		return result;
+//	} @catch (NSException *e) {
+//		NSLog(@"Got exception: %@", e);
+//	}
+//	return nil;
+//}
 
 - (void) openInFinder: (id) sender {
 	NSTask *t = [self baseTask: @"/usr/bin/open" fromArguments: [NSArray arrayWithObjects: @".", nil]];
-	[t autorelease];
-	[t launch];
+	[tq addTask: t withCallback: nil];
 }
 
 - (void) openInTerminal: (id) sender {
@@ -117,18 +117,6 @@ void callbackFunction(
 	[t setCurrentDirectoryPath: repository];
 	[t setArguments: args];
 	[t autorelease];
-	
-	NSString *taskString = [NSString stringWithFormat: @"%@ %@", repository, task];
-	int i;
-	for (i = 0; i < [args count]; i++) {
-		taskString = [NSString stringWithFormat: @"%@ %@", taskString, [args objectAtIndex: i]];
-	}
-	[lastCommands addObject: taskString];
-	[singleRepoLastCommands addObject: taskString];
-
-	NSLog(@"Task string: %@", taskString);
-	NSLog(@"I know about %d commands", [lastCommands count]);
-	NSLog(@"For just %@ I know about %d commands", repository, [singleRepoLastCommands count]);
 	
 	return t;
 }
@@ -160,7 +148,6 @@ void callbackFunction(
 	}	
 
 	[d synchronize];
-	[menuItem setHidden: YES];
 	[mc maybeRefresh: self];
 	FSEventStreamStop(stream);
 }
@@ -174,23 +161,25 @@ void callbackFunction(
 	[mc setAnimatingFor: self to: b];
 }
 
+- (void) checkLocal: (NSTimer *) t {
+	[timer release];
+	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
+	[timer retain];
+}
+
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
-	singleRepoLastCommands = [NSMutableArray arrayWithCapacity: 10];
-	[singleRepoLastCommands retain];
+	tq = [[TaskQueue alloc] initWithName: repo];
+	[tq retain];
 	animating = NO;
-	dirtyLock = [[NSLock alloc] init];
-	[dirtyLock lock];
-	dirty = NO;
-	[dirtyLock unlock];
 	interval = 60;
 	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;
 	untrackedFiles = NO;
 	
-	timer = nil;
-	[self setupTimer];
+	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
+	[timer retain];
 	
 	repository = repo;
 	[repository retain];
@@ -200,11 +189,6 @@ void callbackFunction(
 		[repos retain];
 	}
 	[repos addObject: self];
-
-	if (!lastCommands) {
-		lastCommands = [NSMutableArray arrayWithCapacity: 10];
-		[lastCommands retain];
-	}
 
 	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
 	CFStringRef myPath = (CFStringRef)repository;
@@ -227,37 +211,13 @@ void callbackFunction(
 	FSEventStreamStart(stream);
 	CFRelease(pathsToWatch);
 
+	[self setupUpstream];
+	
 	return self;
 }
 
 - (NSString *)getShort {
 	return shortTitle;
-}
-
-- (void) setupTimer {
-	float minTime = 1.0 * ([RepoButtonDelegate numLocalEdit] + [RepoButtonDelegate numRemoteEdit] + 1);
-	float maxTime = 60.0;
-	
-	if (minTime < 5.0)
-		minTime = 5.0;
-	
-	if (localMod || upstreamMod)
-		interval = interval / 2.0;
-	else
-		interval += 1.0;
-	
-	if (!localMod)
-		minTime *= 5;
-	
-	if (interval < minTime)
-		interval = minTime;
-	else if (interval > maxTime)
-		interval = maxTime;
-
-	[timer invalidate];
-	[timer release];
-	timer = [NSTimer scheduledTimerWithTimeInterval: interval target: self selector: @selector(fire:) userInfo: nil repeats: NO];
-	[timer retain];
 }
 
 - (NSString *)getDiff {
@@ -282,25 +242,11 @@ void callbackFunction(
 		return;
 	}
 	
-	[self setAnimating: YES];
-	NSLog(@"%@", repository);
-	dispatch_async(sync_queue, ^{
-		[ThreadCounter enterSection];
-		[self realFire];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self setupTimer];
-			[self setAnimating: NO];
-			[lock unlock];
-		});
-		[ThreadCounter exitSection];
-	});
+	[self realFire];
+	[lock unlock];
 }
 
 - (void) realFire {
-}
-
-- (void) hideIt {
-	[menuItem setHidden: YES];
 }
 
 + (NSUInteger) numModified {

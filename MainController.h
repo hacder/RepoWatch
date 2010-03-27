@@ -3,8 +3,9 @@
 #import "Scanner.h"
 #import "QuitButtonDelegate.h"
 
+// This is the mega class. Many things need to be moved out of here.
+
 @class ButtonDelegate;
-@class ODeskButtonDelegate;
 
 @interface MainController : NSObject {
 	NSStatusItem *statusItem;

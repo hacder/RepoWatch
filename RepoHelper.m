@@ -18,6 +18,18 @@
 	}
 }
 
++ (void)logTask: (NSTask *)task appending: (NSString *)appending {
+	NSString *logString = [NSString stringWithFormat: @"%@ %@", [task currentDirectoryPath], [task launchPath]];
+	NSArray *args = [task arguments];
+	int i;
+	for (i = 0; i < [args count]; i++) {
+		logString = [NSString stringWithFormat: @"%@ %@", logString, [args objectAtIndex: i]];
+	}
+	if (appending)
+		logString = [NSString stringWithFormat: @"%@ %@", logString, appending];
+	NSLog(@"%@", logString);
+}
+
 + (NSString *)stringFromFile: (NSFileHandle *)file {
 	NSData *data = [file readDataToEndOfFile];
 	NSString *string = [[[NSString alloc] initWithData: data

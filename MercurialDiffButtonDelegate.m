@@ -4,9 +4,10 @@
 
 @implementation MercurialDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc hgPath: (char *)hgPath repository: (NSString *)rep {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc
+		hgPath: (char *)hgPath repository: (NSString *)rep {
 	hg = hgPath;
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
 	[self fire: nil];
 	return self;
 }
@@ -23,43 +24,51 @@
 
 - (void) upstreamUpdate: (id) sender {
 	[sender setEnabled: NO];
-	[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"pull", nil] withName: @"hg::pull"];
-	[NSApp hide: self];
-	[mc->commitWindow close];
-	[sender setEnabled: YES];
-	[self fire: nil];
+
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"pull", nil]];
+
+	// We do not care about the return value, really. Except that errors should be handled.
+	[tq addTask: t withCallback: ^(NSArray *resultarr){
+		[NSApp hide: self];
+		[mc->commitWindow close];
+		[sender setEnabled: YES];
+		[self fire: nil];
+	}];
 }
 
 - (void) pull: (id) menuItem {
 	[mc->commitWindow setTitle: repository];
 	[mc->commitWindow makeFirstResponder: mc->tv];
 
-	NSArray *resultarr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"in", @"--template", @"{node|short} {desc}\n", nil]
-			withName: @"hg::in::add"];
-
-	[mc->butt setTitle: @"Update from upstream"];
-	[mc->butt setTarget: self];
-	[mc->butt setAction: @selector(upstreamUpdate:)];
-
-	NSString *string = [resultarr componentsJoinedByString: @"\n"];
-	[mc->tv setString: string];
-	[mc->tv setEditable: NO];
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"in", @"--template", @"{node|short} {desc}\n", nil]];
+	[tq addTask: t withCallback: ^(NSArray *resultarr) {
+		[mc->butt setTitle: @"Update from upstream"];
+		[mc->butt setTarget: self];
+		[mc->butt setAction: @selector(upstreamUpdate:)];
+	
+		NSString *string = [resultarr componentsJoinedByString: @"\n"];
+		[mc->tv setString: string];
+		[mc->tv setEditable: NO];
+			
+		NSArray *arr = [NSArray arrayWithObjects: @"in", @"-p", nil];
+		NSTask *t2 = [self taskFromArguments: arr];
+		[tq addTask: t2 withCallback: ^(NSArray *resultarr) {
+			NSString *string2 = [resultarr componentsJoinedByString: @"\n"];
+			[mc->diffView setString: string2];
+			[mc->diffView setEditable: NO];
 		
-	NSArray *arr = [NSArray arrayWithObjects: @"in", @"-p", nil];
-	resultarr = [self arrayFromResultOfArgs: arr withName: @"hg::pull::diff"];
-	string = [resultarr componentsJoinedByString: @"\n"];
-	[mc->diffView setString: string];
-	[mc->diffView setEditable: NO];
-
-	[mc->commitWindow center];
-	[NSApp activateIgnoringOtherApps: YES];
-	[mc->commitWindow makeKeyAndOrderFront: NSApp];
+			[mc->commitWindow center];
+			[NSApp activateIgnoringOtherApps: YES];
+			[mc->commitWindow makeKeyAndOrderFront: NSApp];
+		}];
+	}];
 }
 
 - (void) addAll: (id) button {
 	int i;
 	for (i = 0; i < [currentUntracked count]; i++) {
-		[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"add", [currentUntracked objectAtIndex: i], nil] withName: @"hg::addAll::add"];
+		NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"add", [currentUntracked objectAtIndex: i], nil]];
+		[tq addTask: t withCallback: nil];
 	}
 	[mc->untrackedWindow close];
 	[self fire: nil];
@@ -87,24 +96,25 @@
 	[self fire: nil];
 }
 
-- (NSArray *)getUntracked {
-	NSArray *arr = [self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"status", @"-u", nil] withName: @"Mercurial::getUntracked::status"];
-	NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];
-	int i;
-	for (i = 0; i < [arrmut count]; i++) {
-		NSMutableString *original = [NSMutableString stringWithString: [arrmut objectAtIndex: i]];
-		if ([original characterAtIndex: 0] == '?' && [original characterAtIndex: 1] == ' ') {
-			[original deleteCharactersInRange: NSMakeRange(0, 2)];
+- (void)getUntrackedWithCallback: (void (^)(NSArray *))callback {
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"status", @"-u", nil]];
+	[tq addTask: t withCallback: ^(NSArray *arr) {
+		NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];
+		int i;
+		for (i = 0; i < [arrmut count]; i++) {
+			NSMutableString *original = [NSMutableString stringWithString: [arrmut objectAtIndex: i]];
+			if ([original characterAtIndex: 0] == '?' && [original characterAtIndex: 1] == ' ') {
+				[original deleteCharactersInRange: NSMakeRange(0, 2)];
+			}
+			if ([original characterAtIndex: 0] == '"' && [original characterAtIndex: [original length] - 1] == '"') {
+				[original deleteCharactersInRange: NSMakeRange(0, 1)];
+				[original deleteCharactersInRange: NSMakeRange([original length] - 1, 1)];
+			}
+			[arrmut replaceObjectAtIndex: i withObject: original];
+			(callback)(arrmut);
 		}
-		if ([original characterAtIndex: 0] == '"' && [original characterAtIndex: [original length] - 1] == '"') {
-			[original deleteCharactersInRange: NSMakeRange(0, 1)];
-			[original deleteCharactersInRange: NSMakeRange([original length] - 1, 1)];
-		}
-		[arrmut replaceObjectAtIndex: i withObject: original];
-	}
-	return arrmut;
+	}];
 }
-
 
 - (void) beep: (id) something {
 }
@@ -124,14 +134,15 @@
 		[mc->butt setAction: @selector(clickUpdate:)];
 	} else if (upstreamMod) {
 		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
-		NSArray *resultarr = [self arrayFromResultOfArgs: arr withName: @"hg::commit::log"];
-		
-		[mc->butt setTitle: @"Update from upstream"];
-		[mc->butt setTarget: self];
-		[mc->butt setAction: @selector(upstreamUpdate:)];
-		NSString *string = [resultarr componentsJoinedByString: @"\n"];
-		[mc->tv insertText: string];
-		[mc->tv setEditable: NO];
+		NSTask *t = [self taskFromArguments: arr];
+		[tq addTask: t withCallback: ^(NSArray *resultarr) {
+			[mc->butt setTitle: @"Update from upstream"];
+			[mc->butt setTarget: self];
+			[mc->butt setAction: @selector(upstreamUpdate:)];
+			NSString *string = [resultarr componentsJoinedByString: @"\n"];
+			[mc->tv insertText: string];
+			[mc->tv setEditable: NO];
+		}];
 	}
 	[mc->commitWindow center];
 	[NSApp activateIgnoringOtherApps: YES];
@@ -143,8 +154,10 @@
 	[NSApp hide: self];
 	[mc->commitWindow close];
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[self arrayFromResultOfArgs: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil] withName: @"hg::clickUpdate::commit"];
-		[self fire: nil];
+		NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil]];
+		[tq addTask: t withCallback: ^(NSArray *resultarr) {
+			[self fire: nil];
+		}];
 	});
 }
 
@@ -228,47 +241,75 @@
 			[repository lastPathComponent],
 			[RepoHelper shortenDiff: [s2 stringByTrimmingCharactersInSet:
 				[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
-		dispatch_sync(dispatch_get_main_queue(), ^{
+//		dispatch_sync(dispatch_get_main_queue(), ^{
 			[self setTitle: sTit];
 			[self setShortTitle: sTit];
 			[menuItem setHidden: NO];
-		});
+//		});
 	} else {
 		upstreamMod = NO;
 	}
 }
 
 - (void) handleLogsForMenu: (NSMenu *)m {
-	int i;
-
-	NSArray *logs = [self
-		arrayFromResultOfArgs: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|age} {desc}\n", nil]
-		withName: @"Mercurial::fire::logs"];
-	NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
-	NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
-	NSMenuItem *mi;
-	if ([logs count] == 0) {
-		mi = [[NSMenuItem alloc] initWithTitle: @"No history for this project" action: nil keyEquivalent: @""];
-		[m addItem: mi];
-	} else {
-		for (i = 0; i < [logs count]; i++) {
-			NSString *tmp = [logs objectAtIndex: i];
-
-			NSDictionary *attributes;
-			if (i == 0) {
-				attributes = [NSDictionary dictionaryWithObject: firstFont forKey: NSFontAttributeName];
-			} else {
-				attributes = [NSDictionary dictionaryWithObject: secondFont forKey: NSFontAttributeName];
-			}
-			NSAttributedString *attr = [[[NSAttributedString alloc] initWithString: tmp attributes: attributes] autorelease];
-			if (tmp && [tmp length] > 0) {
-				mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
-				[mi autorelease];
-				[mi setAttributedTitle: attr];
-				[m addItem: mi];
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {desc}\n", nil]];
+	[tq addTask: t withCallback: ^(NSArray *logs) {
+		int i;
+		NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
+		NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
+		NSMenuItem *mi;
+		if ([logs count] == 0) {
+			mi = [[NSMenuItem alloc] initWithTitle: @"No history for this project" action: nil keyEquivalent: @""];
+			[m addItem: mi];
+		} else {
+			for (i = 0; i < [logs count]; i++) {
+				NSString *tmp = [logs objectAtIndex: i];
+	
+				NSDictionary *attributes;
+				if (i == 0) {
+					attributes = [NSDictionary dictionaryWithObject: firstFont forKey: NSFontAttributeName];
+				} else {
+					attributes = [NSDictionary dictionaryWithObject: secondFont forKey: NSFontAttributeName];
+				}
+				NSAttributedString *attr = [[[NSAttributedString alloc] initWithString: tmp attributes: attributes] autorelease];
+				if (tmp && [tmp length] > 0) {
+					mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
+					[mi autorelease];
+					[mi setAttributedTitle: attr];
+					[m addItem: mi];
+				}
 			}
 		}
+	}];
+}
+
+- (void) setupUpstream {
+	NSArray *arr = [NSArray arrayWithObjects: @"showconfig", @"paths.default", nil];
+	NSTask *t = [self taskFromArguments: arr];
+	[tq addTask: t withCallback: ^(NSArray *resultarr) {
+		if ([resultarr count]) {
+			upstreamName = [resultarr objectAtIndex: 0];
+			[upstreamName retain];
+		} else {
+			upstreamName = nil;
+		}
+	}];
+}
+
+- (void) checkLocal: (NSTimer *)ti {
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", nil]];
+	NSString *localChanges = [self lastGoodComponentOfString: [self diffStatOfTask: t]];
+	if (![localChanges isEqual: @"0 files changed"]) {
+		localMod = YES;
+//		[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @""
+//			atIndex: [m numberOfItems]] setTarget: self];
+		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [RepoHelper shortenDiff: localChanges]];
+		[self setAllTitles: sTit];
+	} else {
+		localMod = NO;
 	}
+
+	[super checkLocal: ti];
 }
 
 - (void) realFire {
@@ -278,7 +319,9 @@
 	[m insertItem: [NSMenuItem separatorItem] atIndex: [m numberOfItems]];
 	[self handleUntracked];
 	[self handleLocalForMenu: m];
-	[self handleRemoteForMenu: m];
+	
+	if (upstreamName)
+		[self handleRemoteForMenu: m];
 	
 	if (!untrackedFiles && !localMod && !upstreamMod)
 		[self setAllTitles: [NSString stringWithFormat: @"%@", [repository lastPathComponent]]];
@@ -296,7 +339,6 @@
 			[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 15]];
 		[[menuItem offStateImage] autorelease];
 		[menuItem setSubmenu: m];
-		[self setupTimer];
 	});
 }
 

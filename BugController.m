@@ -1,5 +1,4 @@
 #import "BugController.h"
-#import "ThreadCounter.h"
 #import <dispatch/dispatch.h>
 
 @implementation BugController
@@ -21,7 +20,6 @@
 	[urlRequest setHTTPBody: data];
 	[urlRequest retain];
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[ThreadCounter enterSection];
 		[urlRequest autorelease];
 		[NSURLConnection sendSynchronousRequest: urlRequest returningResponse: nil error: nil];
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -29,7 +27,6 @@
 			[button setEnabled: YES];
 			[window close];
 		});
-		[ThreadCounter exitSection];
 	});
 }
 
