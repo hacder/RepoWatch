@@ -268,6 +268,7 @@
 			}
 		}
 	}];
+	NSLog(@"Done");
 }
 
 - (void) noMods {
