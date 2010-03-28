@@ -35,7 +35,7 @@
 		}
 		localMod = YES;
 		[localDiffSummary autorelease];
-		localDiffSummary = [resultarr objectAtIndex: 0];
+		localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
 		[localDiffSummary retain];
 		
 		NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
@@ -236,7 +236,6 @@
 }
 
 - (void) doLogsForMenu: (NSMenu *)m {
-	NSLog(@"doLogsForMenu");
 	NSTask *t =
 		[self taskFromArguments:
 			[NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=format:%h %ar %s", @"--abbrev-commit", nil]];
@@ -268,7 +267,6 @@
 			}
 		}
 	}];
-	NSLog(@"Done");
 }
 
 - (void) noMods {

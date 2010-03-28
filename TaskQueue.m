@@ -18,7 +18,7 @@
 		NSFileHandle *file = [RepoHelper pipeForTask: t];
 		NSFileHandle *err = [RepoHelper errForTask: t];
 
-		[RepoHelper logTask: t appending: @"wee"];
+		[RepoHelper logTask: t appending: nil];
 		[t launch];
 //		[RepoHelper logTask: t appending: @"... done"];
 		
