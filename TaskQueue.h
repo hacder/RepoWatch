@@ -4,9 +4,8 @@
 // A single-thread backgrounded queue of NSTasks to run, complete with GCD callback, running on the same queue.
 
 @interface TaskQueue : NSObject {
-	NSMutableArray *tasks;
 	NSString *_name;
-	dispatch_queue_t _custom_queue;
+	dispatch_group_t _custom_queue;
 }
 
 - initWithName: (NSString *)name;

@@ -19,7 +19,6 @@
 }
 
 - (void) checkLocal: (NSTimer *)ti {
-	NSLog(@"%@ start checkLocal (%@)", [repository lastPathComponent], ti);
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", @"HEAD", nil];
 	NSTask *t = [self taskFromArguments: arr];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
@@ -29,7 +28,6 @@
 			localDiffSummary = nil;
 			[localDiff autorelease];
 			localDiff = nil;
-			NSLog(@"%@ rescheduling via 1", [repository lastPathComponent]);
 			[super checkLocal: ti];
 			[self realFire];
 			return;
@@ -55,12 +53,10 @@
 				}
 				[currLocalDiff retain];
 				[self realFire];
-				NSLog(@"%@ rescheduling via 2", [repository lastPathComponent]);
 				[super checkLocal: ti];
 			}];
 		}];
 	}];
-	NSLog(@"%@ end checkLocal", [repository lastPathComponent]);
 }
 
 - (void) addAll: (id) button {

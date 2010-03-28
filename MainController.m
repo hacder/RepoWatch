@@ -17,6 +17,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 // logic is in here because the goal of this app is simplicity. There is ONE global hot key that
 // does the most logical thing at any given moment.
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
+	NSLog(@"In the hot key handler");
 	MainController *mc = (MainController *)userData;
 	
 	int t = [mc->theMenu numberOfItems];
