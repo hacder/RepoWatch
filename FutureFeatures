@@ -5,6 +5,7 @@ Done:
 	* Build file list when looking at local diffs
 * Make file list show up in table when looking at local diffs
 * Make files in Diff class actually be represented by FileDiff.
+* Fix onofftimes. Seems to lose info after a restart.
 
 Future Features
 ---------------
