@@ -19,6 +19,7 @@
 	NSTimer *timer;
 	NSArray *currentUntracked;
 	NSDate *lastRemote;
+	NSMutableDictionary *config;
 	
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
@@ -35,6 +36,7 @@
 - (void)setupUpstream;
 - (void) checkLocal: (NSTimer *) t;
 - (NSString *) getShort;
+- (void) setLocalMod: (BOOL)b;
 
 - (void) setAnimating: (BOOL)b;
 - (BOOL) hasUntracked;

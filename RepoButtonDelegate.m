@@ -7,13 +7,6 @@
 
 static NSMutableArray *repos;
 
-- (void) addMenuItem {
-	menuItem = [menu insertItemWithTitle: title action: @selector(beep:) keyEquivalent: @"" atIndex: 1];
-	[menuItem retain];
-	[menuItem setTarget: self];
-	[menuItem setAction: @selector(beep:)];
-}
-
 void callbackFunction(
 		ConstFSEventStreamRef streamRef,
 		void *clientCallBackInfo,
@@ -26,6 +19,70 @@ void callbackFunction(
 //	if (!rbd->dirty)
 //		rbd->dirty = YES;
 //	[rbd->dirtyLock unlock];
+}
+
+- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {
+	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
+	tq = [[TaskQueue alloc] initWithName: repo];
+	[tq retain];
+	animating = NO;
+	interval = 60;
+	lock = [[NSLock alloc] init];
+	localMod = NO;
+	upstreamMod = NO;
+	untrackedFiles = NO;
+	
+	config = [[NSMutableDictionary alloc] init];
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	NSDictionary *allRepos = [defaults objectForKey: @"cachedRepos"];
+	NSDictionary *thisRepo = [allRepos objectForKey: repo];
+	[config setDictionary: thisRepo];
+	if ([config objectForKey: @"onofftimes"] == nil)
+		[config setObject: [NSMutableArray arrayWithCapacity: 10] forKey: @"onofftimes"];
+	
+	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
+	[timer retain];
+	
+	repository = repo;
+	[repository retain];
+
+	if (!repos) {
+		repos = [NSMutableArray arrayWithCapacity: 10];
+		[repos retain];
+	}
+	[repos addObject: self];
+
+	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
+	CFStringRef myPath = (CFStringRef)repository;
+	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
+
+	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+	float lat = [d floatForKey: @"fseventDelay"];
+
+	CFAbsoluteTime latency = lat ? lat : 1.5;
+	stream = FSEventStreamCreate(NULL,
+		&callbackFunction,
+		&fsesc,
+		pathsToWatch,
+		kFSEventStreamEventIdSinceNow,
+		latency,
+		kFSEventStreamCreateFlagNone | kFSEventStreamCreateFlagWatchRoot
+	);
+	
+	FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
+	FSEventStreamStart(stream);
+	CFRelease(pathsToWatch);
+
+	[self setupUpstream];
+	
+	return self;
+}
+
+- (void) addMenuItem {
+	menuItem = [menu insertItemWithTitle: title action: @selector(beep:) keyEquivalent: @"" atIndex: 1];
+	[menuItem retain];
+	[menuItem setTarget: self];
+	[menuItem setAction: @selector(beep:)];
 }
 
 - (void) setupUpstream {
@@ -156,6 +213,22 @@ void callbackFunction(
 	return nil;
 }
 
+- (void) setLocalMod: (BOOL) b {
+	if (localMod != b) {
+		NSLog(@"Setting local mod of %@ to %d at %@", repository, b, [NSDate date]);
+		NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys: [NSDate date], @"date", [NSNumber numberWithBool: b], @"setting", nil];
+		NSArray *arr = [[config objectForKey: @"onofftimes"] arrayByAddingObject: item];
+		[config setObject: arr forKey: @"onofftimes"];
+		
+		NSDictionary *dict = [[NSUserDefaults standardUserDefaults] objectForKey: @"cachedRepos"];
+		NSMutableDictionary *dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
+		[dict2 setObject: config forKey: repository];
+		[[NSUserDefaults standardUserDefaults] setObject: dict2 forKey: @"cachedRepos"];
+		[[NSUserDefaults standardUserDefaults] synchronize];
+		localMod = b;
+	}
+}
+
 - (void) setAnimating: (BOOL)b {
 	animating = b;
 	[mc setAnimatingFor: self to: b];
@@ -169,55 +242,6 @@ void callbackFunction(
 	[timer release];
 	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
 	[timer retain];
-}
-
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
-	tq = [[TaskQueue alloc] initWithName: repo];
-	[tq retain];
-	animating = NO;
-	interval = 60;
-	lock = [[NSLock alloc] init];
-	localMod = NO;
-	upstreamMod = NO;
-	untrackedFiles = NO;
-	
-	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
-	[timer retain];
-	
-	repository = repo;
-	[repository retain];
-
-	if (!repos) {
-		repos = [NSMutableArray arrayWithCapacity: 10];
-		[repos retain];
-	}
-	[repos addObject: self];
-
-	FSEventStreamContext fsesc = {0, self, NULL, NULL, NULL};
-	CFStringRef myPath = (CFStringRef)repository;
-	CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&myPath, 1, NULL);
-
-	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
-	float lat = [d floatForKey: @"fseventDelay"];
-
-	CFAbsoluteTime latency = lat ? lat : 1.5;
-	stream = FSEventStreamCreate(NULL,
-		&callbackFunction,
-		&fsesc,
-		pathsToWatch,
-		kFSEventStreamEventIdSinceNow,
-		latency,
-		kFSEventStreamCreateFlagNone | kFSEventStreamCreateFlagWatchRoot
-	);
-	
-	FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
-	FSEventStreamStart(stream);
-	CFRelease(pathsToWatch);
-
-	[self setupUpstream];
-	
-	return self;
 }
 
 - (NSString *)getShort {

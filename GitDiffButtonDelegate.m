@@ -24,16 +24,16 @@
 	NSTask *t = [self taskFromArguments: arr];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
 		if (![resultarr count]) {
+			[self setLocalMod: NO];
 			[localDiffSummary autorelease];
 			localDiffSummary = nil;
 			[localDiff autorelease];
 			localDiff = nil;
-			localMod = NO;
 			[super checkLocal: ti];
 			[self realFire];
 			return;
 		}
-		localMod = YES;
+		[self setLocalMod: YES];
 		[localDiffSummary autorelease];
 		localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
 		[localDiffSummary retain];
