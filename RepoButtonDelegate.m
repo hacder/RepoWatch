@@ -246,12 +246,12 @@ void callbackFunction(
 				if (nowOn) {
 					lastOn = ts;
 				} else {
-					seconds += [lastOn timeIntervalSinceDate: ts];
+					seconds += [ts timeIntervalSinceDate: lastOn];
 				}
 				currentlyOn = nowOn;
 			}
 			
-			NSLog(@"Seconds spent on %@: %d", [repository lastPathComponent], seconds);
+			NSLog(@"Seconds spent on %@: %02d:%02d:%02d", [repository lastPathComponent], seconds / 3600, seconds % 3600, seconds % 3600);
 		}
 	}
 }
