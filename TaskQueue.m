@@ -9,6 +9,7 @@
 	tasks = [NSMutableArray arrayWithCapacity: 10];
 	[tasks retain];
 	_custom_queue = dispatch_queue_create("__custom", NULL);
+	dispatch_set_target_queue(_custom_queue, dispatch_get_global_queue(0, 0));
 	return self;
 }
 
@@ -18,9 +19,9 @@
 		NSFileHandle *file = [RepoHelper pipeForTask: t];
 		NSFileHandle *err = [RepoHelper errForTask: t];
 
-		// [RepoHelper logTask: t appending: nil];
+		[RepoHelper logTask: t appending: nil];
 		[t launch];
-		// [RepoHelper logTask: t appending: @"... done"];
+		[RepoHelper logTask: t appending: @"... done"];
 		
 		NSString *string = [RepoHelper stringFromFile: file];
 		NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];

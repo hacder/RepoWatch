@@ -269,7 +269,8 @@ char *find_execable(const char *filename) {
 	NSDictionary *dict = [def dictionaryForKey: @"cachedRepos"];
 	if ([dict objectForKey: path] != nil)
 		return;
-		
+	
+	NSLog(@"addCachedRepoPath: %@", path);
 	NSMutableDictionary *dict2;
 	if (dict) {
 		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];

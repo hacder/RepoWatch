@@ -15,7 +15,6 @@
 	[diffCommitTV retain];
 	
 	[self fire: nil];
-	[self updateRemote];
 	return self;
 }
 
@@ -117,25 +116,6 @@
 	return [self baseTask: lp fromArguments: args];
 }
 
-- (void) updateRemote {
-	NSArray *arr;
-	
-	arr = [NSArray arrayWithObjects: @"remote", nil];
-	NSTask *t = [self taskFromArguments: arr];
-	[tq addTask: t withCallback: ^(NSArray *resarr) {
-		NSString *string;
-		if (![resarr count])
-			return;
-		string = [resarr objectAtIndex: 0];
-		string = [string stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		if (![string length])
-			return;
-		
-		NSTask *t2 = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", nil]];
-		[tq addTask: t2 withCallback: nil];
-	}];
-}
-	
 - (void) getDiffRemoteWithCallback: (void (^)(NSString *)) callback {
 	NSArray *arr;
 	
@@ -286,7 +266,7 @@
 }
 
 - (void) noMods {
-	//dispatch_sync(dispatch_get_main_queue(), ^{
+	dispatch_async(dispatch_get_main_queue(), ^{
 		NSString *s3;
 		if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 			s3 = [NSString stringWithFormat: @"%@",
@@ -298,7 +278,7 @@
 		[self setTitle: s3];
 		[self setShortTitle: s3];
 		[menuItem setHidden: NO];
-	//});
+	});
 }
 
 - (void) localModsWithMenu: (NSMenu *)m {
@@ -373,7 +353,7 @@
 //			[remoteString stringByTrimmingCharactersInSet:
 //				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 
-		dispatch_sync(dispatch_get_main_queue(), ^{
+		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setTitle: sTit];
 			[self setShortTitle: sTit];
 			[menuItem setHidden: NO];
