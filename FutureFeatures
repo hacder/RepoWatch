@@ -1,6 +1,7 @@
 Done:
 	* Make diff show new files as well as modified ones.
 	* Ultra ultra basics of project time tracking.
+	* Colorize diffs
 * Add files to list when seeing diffs.
 * Make diffs start to be represented by new classes.
 

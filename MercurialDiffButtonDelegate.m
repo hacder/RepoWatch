@@ -126,9 +126,11 @@
 	[mc->tv setString: @""];
 	[mc->tv setNeedsDisplay: YES];
 	if (localMod) {	
-		NSString *diffString = [self getDiff];
 		[mc->tv setString: @""];
-		[mc->diffView setString: diffString];
+
+		// Insert text is the only method that is documented to take an attributed string.
+		[mc->diffView insertText: localDiff];
+		[mc->diffView scrollRangeToVisible: NSMakeRange(0, 0)];
 		[mc->butt setTitle: @"Do Commit"];
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(clickUpdate:)];
@@ -300,16 +302,27 @@
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", nil]];
 	NSString *localChanges = [self lastGoodComponentOfString: [self diffStatOfTask: t]];
 	if (![localChanges isEqual: @"0 files changed"]) {
-		localMod = YES;
-//		[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @""
-//			atIndex: [m numberOfItems]] setTarget: self];
-		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [RepoHelper shortenDiff: localChanges]];
+		[self setLocalMod: YES];
+		[localDiffSummary autorelease];
+		localDiffSummary = [RepoHelper shortenDiff: localChanges];
+		[localDiffSummary retain];
+		
+		NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
+		NSTask *t = [self taskFromArguments: arr];
+		[tq addTask: t withCallback: ^(NSArray *resultarr) {
+			[localDiff autorelease];
+			localDiff = [RepoHelper colorizedDiffFromArray: resultarr];
+			[localDiff retain];
+			[super checkLocal: ti];
+			[self realFire];			
+		}];
+		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], localDiffSummary];
 		[self setAllTitles: sTit];
 	} else {
-		localMod = NO;
+		[self setLocalMod: NO];
+		[super checkLocal: ti];
+		[self realFire];
 	}
-
-	[super checkLocal: ti];
 }
 
 - (void) realFire {

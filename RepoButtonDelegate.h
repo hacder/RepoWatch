@@ -21,6 +21,9 @@
 	NSDate *lastRemote;
 	NSMutableDictionary *config;
 	
+	NSString *localDiffSummary; // lines changed, files modified, etc.
+	NSAttributedString *localDiff; // the actual diff
+
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
 	FSEventStreamRef stream;
