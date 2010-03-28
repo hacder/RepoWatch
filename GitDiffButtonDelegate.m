@@ -44,9 +44,6 @@
 			[localDiff autorelease];
 			localDiff = [RepoHelper colorizedDiffFromArray: resultarr];
 			[localDiff retain];
-			[super checkLocal: ti];
-			[self realFire];
-			
 			NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff-files", @"--name-only", nil]];
 			[tq addTask: t withCallback: ^(NSArray *resultarr) {
 				[currLocalDiff autorelease];
@@ -56,6 +53,9 @@
 					[currLocalDiff addFile: [resultarr objectAtIndex: i]];
 				}
 				[currLocalDiff retain];
+				NSLog(@"Getting here, rescheduling");
+				[super checkLocal: ti];
+				[self realFire];
 			}];
 		}];
 	}];
