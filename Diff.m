@@ -11,7 +11,6 @@
 
 - (void) addFile: (NSString *)fileName {
 	[files addObject: fileName];
-	NSLog(@"%@", files);
 }
 
 
