@@ -52,8 +52,8 @@
 					[currLocalDiff addFile: [resultarr objectAtIndex: i]];
 				}
 				[currLocalDiff retain];
-				[self realFire];
 				[super checkLocal: ti];
+				[self realFire];
 			}];
 		}];
 	}];

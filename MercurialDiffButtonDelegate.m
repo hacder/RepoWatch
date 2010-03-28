@@ -243,11 +243,11 @@
 			[repository lastPathComponent],
 			[RepoHelper shortenDiff: [s2 stringByTrimmingCharactersInSet:
 				[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
-//		dispatch_sync(dispatch_get_main_queue(), ^{
+		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setTitle: sTit];
 			[self setShortTitle: sTit];
 			[menuItem setHidden: NO];
-//		});
+		});
 	} else {
 		upstreamMod = NO;
 	}

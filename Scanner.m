@@ -253,13 +253,13 @@ char *find_execable(const char *filename) {
 			return YES;
 		}
 	} else if ([contents containsObject: @".hg"]) {
-		// if (hg) {
-		// 	[self addCachedRepoPath: path];
-		// 	[[MercurialDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
-		// 		menu: menu statusItem: statusItem mainController: mc
-		// 		hgPath: hg repository: path];
-		// 	return YES;
-		// }
+		if (hg) {
+			[self addCachedRepoPath: path];
+			[[MercurialDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
+				menu: menu statusItem: statusItem mainController: mc
+				hgPath: hg repository: path];
+			return YES;
+		}
 	}
 	return NO;
 }
