@@ -218,6 +218,7 @@ void callbackFunction(
 		NSLog(@"Setting local mod of %@ to %d at %@", repository, b, [NSDate date]);
 		NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys: [NSDate date], @"date", [NSNumber numberWithBool: b], @"setting", nil];
 
+		NSLog(@"Config before it all: %@", config);
 		NSArray *arr = [config objectForKey: @"onofftimes"];
 		NSLog(@"Before insertion: %@", arr);
 		arr = [arr arrayByAddingObject: item];

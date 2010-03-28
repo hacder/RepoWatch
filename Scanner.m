@@ -267,6 +267,9 @@ char *find_execable(const char *filename) {
 - (void) addCachedRepoPath: (NSString *)path {
 	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 	NSDictionary *dict = [def dictionaryForKey: @"cachedRepos"];
+	if ([dict objectForKey: path] != nil)
+		return;
+		
 	NSMutableDictionary *dict2;
 	if (dict) {
 		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
