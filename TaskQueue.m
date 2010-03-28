@@ -8,7 +8,7 @@
 	_name = [name retain];
 	tasks = [NSMutableArray arrayWithCapacity: 10];
 	[tasks retain];
-	_custom_queue = dispatch_queue_create("", NULL);
+	_custom_queue = dispatch_queue_create("__custom", NULL);
 	return self;
 }
 
