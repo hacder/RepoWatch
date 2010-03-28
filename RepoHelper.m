@@ -13,7 +13,7 @@
 		} else if ([thisLine characterAtIndex: 0] == '-') {
 			newString = [[NSAttributedString alloc] initWithString: thisLine attributes: [NSDictionary dictionaryWithObject: [NSColor redColor] forKey: NSForegroundColorAttributeName]];			
 		} else {
-			newString = [[NSAttributedString alloc] initWithString: thisLine];
+			newString = [[NSAttributedString alloc] initWithString: thisLine attributes: [NSDictionary dictionaryWithObject: [NSColor grayColor] forKey: NSForegroundColorAttributeName]];			
 		}
 		[res appendAttributedString: newString];
 		[res appendAttributedString: [[NSAttributedString alloc] initWithString: @"\n"]];
