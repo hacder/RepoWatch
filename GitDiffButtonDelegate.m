@@ -20,7 +20,7 @@
 }
 
 - (void) checkLocal: (NSTimer *)ti {
-	NSLog(@"%@ start checkLocal", [repository lastPathComponent]);
+	NSLog(@"%@ start checkLocal (%@)", [repository lastPathComponent], ti);
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", @"HEAD", nil];
 	NSTask *t = [self taskFromArguments: arr];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
