@@ -262,12 +262,6 @@ void callbackFunction(
 }
 
 - (void) checkLocal: (NSTimer *) t {
-	// If we call this manually with no timer, don't schedule a new timer.
-	if (!t) {
-		NSLog(@"%@ Called manually, not scheduling!", repository);
-		return;
-	}
-	
 	NSLog(@"%@ actually rescheduling", [repository lastPathComponent]);
 	[timer invalidate];
 	[timer autorelease];
