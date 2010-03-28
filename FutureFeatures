@@ -4,9 +4,9 @@ Done:
 	* Colorize diffs
 	* Build file list when looking at local diffs
 	* Fix onofftimes. Seems to lose info after a restart.
+	* Does not seem to notice updates after the initial start. At least on git.
 * Make file list show up in table when looking at local diffs
 * Make files in Diff class actually be represented by FileDiff.
-* Does not seem to notice updates after the initial start. At least on git.
 * Continue settling on more sane per-repository set of code.
 * Severe performance issues when commit window is up. Not sure why, but it started
   when I added the colorization.
