@@ -2,9 +2,9 @@ Done:
 	* Make diff show new files as well as modified ones.
 	* Ultra ultra basics of project time tracking.
 	* Colorize diffs
-* Add files to list when seeing diffs.
-* Make diffs start to be represented by new classes.
-
+	* Build file list when looking at local diffs
+* Make file list show up in table when looking at local diffs
+* Make files in Diff class actually be represented by FileDiff.
 
 Future Features
 ---------------

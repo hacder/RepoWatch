@@ -45,7 +45,18 @@
 			localDiff = [RepoHelper colorizedDiffFromArray: resultarr];
 			[localDiff retain];
 			[super checkLocal: ti];
-			[self realFire];			
+			[self realFire];
+			
+			NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff-files", @"--name-only", nil]];
+			[tq addTask: t withCallback: ^(NSArray *resultarr) {
+				[currLocalDiff autorelease];
+				currLocalDiff = [[Diff alloc] init];
+				int i;
+				for (i = 0; i < [resultarr count]; i++) {
+					[currLocalDiff addFile: [resultarr objectAtIndex: i]];
+				}
+				[currLocalDiff retain];
+			}];
 		}];
 	}];
 }

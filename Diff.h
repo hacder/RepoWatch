@@ -8,9 +8,10 @@
 	NSString *hash;
 	NSString *author;
 	NSDate *ts;
-	NSArray *files; // Array of FileDiff objects
+	NSMutableArray *files; // Array of FileDiff objects
 }
 
+- (void) addFile: (NSString *)fileName;
 - init;
 
 @end
