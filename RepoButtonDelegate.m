@@ -217,7 +217,11 @@ void callbackFunction(
 	if (localMod != b) {
 		NSLog(@"Setting local mod of %@ to %d at %@", repository, b, [NSDate date]);
 		NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys: [NSDate date], @"date", [NSNumber numberWithBool: b], @"setting", nil];
-		NSArray *arr = [[config objectForKey: @"onofftimes"] arrayByAddingObject: item];
+
+		NSArray *arr = [config objectForKey: @"onofftimes"];
+		NSLog(@"Before insertion: %@", arr);
+		arr = [arr arrayByAddingObject: item];
+		NSLog(@"After insertion: %@", arr);
 		[config setObject: arr forKey: @"onofftimes"];
 		
 		NSDictionary *dict = [[NSUserDefaults standardUserDefaults] objectForKey: @"cachedRepos"];
