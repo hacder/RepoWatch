@@ -42,7 +42,7 @@
 		NSTask *t = [self taskFromArguments: arr];
 		[tq addTask: t withCallback: ^(NSArray *resultarr) {
 			[localDiff autorelease];
-			localDiff = [resultarr componentsJoinedByString: @"\n"];
+			localDiff = [RepoHelper colorizedDiffFromArray: resultarr];
 			[localDiff retain];
 			[super checkLocal: ti];
 			[self realFire];			
@@ -203,7 +203,8 @@
 	if (localMod) {	
 		[mc->tv setEditable: YES];
 		[mc->tv setString: @""];
-		[mc->diffView setString: localDiff];
+		// Insert text is the only method that is documented to take an attributed string.
+		[mc->diffView insertText: localDiff];
 		[mc->butt setTitle: @"Do Commit"];
 		[mc->butt setTarget: self];
 		[mc->butt setAction: @selector(clickUpdate:)];

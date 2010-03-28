@@ -9,7 +9,7 @@
 	NSString *currentBranch;
 	
 	NSString *localDiffSummary; // lines changed, files modified, etc.
-	NSString *localDiff; // the actual diff
+	NSAttributedString *localDiff; // the actual diff
 }
 
 - (id) initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep;

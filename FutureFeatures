@@ -1,5 +1,7 @@
-* Make diff show new files as well as modified ones.
-* Ultra ultra basics of project time tracking.
+Done:
+	* Make diff show new files as well as modified ones.
+	* Ultra ultra basics of project time tracking.
+* Make diffs start to be represented by new classes.
 
 
 Future Features
@@ -8,33 +10,14 @@ Future Features
 1. Handle Branching
 2. Handle Stashes and Unstashes
 3. Plugin To Do Whatever
-4. Project time tracking, based on new edits. Very rough, but better than
-   nothing.
-
-Before Next Beta
-----------------
-1. Think that the upstream diff screen only shows the first line of either
-   text box. Fix that.
-2. Make upstream updates happen more than just at start.
-
-Working on Now
---------------
-1. Nag screen
-2. Startup Configuration Screen
-3. Handle huge repository numbers gracefully (start using a time delay in the scanner as we find more
+4. Startup Configuration Screen
+5. Handle huge repository numbers gracefully (start using a time delay in the scanner as we find more
    and more repositories. this should make the initial HIGH cpu spike ease off)
-4. License manager.
-
-Time Tracker
-------------
-
-1. Manual Start of timer
-2. Manual Stop of timer
-3. Automatic start/stop based on diff lines changing
-
+6. Handle no git and no mercurial gracefully.
+7. Look into github or the mercurial equivalent for some sort of project suggestion feature.
 
 Preferences:
 	* Auto-scan or not
 	* Green or clear bubble
 	* Extra menu text or not
-	
+	* Time tracking delay before not working anymore.

@@ -2,6 +2,25 @@
 
 @implementation RepoHelper
 
++ (NSAttributedString *)colorizedDiffFromArray: (NSArray *)arr {
+	int i;
+	NSMutableAttributedString *res = [[NSMutableAttributedString alloc] initWithString: @""];
+	for (i = 0; i < [arr count]; i++) {
+		NSString *thisLine = [arr objectAtIndex: i];
+		NSAttributedString *newString;
+		if ([thisLine characterAtIndex: 0] == '+') {
+			newString = [[NSAttributedString alloc] initWithString: thisLine attributes: [NSDictionary dictionaryWithObject: [NSColor greenColor] forKey: NSForegroundColorAttributeName]];
+		} else if ([thisLine characterAtIndex: 0] == '-') {
+			newString = [[NSAttributedString alloc] initWithString: thisLine attributes: [NSDictionary dictionaryWithObject: [NSColor redColor] forKey: NSForegroundColorAttributeName]];			
+		} else {
+			newString = [[NSAttributedString alloc] initWithString: thisLine];
+		}
+		[res appendAttributedString: newString];
+		[res appendAttributedString: [[NSAttributedString alloc] initWithString: @"\n"]];
+	}
+	return res;
+}
+
 + (NSString *)shortenDiff: (NSString *)diff {
 	NSArray *parts = [diff componentsSeparatedByString: @", "];
 	if ([parts count] == 3) {
