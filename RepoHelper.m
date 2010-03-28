@@ -7,14 +7,22 @@
 	NSMutableAttributedString *res = [[NSMutableAttributedString alloc] initWithString: @""];
 	for (i = 0; i < [arr count]; i++) {
 		NSString *thisLine = [arr objectAtIndex: i];
+		NSFont *font;
+		CGFloat fontSize = 14;
+		NSColor *color;
 		NSAttributedString *newString;
 		if ([thisLine characterAtIndex: 0] == '+') {
-			newString = [[NSAttributedString alloc] initWithString: thisLine attributes: [NSDictionary dictionaryWithObject: [NSColor greenColor] forKey: NSForegroundColorAttributeName]];
+			font = [NSFont boldSystemFontOfSize: fontSize];
+			color = [NSColor greenColor];
 		} else if ([thisLine characterAtIndex: 0] == '-') {
-			newString = [[NSAttributedString alloc] initWithString: thisLine attributes: [NSDictionary dictionaryWithObject: [NSColor redColor] forKey: NSForegroundColorAttributeName]];			
+			font = [NSFont boldSystemFontOfSize: fontSize];
+			color = [NSColor redColor];
 		} else {
-			newString = [[NSAttributedString alloc] initWithString: thisLine attributes: [NSDictionary dictionaryWithObject: [NSColor grayColor] forKey: NSForegroundColorAttributeName]];			
+			font = [NSFont systemFontOfSize: fontSize];
+			color = [NSColor grayColor];
 		}
+		NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys: color, NSForegroundColorAttributeName, font, NSFontAttributeName, nil];
+		newString = [[NSAttributedString alloc] initWithString: thisLine attributes: dict];			
 		[res appendAttributedString: newString];
 		[res appendAttributedString: [[NSAttributedString alloc] initWithString: @"\n"]];
 	}
