@@ -262,7 +262,6 @@ void callbackFunction(
 }
 
 - (void) checkLocal: (NSTimer *) t {
-	NSLog(@"%@ actually rescheduling", [repository lastPathComponent]);
 	[timer invalidate];
 	[timer autorelease];
 	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
