@@ -228,6 +228,31 @@ void callbackFunction(
 		[[NSUserDefaults standardUserDefaults] setObject: dict2 forKey: @"cachedRepos"];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		localMod = b;
+		
+		if (!localMod) {
+			int i;
+			int seconds = 0;
+			BOOL currentlyOn = NO;
+			NSDate *lastOn;
+			
+			for (i = 0; i < [arr count]; i++) {
+				NSDictionary *item = [arr objectAtIndex: i];
+				NSDate *ts = [item objectForKey: @"date"];
+				BOOL nowOn = [[item objectForKey: @"setting"] boolValue];
+				
+				if (nowOn == currentlyOn)
+					continue;
+				
+				if (nowOn) {
+					lastOn = ts;
+				} else {
+					seconds += [lastOn timeIntervalSinceDate: ts];
+				}
+				currentlyOn = nowOn;
+			}
+			
+			NSLog(@"Seconds spent on %@: %d", [repository lastPathComponent], seconds);
+		}
 	}
 }
 
