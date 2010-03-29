@@ -317,18 +317,22 @@ NSInteger intSort(id num1, id num2, void *context) {
 	NSApplication *app = [NSApplication sharedApplication];
 	if ([rbd hasUntracked]) {
 		[app setApplicationIconImage: [[BubbleFactory getBlueOfSize: [[app dockTile] size].height] autorelease]];
+		[statusItem setImage: [BubbleFactory getBlueOfSize: 15]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasLocal]) {
 		[app setApplicationIconImage: [[BubbleFactory getRedOfSize: [[app dockTile] size].height] autorelease]];
+		[statusItem setImage: [BubbleFactory getRedOfSize: 15]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasUpstream]) {
 		[app setApplicationIconImage: [[BubbleFactory getYellowOfSize: [[app dockTile] size].height] autorelease]];
+		[statusItem setImage: [BubbleFactory getYellowOfSize: 15]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else {
 		[app setApplicationIconImage: [[BubbleFactory getGreenOfSize: [[app dockTile] size].height] autorelease]];
+		[statusItem setImage: [BubbleFactory getGreenOfSize: 15]];
 		[statusItem setTitle: @""];
 	}
 }
