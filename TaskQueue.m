@@ -11,6 +11,15 @@
 	return self;
 }
 
+- (void) handleOddTerminationStatusOfTask: (NSTask *)t withCallback: (void (^)(struct NSArray *))callback {
+	[RepoHelper logTask: t appending: [NSString stringWithFormat: @"Error: %d", [t terminationStatus]]];
+	if (callback)
+		(callback)(nil);
+	num_tasks--;
+	if (num_tasks == 0)
+		NSLog(@"%@ is going to sleep", _name);
+}
+
 - (void) addTask: (NSTask *)t withCallback: (void (^)(struct NSArray *))callback {
 	num_tasks++;
 	if (num_tasks == 1)
@@ -24,11 +33,7 @@
 		NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
 		[t waitUntilExit];
 		if ([t terminationStatus] != 0) {
-			[RepoHelper logTask: t appending: [NSString stringWithFormat: @"Error: %d", [t terminationStatus]]];
-			(callback)(nil);
-			num_tasks--;
-			if (num_tasks == 0)
-				NSLog(@"%@ is going to sleep", _name);
+			[self handleOddTerminationStatusOfTask: t withCallback: callback];
 			return;
 		}
 		[err closeFile];
