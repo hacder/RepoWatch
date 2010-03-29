@@ -32,6 +32,7 @@ void callbackFunction(
 	localMod = NO;
 	upstreamMod = NO;
 	untrackedFiles = NO;
+	dirty = YES;
 	
 	config = [[NSMutableDictionary alloc] init];
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

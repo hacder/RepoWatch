@@ -19,6 +19,11 @@
 }
 
 - (void) checkLocal: (NSTimer *)ti {
+	if (!dirty) {
+		NSLog(@"%@: I'm not dirty, I'm skipping a lot of work!", [repository lastPathComponent]);
+		[super checkLocal: ti];
+		return;
+	}
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", @"HEAD", nil];
 	NSTask *t = [self taskFromArguments: arr];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
@@ -30,6 +35,7 @@
 			localDiff = nil;
 			[super checkLocal: ti];
 			[self realFire];
+			dirty = NO;
 			return;
 		}
 		[self setLocalMod: YES];
@@ -54,6 +60,7 @@
 				[currLocalDiff retain];
 				[super checkLocal: ti];
 				[self realFire];
+				dirty = NO;
 			}];
 		}];
 	}];
