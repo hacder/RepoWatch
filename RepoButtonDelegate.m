@@ -252,14 +252,11 @@ void callbackFunction(
 }
 
 - (void) checkLocal: (NSTimer *) t {
-	NSLog(@"Check local inside of RepoButtonDelegate: %@ -- %s", [repository lastPathComponent], dispatch_queue_get_label(dispatch_get_current_queue()));
-	if ([timer isValid])
-		return;
-		
-	NSLog(@"Re-creating timer for %@", [repository lastPathComponent]);
 	// NOTE: Doing this on a background thread makes NSTimer confused about where to run when it fires, so it starts missing.
+	//       Since we're only re-creating this timer as a result of this timer running, we REALLY do not want to miss.
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[timer autorelease];
+		[timer invalidate];
 		timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
 		[timer retain];
 	});

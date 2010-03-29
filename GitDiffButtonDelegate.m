@@ -19,7 +19,6 @@
 }
 
 - (void) checkLocal: (NSTimer *)ti {
-	NSLog(@"checkLocal inside of git: %@", [repository lastPathComponent]);
 	if (!dirty) {
 		[super checkLocal: ti];
 		return;
