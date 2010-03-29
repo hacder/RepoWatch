@@ -34,7 +34,7 @@
 			localDiff = nil;
 			[super checkLocal: ti];
 			[self realFire];
-			dirty = NO;
+			[self setDirty: NO];
 			return;
 		}
 		[self setLocalMod: YES];

@@ -326,7 +326,7 @@
 		[self setLocalMod: NO];
 		[super checkLocal: ti];
 		[self realFire];
-		dirty = NO;
+		[self setDirty: NO];
 	}
 }
 

@@ -15,15 +15,16 @@ void callbackFunction(
 		const FSEventStreamEventFlags eventFlags[],
 		const FSEventStreamEventId eventIds[]) {
 	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
-	[rbd->dirtyLock lock];
-	if (!rbd->dirty)
-		rbd->dirty = YES;
-	NSLog(@"%@ is dirty?: %d", [rbd getShort], rbd->dirty);
-	[rbd->dirtyLock unlock];
+	[rbd setDirty: YES];
 }
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
+
+	repository = repo;
+	[repository retain];
+	[self setDirty: YES];
+
 	tq = [[TaskQueue alloc] initWithName: repo];
 	[tq retain];
 	animating = NO;
@@ -32,8 +33,6 @@ void callbackFunction(
 	localMod = NO;
 	upstreamMod = NO;
 	untrackedFiles = NO;
-	dirty = YES;
-	
 	config = [[NSMutableDictionary alloc] init];
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSDictionary *allRepos = [defaults objectForKey: @"cachedRepos"];
@@ -45,9 +44,6 @@ void callbackFunction(
 	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
 	[timer retain];
 	
-	repository = repo;
-	[repository retain];
-
 	if (!repos) {
 		repos = [NSMutableArray arrayWithCapacity: 10];
 		[repos retain];
@@ -78,6 +74,13 @@ void callbackFunction(
 	[self setupUpstream];
 	
 	return self;
+}
+
+- (void) setDirty: (BOOL)b {
+	if (dirty != b) {
+		dirty = b;
+		NSLog(@"Setting %@ to dirty?:%d", [repository lastPathComponent], b);
+	}
 }
 
 - (void) addMenuItem {
