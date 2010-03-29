@@ -252,14 +252,14 @@ char *find_execable(const char *filename) {
 				gitPath: git repository: path];
 			return YES;
 		}
-	} else if ([contents containsObject: @".hg"]) {
-		if (hg) {
-			[self addCachedRepoPath: path];
-			[[MercurialDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
-				menu: menu statusItem: statusItem mainController: mc
-				hgPath: hg repository: path];
-			return YES;
-		}
+	// } else if ([contents containsObject: @".hg"]) {
+	// 	if (hg) {
+	// 		[self addCachedRepoPath: path];
+	// 		[[MercurialDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
+	// 			menu: menu statusItem: statusItem mainController: mc
+	// 			hgPath: hg repository: path];
+	// 		return YES;
+	// 	}
 	}
 	return NO;
 }
