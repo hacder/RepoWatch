@@ -76,6 +76,14 @@ void callbackFunction(
 	return self;
 }
 
+- (NSString *)getTimeWorked {
+	return @"time";
+}
+
+- (NSString *)repositoryPath {
+	return repository;
+}
+
 - (void) setDirty: (BOOL)b {
 	if (dirty != b) {
 		dirty = b;

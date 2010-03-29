@@ -270,11 +270,9 @@
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSString *s3;
 		if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-			s3 = [NSString stringWithFormat: @"%@",
-				[repository lastPathComponent]];
+			s3 = [NSString stringWithFormat: @"%@", [RepoHelper makeNameFromRepo: self]];
 		} else {
-			s3 = [NSString stringWithFormat: @"%@ (%@)",
-					[repository lastPathComponent], currentBranch];
+			s3 = [NSString stringWithFormat: @"%@ (%@)", [RepoHelper makeNameFromRepo: self], currentBranch];
 		}
 		[self setTitle: s3];
 		[self setShortTitle: s3];
@@ -288,12 +286,12 @@
 		setTarget: self];
 	if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
 		sTit = [NSString stringWithFormat: @"%@: %@",
-			[repository lastPathComponent],
+			[RepoHelper makeNameFromRepo: self],
 			[localDiffSummary stringByTrimmingCharactersInSet:
 				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 	} else {
 		sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
-			[repository lastPathComponent],
+			[RepoHelper makeNameFromRepo: self],
 			[localDiffSummary stringByTrimmingCharactersInSet:
 			[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
 	}
@@ -332,7 +330,7 @@
 	[m insertItem: [NSMenuItem separatorItem] atIndex: [m numberOfItems]];
 
 	if (untrackedFiles) {
-		NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [repository lastPathComponent], [untracked count]];
+		NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [RepoHelper makeNameFromRepo: self], [untracked count]];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setTitle: s];
 			[self setShortTitle: s];

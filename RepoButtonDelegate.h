@@ -44,6 +44,8 @@
 - (NSString *) getShort;
 - (void) setLocalMod: (BOOL)b;
 - (void) setDirty: (BOOL)b;
+- (NSString *)repositoryPath;
+- (NSString *)getTimeWorked;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;

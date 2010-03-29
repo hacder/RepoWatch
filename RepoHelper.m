@@ -2,6 +2,16 @@
 
 @implementation RepoHelper
 
+// This provides us with our name for the repository. In the future, the user will be able to
+// adjust this with format flags. For now, just hard code (in one place) the policy that was
+// hard coded in multiple places.
++ (NSString *)makeNameFromRepo: (RepoButtonDelegate *)repo {
+	NSString *time = [repo getTimeWorked];
+	if (time)
+		return [NSString stringWithFormat: @"%@ %@", [[repo repositoryPath] lastPathComponent], time];
+	return [[repo repositoryPath] lastPathComponent];
+}
+
 + (NSAttributedString *)colorizedDiffFromArray: (NSArray *)arr {
 	int i;
 	NSMutableAttributedString *res = [[NSMutableAttributedString alloc] initWithString: @""];

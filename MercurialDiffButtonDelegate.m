@@ -207,7 +207,7 @@
 	NSArray *untracked = [self getUntracked];
 	if (untracked && [untracked count]) {
 		untrackedFiles = YES;
-		NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [repository lastPathComponent], [untracked count]];
+		NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [RepoHelper makeNameFromRepo: self], [untracked count]];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self setTitle: s];
 			[self setShortTitle: s];
@@ -224,7 +224,7 @@
 	if (![localChanges isEqual: @"0 files changed"]) {
 		localMod = YES;
 		[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
-		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], [RepoHelper shortenDiff: localChanges]];
+		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [RepoHelper makeNameFromRepo: self], [RepoHelper shortenDiff: localChanges]];
 		[self setAllTitles: sTit];
 	} else {
 		localMod = NO;
@@ -240,7 +240,7 @@
 		upstreamMod = YES;
 		[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
 		NSString *sTit = [NSString stringWithFormat: @"%@: %@",
-			[repository lastPathComponent],
+			[RepoHelper makeNameFromRepo: self],
 			[RepoHelper shortenDiff: [s2 stringByTrimmingCharactersInSet:
 				[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -320,7 +320,7 @@
 			[super checkLocal: ti];
 			[self realFire];			
 		}];
-		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], localDiffSummary];
+		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [RepoHelper makeNameFromRepo: self], localDiffSummary];
 		[self setAllTitles: sTit];
 	} else {
 		[self setLocalMod: NO];
@@ -342,7 +342,7 @@
 		[self handleRemoteForMenu: m];
 	
 	if (!untrackedFiles && !localMod && !upstreamMod)
-		[self setAllTitles: [NSString stringWithFormat: @"%@", [repository lastPathComponent]]];
+		[self setAllTitles: [NSString stringWithFormat: @"%@", [RepoHelper makeNameFromRepo: self]]];
 		
 	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
 	[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];

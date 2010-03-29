@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import "RepoButtonDelegate.h";
 
 // Lots of general helper functions. They were taking up too much room in other classes.
 
@@ -12,5 +13,6 @@
 + (NSFileHandle *)errForTask: (NSTask *)t;
 + (void)logTask: (NSTask *)task appending: (NSString *)appending;
 + (NSAttributedString *)colorizedDiffFromArray: (NSArray *)arr;
++ (NSString *)makeNameFromRepo: (RepoButtonDelegate *)repo;
 	
 @end
