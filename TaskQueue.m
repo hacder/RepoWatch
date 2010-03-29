@@ -15,7 +15,6 @@
 		NSFileHandle *file = [RepoHelper pipeForTask: t];
 		NSFileHandle *err = [RepoHelper errForTask: t];
 
-		[RepoHelper logTask: t appending: nil];
 		[t launch];		
 		NSString *string = [RepoHelper stringFromFile: file];
 		NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
