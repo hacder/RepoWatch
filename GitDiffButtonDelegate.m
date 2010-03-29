@@ -198,9 +198,11 @@
 
 	if (localMod) {	
 		[mc->tv setEditable: YES];
+
 		[mc->tv setString: @""];
+
 		// Insert text is the only method that is documented to take an attributed string.
-		[mc->diffView insertText: localDiff];
+		[[mc->diffView textStorage] setAttributedString: localDiff];
 		[mc->diffView scrollRangeToVisible: NSMakeRange(0, 0)];
 		[mc->butt setTitle: @"Do Commit"];
 		[mc->butt setTarget: self];
