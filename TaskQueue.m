@@ -11,13 +11,17 @@
 	return self;
 }
 
+- (void) decrementTaskCount {
+	num_tasks--;
+	if (num_tasks == 0)
+		NSLog(@"%@ is going to sleep", _name);
+}
+
 - (void) handleOddTerminationStatusOfTask: (NSTask *)t withCallback: (void (^)(struct NSArray *))callback {
 	[RepoHelper logTask: t appending: [NSString stringWithFormat: @"Error: %d", [t terminationStatus]]];
 	if (callback)
 		(callback)(nil);
-	num_tasks--;
-	if (num_tasks == 0)
-		NSLog(@"%@ is going to sleep", _name);
+	[self decrementTaskCount];
 }
 
 - (void) addTask: (NSTask *)t withCallback: (void (^)(struct NSArray *))callback {
@@ -44,17 +48,13 @@
 			[result2 removeObjectAtIndex: [result2 count] - 1];
 			if (callback != nil)
 				(callback)(result2);
-			num_tasks--;
-			if (num_tasks == 0)
-				NSLog(@"%@ is going to sleep", _name);
+			[self decrementTaskCount];
 			return;
 		}
 
 		if (callback != nil)
 			(callback)(result);
-		num_tasks--;
-		if (num_tasks == 0)
-			NSLog(@"%@ is going to sleep", _name);
+		[self decrementTaskCount];
 		return;
 	});
 }
