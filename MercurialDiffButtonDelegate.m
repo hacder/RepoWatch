@@ -299,6 +299,11 @@
 }
 
 - (void) checkLocal: (NSTimer *)ti {
+	if (!dirty) {
+		NSLog(@"%@: I'm not dirty, I'm skipping a lot of work!", [repository lastPathComponent]);
+		[super checkLocal: ti];
+		return;
+	}
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", nil]];
 	NSString *localChanges = [self lastGoodComponentOfString: [self diffStatOfTask: t]];
 	if (![localChanges isEqual: @"0 files changed"]) {
@@ -322,6 +327,7 @@
 		[self setLocalMod: NO];
 		[super checkLocal: ti];
 		[self realFire];
+		dirty = NO;
 	}
 }
 

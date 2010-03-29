@@ -229,7 +229,7 @@ void callbackFunction(
 - (void) checkLocal: (NSTimer *) t {
 	[timer invalidate];
 	[timer autorelease];
-	timer = [NSTimer scheduledTimerWithTimeInterval: 30.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
+	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
 	[timer retain];
 }
 
