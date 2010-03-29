@@ -120,43 +120,6 @@ void callbackFunction(
 	return nil;
 }
 
-//- (NSArray *)arrayFromResultOfArgs: (NSArray *)args withName: (NSString *)name {
-//	NSTask *t = [self taskFromArguments: args];
-//	NSFileHandle *file = [RepoHelper pipeForTask: t];
-//	NSFileHandle *err = [RepoHelper errForTask: t];
-//
-//	@try {
-//		[t launch];
-//		NSString *string = [RepoHelper stringFromFile: file];
-//		NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
-//		[t waitUntilExit];
-//		if ([t terminationStatus] != 0) {
-//			NSMutableString *command = [NSMutableString stringWithCapacity: 20];
-//			[command appendFormat: @"%@: %@", [t currentDirectoryPath], [t launchPath]];
-//			int i;
-//			for (i = 0; i < [args count]; i++) {
-//				[command appendFormat: @" %@", [args objectAtIndex: i]];
-//			}
-//			NSString *errStr = [RepoHelper stringFromFile: err];
-//			NSLog(@"%@, task status: %d error: %@ full command: %@", name, [t terminationStatus], errStr, command);
-//			return nil;
-//		}
-//		[err closeFile];
-//		[file closeFile];
-//
-//		if ([[result objectAtIndex: [result count] - 1] isEqualToString: @""]) {
-//			NSMutableArray *result2 = [NSMutableArray arrayWithArray: result];
-//			[result2 removeObjectAtIndex: [result2 count] - 1];
-//			return result2;
-//		}
-//		
-//		return result;
-//	} @catch (NSException *e) {
-//		NSLog(@"Got exception: %@", e);
-//	}
-//	return nil;
-//}
-
 - (void) openInFinder: (id) sender {
 	NSTask *t = [self baseTask: @"/usr/bin/open" fromArguments: [NSArray arrayWithObjects: @".", nil]];
 	[tq addTask: t withCallback: nil];
