@@ -106,10 +106,8 @@ void callbackFunction(
 }
 
 - (void) setDirty: (BOOL)b {
-	if (dirty != b) {
+	if (dirty != b)
 		dirty = b;
-		NSLog(@"Setting %@ to dirty?:%d", [repository lastPathComponent], b);
-	}
 }
 
 - (void) addMenuItem {
