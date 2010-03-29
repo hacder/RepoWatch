@@ -14,11 +14,11 @@ void callbackFunction(
 		void *eventPaths,
 		const FSEventStreamEventFlags eventFlags[],
 		const FSEventStreamEventId eventIds[]) {
-//	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
-//	[rbd->dirtyLock lock];
-//	if (!rbd->dirty)
-//		rbd->dirty = YES;
-//	[rbd->dirtyLock unlock];
+	RepoButtonDelegate *rbd = (RepoButtonDelegate *)clientCallBackInfo;
+	[rbd->dirtyLock lock];
+	if (!rbd->dirty)
+		rbd->dirty = YES;
+	[rbd->dirtyLock unlock];
 }
 
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {

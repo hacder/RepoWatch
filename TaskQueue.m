@@ -13,8 +13,8 @@
 
 - (void) decrementTaskCount {
 	num_tasks--;
-	if (num_tasks == 0)
-		NSLog(@"%@ is going to sleep", _name);
+	// if (num_tasks == 0)
+	// 	NSLog(@"%@ is going to sleep", _name);
 }
 
 - (void) doCallback: (void (^)(struct NSArray *))callback withResult: (NSArray *)result {
@@ -30,8 +30,8 @@
 
 - (void) addTask: (NSTask *)t withCallback: (void (^)(struct NSArray *))callback {
 	num_tasks++;
-	if (num_tasks == 1)
-		NSLog(@"%@ is waking up", _name);
+	// if (num_tasks == 1)
+	// 	NSLog(@"%@ is waking up", _name);
 	dispatch_group_async(_custom_queue, dispatch_get_global_queue(0, 0), ^{
 		NSFileHandle *file = [RepoHelper pipeForTask: t];
 		NSFileHandle *err = [RepoHelper errForTask: t];

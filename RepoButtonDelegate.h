@@ -31,6 +31,8 @@
 	BOOL upstreamMod;
 	BOOL untrackedFiles;
 	BOOL animating;
+	BOOL dirty;
+	NSLock *dirtyLock;
 	TaskQueue *tq;
 }
 
