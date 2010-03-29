@@ -83,10 +83,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	// text and image.
 	activeBD = nil;
 	
-	// The amount that the main image is currently rotated. This is for the activity throbber.
-	currentRotation = [NSNumber numberWithFloat: 0.0];
-	[currentRotation retain];
-	
 	// Set up our main status bar. This is the area where the most pressing information is
 	// displayed.
 	NSStatusBar *bar = [NSStatusBar systemStatusBar];
@@ -312,11 +308,7 @@ NSInteger intSort(id num1, id num2, void *context) {
 	return [rotated autorelease];
 }
 
-- (void) setProperIconForButton: (RepoButtonDelegate *)rbd atRotationOf: (NSNumber *)rot withString: (BOOL)withString {
-	BOOL isRotating = NO;
-	if (rot < [NSNumber numberWithFloat: 1.0] && rot > [NSNumber numberWithFloat: -1.0])
-		isRotating = YES;
-
+- (void) setProperIconForButton: (RepoButtonDelegate *)rbd withString: (BOOL)withString {
 	if (![scanner isDone]) {
 		withString = NO;
 		[statusItem setTitle: @"Scanning..."];
@@ -325,35 +317,19 @@ NSInteger intSort(id num1, id num2, void *context) {
 	NSApplication *app = [NSApplication sharedApplication];
 	if ([rbd hasUntracked]) {
 		[app setApplicationIconImage: [[BubbleFactory getBlueOfSize: [[app dockTile] size].height] autorelease]];
-		if (!isRotating)
-			[statusItem setImage: [BubbleFactory getBlueOfSize: 15]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasLocal]) {
 		[app setApplicationIconImage: [[BubbleFactory getRedOfSize: [[app dockTile] size].height] autorelease]];
-		if (!isRotating)
-			[statusItem setImage: [BubbleFactory getRedOfSize: 15]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasUpstream]) {
 		[app setApplicationIconImage: [[BubbleFactory getYellowOfSize: [[app dockTile] size].height] autorelease]];
-		if (!isRotating)
-			[statusItem setImage: [BubbleFactory getYellowOfSize: 15]];
 		if (withString)
 			[statusItem setTitle: [rbd shortTitle]];
 	} else {
 		[app setApplicationIconImage: [[BubbleFactory getGreenOfSize: [[app dockTile] size].height] autorelease]];
-		if (!isRotating)
-			[statusItem setImage: [BubbleFactory getGreenOfSize: 15]];
 		[statusItem setTitle: @""];
-	}
-	if (isRotating) {
-		[statusItem setImage:
-			[MainController rotateImage:
-				[[NSImage imageNamed: NSImageNameRefreshTemplate] retain]
-				byDegrees: [rot floatValue]
-			]
-		];
 	}
 }
 
@@ -376,56 +352,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 		if (noString)
 			[statusItem setTitle: @""];
 		
-		[self setProperIconForButton: rbd atRotationOf: currentRotation withString: !noString];
+		[self setProperIconForButton: rbd withString: !noString];
 	});
-}
-
-// The callback for rotating the menu icon. This could stand to be more efficient, probably. It's called a LOT
-// when things are rotating.
-- (void) animationUpdate: (id) timer {
-	if (timer) {
-		float newVal = [currentRotation floatValue] - 5.0;
-		[currentRotation autorelease];
-		currentRotation = [NSNumber numberWithFloat: newVal];
-		[currentRotation retain];
-	}
-	if (activeBD)
-		[self
-			setProperIconForButton: (RepoButtonDelegate *)activeBD
-			atRotationOf: currentRotation
-			withString: [[NSUserDefaults standardUserDefaults]
-			integerForKey: @"suppressText"]];
-}
-
-- (void) setAnimatingFor: (ButtonDelegate *)bd to: (BOOL)b {
-	// We only really care if the main button delegate is rotating.
-	// eventually the sub menus will have rotating icons, but for now
-	// if they aren't the most important, they aren't important enough.
-	if (activeBD && activeBD == bd) {
-		if (b) {
-			// We already have an animation timer, so let's just keep using that one.
-			if (animationTimer)
-				return;
-			[currentRotation autorelease];
-			currentRotation = [NSNumber numberWithFloat: 0.0];
-			[currentRotation retain];
-			animationTimer =
-				[NSTimer
-					scheduledTimerWithTimeInterval: 0.05
-					target: self
-					selector: @selector(animationUpdate:)
-					userInfo: nil
-					repeats: YES];
-		} else {
-			if (animationTimer)
-				[animationTimer invalidate];
-			animationTimer = nil;
-			[currentRotation autorelease];
-			currentRotation = [NSNumber numberWithFloat: 0.0];
-			[currentRotation retain];
-			[self animationUpdate: nil];
-		}
-	}
 }
 
 @end

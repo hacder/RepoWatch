@@ -8,8 +8,6 @@ Done:
 * Make file list show up in table when looking at local diffs
 * Make files in Diff class actually be represented by FileDiff.
 * Continue settling on more sane per-repository set of code.
-* Severe performance issues when commit window is up. Not sure why, but it started
-  when I added the colorization.
 
 Future Features
 ---------------
@@ -28,3 +26,15 @@ Preferences:
 	* Green or clear bubble
 	* Extra menu text or not
 	* Time tracking delay before not working anymore.
+
+
+Current work flow																Git					Mercurial
+	* checkLocal: (NSTimer *)
+		Used to get initial local diffs and periodically to get					buggy				untested
+		updates about what has changed.
+	* setupUpstream
+		Used once at repository creation to detect if there even				done				done
+		IS an upstream for us to worry about
+	* setLocalMod: (BOOL)
+		Used for our basic local modification flag AND to log transition		done				done
+		times for our incredibly basic time tracking program.

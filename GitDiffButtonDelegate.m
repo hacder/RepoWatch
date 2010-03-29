@@ -20,7 +20,6 @@
 
 - (void) checkLocal: (NSTimer *)ti {
 	if (!dirty) {
-		NSLog(@"%@: I'm not dirty, I'm skipping a lot of work!", [repository lastPathComponent]);
 		[super checkLocal: ti];
 		return;
 	}

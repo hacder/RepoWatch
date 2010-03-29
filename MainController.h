@@ -18,8 +18,6 @@
 	char *date;
 	char *time;
 	
-	NSTimer *animationTimer;
-	NSNumber *currentRotation;
 	Scanner *scanner;
 	QuitButtonDelegate *quit;
 	ButtonDelegate *activeBD;
@@ -48,6 +46,5 @@
 - (void) maybeRefresh: (ButtonDelegate *)bd;
 - (IBAction) openFile: (id) sender;
 - (void) ping;
-- (void) setAnimatingFor: (ButtonDelegate *)bd to: (BOOL)b;
 
 @end

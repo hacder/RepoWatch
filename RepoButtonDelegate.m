@@ -221,11 +221,6 @@ void callbackFunction(
 	}
 }
 
-- (void) setAnimating: (BOOL)b {
-	animating = b;
-	[mc setAnimatingFor: self to: b];
-}
-
 - (void) checkLocal: (NSTimer *) t {
 	if (t == nil)
 		return;

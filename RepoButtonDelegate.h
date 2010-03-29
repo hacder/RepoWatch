@@ -43,7 +43,6 @@
 - (NSString *) getShort;
 - (void) setLocalMod: (BOOL)b;
 
-- (void) setAnimating: (BOOL)b;
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;
 - (BOOL) hasLocal;
