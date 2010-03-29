@@ -17,7 +17,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 // logic is in here because the goal of this app is simplicity. There is ONE global hot key that
 // does the most logical thing at any given moment.
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
-	NSLog(@"In the hot key handler");
 	MainController *mc = (MainController *)userData;
 	
 	int t = [mc->theMenu numberOfItems];
@@ -36,25 +35,20 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			// Another exception to the rule is the hidden separator items. Or any other special Button
 			// Delegate instances I may put into the menu in the future. We want to make sure that
 			// we are dealing with some kind of repository.
-			if (![[mi target] isKindOfClass: [RepoButtonDelegate class]]) {
-				NSLog(@"Item %d was not a RepoButtonDelegate", i);
+			if (![[mi target] isKindOfClass: [RepoButtonDelegate class]])
 				continue;
-			}
 
 			RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
 			
-			NSLog(@"Found a good entry in %d: %@", i, rbd);
 			// Untracked files are the main concern when they exist. We can't deal with local changes
 			// really until we are sure if these untracked files should count as local edits.
 			if ([rbd hasUntracked]) {
-				NSLog(@"Calling dealWithUntracked");
 				[rbd dealWithUntracked: nil];
 				return noErr;
 			}
 
 			// Local changes should be commited locally before you pull in upstream updates.
 			if ([rbd hasLocal]) {
-				NSLog(@"Calling commit");
 				[rbd commit: nil];
 				return noErr;
 			}
@@ -62,7 +56,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			// Upstream updates are the least important thing, though you should still pull
 			// as frequently as you can.
 			if ([rbd hasUpstream]) {
-				NSLog(@"Calling pull");
 				[rbd pull: nil];
 				return noErr;
 			}
@@ -73,10 +66,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			// repository work to do (this is a good thing), but if you're wanting to do something
 			// with no repository work, maybe you're trying to task switch.
 			
-			NSLog(@"Nothing to do, so I guess we give up.");
 			return noErr;
-		} else {
-			NSLog(@"Item %d was hidden", i);
 		}
 	}
 	return noErr;
