@@ -60,7 +60,6 @@
 				[currLocalDiff retain];
 				[super checkLocal: ti];
 				[self realFire];
-				dirty = NO;
 			}];
 		}];
 	}];
