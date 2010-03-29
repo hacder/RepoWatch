@@ -18,6 +18,7 @@ void callbackFunction(
 	[rbd->dirtyLock lock];
 	if (!rbd->dirty)
 		rbd->dirty = YES;
+	NSLog(@"%@ is dirty?: %d", [rbd getShort], rbd->dirty);
 	[rbd->dirtyLock unlock];
 }
 
