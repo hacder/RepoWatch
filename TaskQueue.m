@@ -17,11 +17,15 @@
 		NSLog(@"%@ is going to sleep", _name);
 }
 
+- (void) doCallback: (void (^)(struct NSArray *))callback withResult: (NSArray *)result {
+	if (callback != nil)
+		(callback)(result);
+	[self decrementTaskCount];
+}
+
 - (void) handleOddTerminationStatusOfTask: (NSTask *)t withCallback: (void (^)(struct NSArray *))callback {
 	[RepoHelper logTask: t appending: [NSString stringWithFormat: @"Error: %d", [t terminationStatus]]];
-	if (callback)
-		(callback)(nil);
-	[self decrementTaskCount];
+	[self doCallback: callback withResult: nil];
 }
 
 - (void) addTask: (NSTask *)t withCallback: (void (^)(struct NSArray *))callback {
@@ -46,15 +50,11 @@
 		if ([[result objectAtIndex: [result count] - 1] isEqualToString: @""]) {
 			NSMutableArray *result2 = [NSMutableArray arrayWithArray: result];
 			[result2 removeObjectAtIndex: [result2 count] - 1];
-			if (callback != nil)
-				(callback)(result2);
-			[self decrementTaskCount];
+			[self doCallback: callback withResult: result2];
 			return;
 		}
 
-		if (callback != nil)
-			(callback)(result);
-		[self decrementTaskCount];
+		[self doCallback: callback withResult: result];
 		return;
 	});
 }
