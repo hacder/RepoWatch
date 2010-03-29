@@ -6,6 +6,7 @@
 @interface TaskQueue : NSObject {
 	NSString *_name;
 	dispatch_group_t _custom_queue;
+	int num_tasks;
 }
 
 - initWithName: (NSString *)name;
