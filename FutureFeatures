@@ -1,3 +1,12 @@
+Topic Branches
+--------------
+	Assumptions: Never edit master. Never. When we go to commit, if we had master checked out, we should actually
+	offer to commit to a topic branch instead, or to make a new topic branch. Ideally, we create a new topic branch,
+	focus on just that one, then we have the ability to mark a topic branch as done (graduate to next level), or
+	abandon it.
+
+
+
 Done:
 	* Make diff show new files as well as modified ones.
 	* Ultra ultra basics of project time tracking.
