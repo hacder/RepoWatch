@@ -4,6 +4,14 @@ Topic Branches
 	offer to commit to a topic branch instead, or to make a new topic branch. Ideally, we create a new topic branch,
 	focus on just that one, then we have the ability to mark a topic branch as done (graduate to next level), or
 	abandon it.
+	
+	The real questions becomes: how do we switch between branches? The super-simple answer is that we cannot. You
+	must finish working on this branch before you create a new one. In the real world that just is not acceptable,
+	even for super simple users who aren't using branches now. It makes starting a branch a very risky operation.
+	
+	Switching branches becomes a secondary operation. At any point we no longer know exactly what the user should
+	do next, so one magic key press no longer becomes possible. Do we do multiple hotkeys, or maybe we bring
+	up a more complicated dialog that allows us to do what we would have done before AND switch branches?
 
 
 
