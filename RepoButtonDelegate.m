@@ -35,8 +35,6 @@ void callbackFunction(
 	NSDictionary *allRepos = [defaults objectForKey: @"cachedRepos"];
 	NSDictionary *thisRepo = [allRepos objectForKey: repo];
 	[config setDictionary: thisRepo];
-	if ([config objectForKey: @"onofftimes"] == nil)
-		[config setObject: [NSMutableArray arrayWithCapacity: 10] forKey: @"onofftimes"];
 	
 	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
 	[timer retain];
