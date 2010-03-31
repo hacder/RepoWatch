@@ -22,7 +22,9 @@
 	Scanner *scanner;
 	QuitButtonDelegate *quit;
 	ButtonDelegate *activeBD;
-	TimeTracker *tt;
+	
+	// This is a TimeTracker, but we're not hard-coding the existance of that class anywhere
+	id tt;
 
 @public	
 	IBOutlet NSWindow *commitWindow;
