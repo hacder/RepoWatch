@@ -28,14 +28,16 @@ Done:
 	* Colorize diffs
 	* Build file list when looking at local diffs
 	* Fix onofftimes. Seems to lose info after a restart.
-* Does not seem to notice updates after the initial start. At least on git.
+	* Does not seem to notice updates after the initial start. At least on git.
+	* Make a wordpress-like callback-heavy "action" model so that I can do
+	  things like make the time tracker be its own class that just subscribes
+	  to events and does its own thing. Also make the "filter" model work
+	  so that the timer plugin can affect the title of the project.
+
 * Make file list show up in table when looking at local diffs
 * Make files in Diff class actually be represented by FileDiff.
 * Continue settling on more sane per-repository set of code.
-* Make a wordpress-like callback-heavy "action" model so that I can do
-  things like make the time tracker be its own class that just subscribes
-  to events and does its own thing. Also make the "filter" model work
-  so that the timer plugin can affect the title of the project.
+* Startup time is very very poor. Why?
 
 Future Features
 ---------------

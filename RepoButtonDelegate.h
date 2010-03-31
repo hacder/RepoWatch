@@ -15,7 +15,6 @@
 	NSButton *butt;
 	NSTextView *tv;
 	NSWindow *window;
-	NSTimeInterval interval;
 	NSTimer *timer;
 	NSArray *currentUntracked;
 	NSDate *lastRemote;
@@ -30,7 +29,6 @@
 	BOOL localMod;
 	BOOL upstreamMod;
 	BOOL untrackedFiles;
-	BOOL animating;
 	BOOL dirty;
 	TaskQueue *tq;
 }

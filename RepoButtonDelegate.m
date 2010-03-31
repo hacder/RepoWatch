@@ -27,8 +27,6 @@ void callbackFunction(
 
 	tq = [[TaskQueue alloc] initWithName: repo];
 	[tq retain];
-	animating = NO;
-	interval = 60;
 	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;
