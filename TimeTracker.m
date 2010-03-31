@@ -138,6 +138,7 @@
 							if (i > 2) {
 								NSLog(@"New off? %@", [onoff objectAtIndex: i - 3]);
 							} else {
+								lastOff = nil;
 								NSLog(@"No remedy!");
 							}
 
