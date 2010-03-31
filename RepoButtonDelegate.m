@@ -185,11 +185,8 @@ void callbackFunction(
 
 - (void) setLocalMod: (BOOL) b {
 	if (localMod != b) {
-		localMod = b;
-		
+		localMod = b;		
 		[[NSNotificationCenter defaultCenter] postNotificationName: @"repoModChange" object: self];
-		
-		NSLog(@"Setting local mod of %@ to %d at %@", repository, b, [NSDate date]);
 	}
 }
 
