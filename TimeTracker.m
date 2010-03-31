@@ -6,14 +6,25 @@
 - (void) addCommitMessage: (id) notification {
 	RepoButtonDelegate *rbd = [notification object];
 	NSString *message = [[notification userInfo] objectForKey: @"commitMessage"];
-	NSLog(@"%@ used message %@", rbd, message);
+	
+	NSMutableArray *arr = [timeTracks objectForKey: [rbd repository]];
+	if (!arr)
+		arr = [NSMutableArray arrayWithCapacity: 1];
+	
+	[arr addObject: message];
+	[timeTracks setObject: arr forKey: [rbd repository]];
 }
 
 - (void) doWorkingChange: (id) notification {
 	RepoButtonDelegate *rbd = [notification object];
 	
 	// Create the new time item to be inserted.
-	NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys: [NSDate date], @"date", [NSNumber numberWithBool: [rbd hasLocal]], @"setting", nil];
+	NSDictionary *item =
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSDate date], @"date",
+			[NSNumber numberWithBool: [rbd hasLocal]], @"setting",
+			[timeTracks objectForKey: [rbd repository]], @"messages",
+			nil];
 	
 	NSDictionary *globalConfig = [[NSUserDefaults standardUserDefaults] objectForKey: @"cachedRepos"];
 	NSDictionary *customConfig = [globalConfig objectForKey: [rbd repository]];
@@ -92,7 +103,7 @@
 
 - init {
 	self = [super init];
-	timeTracks = [NSMutableArray arrayWithCapacity: 10];
+	timeTracks = [[NSMutableDictionary alloc] init];
 	[timeTracks retain];
 	
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(doWorkingChange:) name: @"repoModChange" object: nil];

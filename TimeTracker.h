@@ -2,7 +2,7 @@
 #import <AppKit/AppKit.h>
 
 @interface TimeTracker : NSObject {
-	NSMutableArray *timeTracks;
+	NSMutableDictionary *timeTracks;
 }
 
 - init;
