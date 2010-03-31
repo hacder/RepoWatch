@@ -135,20 +135,13 @@
 							[dict setObject: newArray forKey: @"messages"];
 							[onoff replaceObjectAtIndex: i + 1 withObject: dict];
 
-							if (i > 2) {
-								NSLog(@"New off? %@", [onoff objectAtIndex: i - 3]);
-							} else {
-								lastOff = nil;
-								NSLog(@"No remedy!");
-							}
+							lastOn = lastOff;
 
 							// Now we remove our previous off.
 							NSLog(@"Removing %@", [onoff objectAtIndex: i - 1]);
 							[onoff removeObjectAtIndex: i - 1];
 							NSLog(@"Removing %@", [onoff objectAtIndex: i - 1]);
 							[onoff removeObjectAtIndex: i - 1];
-							NSLog(@"Last on: %@", lastOn);
-							NSLog(@"Last off: %@", lastOff); 
 							i -= 2;
 						}
 
