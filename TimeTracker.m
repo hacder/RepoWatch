@@ -127,7 +127,12 @@
 						// And append them to our next "off" time.
 						NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary: [onoff objectAtIndex: i + 1]];
 						
-						NSArray *newArray = [[dict objectForKey: @"messages"] arrayByAddingObjectsFromArray: previousItems];
+						NSArray *newArray;
+						if ([dict objectForKey: @"messages"])
+							newArray = [[dict objectForKey: @"messages"] arrayByAddingObjectsFromArray: previousItems];
+						else
+							newArray = previousItems;
+							
 						NSLog(@"New array: %@", newArray);
 						if (newArray == nil) {
 							NSLog(@"new array wound up null. dict was %@", dict);
