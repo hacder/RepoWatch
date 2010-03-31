@@ -26,6 +26,8 @@
 			[timeTracks objectForKey: [rbd repository]], @"messages",
 			nil];
 	
+	[timeTracks removeObjectForKey: [rbd repository]];
+	
 	NSDictionary *globalConfig = [[NSUserDefaults standardUserDefaults] objectForKey: @"cachedRepos"];
 	NSDictionary *customConfig = [globalConfig objectForKey: [rbd repository]];
 	NSArray *onofftimes = [customConfig objectForKey: @"onofftimes"];
@@ -96,8 +98,9 @@
 	[newCustomConfig setObject: onoff forKey: @"onofftimes"];
 	
 	NSMutableDictionary *newGlobalConfig = [NSMutableDictionary dictionaryWithDictionary: globalConfig];
-	[newGlobalConfig setObject: newCustomConfig forKey: @"cachedRepos"];
+	[newGlobalConfig setObject: newCustomConfig forKey: [rbd repository]];
 	
+	[[NSUserDefaults standardUserDefaults] setObject: newGlobalConfig forKey: @"cachedRepos"];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
