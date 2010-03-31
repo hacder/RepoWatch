@@ -146,7 +146,7 @@
 
 							// Now we remove our previous off.
 							[onoff removeObjectAtIndex: i - 1];
-							[onoff removeObjectAtIndex: i];
+							[onoff removeObjectAtIndex: i - 1];
 							i -= 2;
 						}
 
