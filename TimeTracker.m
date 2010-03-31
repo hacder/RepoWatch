@@ -145,12 +145,11 @@
 							[onoff replaceObjectAtIndex: i + 1 withObject: dict];
 
 							// Now we remove our previous off.
-							[onoff removeObjectAtIndex: i - 1];							
-							i--;
+							[onoff removeObjectAtIndex: i - 1];
+							[onoff removeObjectAtIndex: i];
+							i -= 2;
 						}
-						
-						// Stupid debug for now.
-						NSLog(@"Hit the magical branch.");
+
 						continue;
 					}
 					
