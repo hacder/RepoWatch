@@ -27,7 +27,6 @@ void callbackFunction(
 
 	tq = [[TaskQueue alloc] initWithName: repo];
 	[tq retain];
-	lock = [[NSLock alloc] init];
 	localMod = NO;
 	upstreamMod = NO;
 	untrackedFiles = NO;
@@ -224,13 +223,7 @@ void callbackFunction(
 		});
 		return;
 	}
-	if (![lock tryLock]) {
-		NSLog(@"Trying to run while already locked: %@", repository);
-		return;
-	}
-	
 	[self realFire];
-	[lock unlock];
 }
 
 - (void) realFire {
