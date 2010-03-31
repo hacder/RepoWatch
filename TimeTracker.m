@@ -47,6 +47,7 @@
 	int i;
 	int seconds = 0;
 	NSDate *lastOn = nil;
+	NSDate *lastOff = nil;
 	
 	for (i = 0; i < [onoff count]; i++) {
 		NSDictionary *dict = [onoff objectAtIndex: i];
@@ -84,8 +85,12 @@
 		}
 		
 		if (setting) {
-			lastOn = ts;
+			// If we turned off less than 30 minutes ago, bill for the gap time. We were probably working
+			// in one form or another.
+			if (!(lastOff && [ts timeIntervalSinceDate: lastOff] < 60 * 30))
+				lastOn = ts;
 		} else {
+			lastOff = ts;
 			seconds += [ts timeIntervalSinceDate: lastOn];
 		}
 		currentlyOn = setting;
