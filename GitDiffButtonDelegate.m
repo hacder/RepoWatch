@@ -225,7 +225,10 @@
 }
 
 - (void) clickUpdate: (id) button {
-	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", [[mc->tv textStorage] mutableString], nil]];
+	NSString *commitMessage = [[mc->tv textStorage] string];
+
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", commitMessage, nil]];
+	[[NSNotificationCenter defaultCenter] postNotificationName: @"repoCommit" object: self userInfo: [NSDictionary dictionaryWithObjectsAndKeys: commitMessage, @"commitMessage", nil]];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
 		[NSApp hide: self];
 		[mc->commitWindow close];

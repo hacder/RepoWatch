@@ -45,7 +45,6 @@
 - (void) setLocalMod: (BOOL)b;
 - (void) setDirty: (BOOL)b;
 - (NSString *)repositoryPath;
-- (NSString *)getTimeWorked;
 - (NSString *)repository;
 
 - (BOOL) hasUntracked;

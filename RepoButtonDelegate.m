@@ -76,31 +76,6 @@ void callbackFunction(
 	return self;
 }
 
-- (NSString *)getTimeWorked {
-	NSArray *arr = [config objectForKey: @"onofftimes"];
-	int i;
-	int seconds = 0;
-	BOOL currentlyOn = NO;
-	NSDate *lastOn;
-	
-	for (i = 0; i < [arr count]; i++) {
-		NSDictionary *item = [arr objectAtIndex: i];
-		NSDate *ts = [item objectForKey: @"date"];
-		BOOL nowOn = [[item objectForKey: @"setting"] boolValue];
-		
-		if (nowOn == currentlyOn)
-			continue;
-		
-		if (nowOn) {
-			lastOn = ts;
-		} else {
-			seconds += [ts timeIntervalSinceDate: lastOn];
-		}
-		currentlyOn = nowOn;
-	}
-	return [NSString stringWithFormat: @"%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60];
-}
-
 - (NSString *)repositoryPath {
 	return repository;
 }
