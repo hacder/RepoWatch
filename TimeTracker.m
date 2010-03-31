@@ -16,7 +16,7 @@
 }
 
 - (void) doWorkingChange: (id) notification {
-	RepoButtonDelegate *rbd = [notification object];
+	RepoButtonDelegate *rbd = [notification object]; 
 	
 	// Create the new time item to be inserted.
 	NSDictionary *item =
