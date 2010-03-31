@@ -15,40 +15,24 @@
 	[timeTracks setObject: arr forKey: [rbd repository]];
 }
 
-- (void) doWorkingChange: (id) notification {
-	RepoButtonDelegate *rbd = [notification object];
-	
-	// Create the new time item to be inserted.
-	NSDictionary *item =
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			[NSDate date], @"date",
-			[NSNumber numberWithBool: [rbd hasLocal]], @"setting",
-			[timeTracks objectForKey: [rbd repository]], @"messages",
-			nil];
-	
-	[timeTracks removeObjectForKey: [rbd repository]];
-	
+- (NSArray *)getOnOffTimesForRBD: (RepoButtonDelegate *)rbd {
 	NSDictionary *globalConfig = [[NSUserDefaults standardUserDefaults] objectForKey: @"cachedRepos"];
 	NSDictionary *customConfig = [globalConfig objectForKey: [rbd repository]];
 	NSArray *onofftimes = [customConfig objectForKey: @"onofftimes"];
-	NSMutableArray *onoff;
-	if (onofftimes == nil) {
-		onoff = [NSMutableArray arrayWithCapacity: 1];
-	} else {
-		// Make it mutable.
-		onoff = [NSMutableArray arrayWithArray: onofftimes];
-	}
+	return onofftimes;	
+}
+
+- (NSMutableArray *) removeDuplicatesForRBD: (RepoButtonDelegate *)rbd {
+	NSArray *onofftimes = [self getOnOffTimesForRBD: rbd];
+	if (onofftimes == nil)
+		return [NSMutableArray arrayWithCapacity: 1];
 	
-	// Insert the object into the newly expanded array of onoff times.
-	[onoff addObject: item];
+	NSMutableArray *onoff = [NSMutableArray arrayWithArray: onofftimes];
 	
-	// Now, let's clean up the timers. This is tricky code that must be just right.
-	BOOL currentlyOn = NO;
 	int i;
-	int seconds = 0;
 	NSDate *lastOn = nil;
-	NSDate *lastOff = nil;
-	
+	BOOL currentlyOn = NO;
+
 	for (i = 0; i < [onoff count]; i++) {
 		NSDictionary *dict = [onoff objectAtIndex: i];
 		BOOL setting = [[dict objectForKey: @"setting"] boolValue];
@@ -83,14 +67,83 @@
 			i--;
 			continue;
 		}
+	}
+	return onoff;
+}
+
+- (void) doWorkingChange: (id) notification {
+	RepoButtonDelegate *rbd = [notification object];
+	NSMutableArray *onoff = [self removeDuplicatesForRBD: rbd];
+	NSLog(@"doWorkingChange in TimeTracker for %@", rbd);
+	
+	// Create the new time item to be inserted.
+	NSDictionary *item =
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSDate date], @"date",
+			[NSNumber numberWithBool: [rbd hasLocal]], @"setting",
+			[timeTracks objectForKey: [rbd repository]], @"messages",
+			nil];
+	[timeTracks removeObjectForKey: [rbd repository]];
+	
+	// Insert the object into the newly expanded array of onoff times.
+	[onoff addObject: item];
+	
+	// Now, let's clean up the timers. This is tricky code that must be just right.
+	BOOL currentlyOn = NO;
+	int i;
+	int seconds = 0;
+	NSDate *lastOn = nil;
+	NSDate *lastOff = nil;
+	
+	for (i = 0; i < [onoff count]; i++) {
+		NSDictionary *dict = [onoff objectAtIndex: i];
+		BOOL setting = [[dict objectForKey: @"setting"] boolValue];
+		NSDate *ts = [dict objectForKey: @"date"];
+		int timeInterval = 0;
+		
+		if (lastOn)
+			timeInterval = [ts timeIntervalSinceDate: lastOn];
+		
+		// We have just turned on.
+		if (setting) {
+			// We are not the first time turning on, so there is a turn off time previously.
+			if (lastOff) {
+				// We spent less than 30 minutes turned off.
+				if ([ts timeIntervalSinceDate: lastOff] < 60 * 30) {
+					// If we have an off after this.
+					if ([onoff count] > i + 1) {
+						// We take our previous commit messages.
+						NSArray *previousItems = [[onoff objectAtIndex: i - 1] objectForKey: @"messages"];
+						
+						// And append them to our next "off" time.
+						NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary: [onoff objectAtIndex: i + 1]];
+						
+						NSArray *newArray = [[dict objectForKey: @"messages"] arrayByAddingObjectsFromArray: previousItems];
+						NSLog(@"New array: %@", newArray);
+						if (newArray == nil) {
+							NSLog(@"new array wound up null. dict was %@", dict);
+						} else {
+							[dict setObject: newArray forKey: @"messages"];
+							[onoff replaceObjectAtIndex: i + 1 withObject: dict];
+
+							// Now we remove our previous off.
+							[onoff removeObjectAtIndex: i - 1];							
+							i--;
+						}
+						NSLog(@"Hit the magical branch.");
+						continue;
+					}
+					
+				}
+			}
+			
+		}
 		
 		if (setting) {
-			// If we turned off less than 30 minutes ago, bill for the gap time. We were probably working
-			// in one form or another.
-			if (!(lastOff && [ts timeIntervalSinceDate: lastOff] < 60 * 30))
-				lastOn = ts;
+			lastOn = ts;
 		} else {
 			lastOff = ts;
+			NSLog(@"Adding interval between %@ and %@", ts, lastOn);
 			seconds += [ts timeIntervalSinceDate: lastOn];
 		}
 		currentlyOn = setting;
@@ -98,6 +151,9 @@
 	NSLog(@"Time spent on %@: %02d:%02d:%02d",
 		[[rbd repository] lastPathComponent],
 		seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60);
+
+	NSDictionary *globalConfig = [[NSUserDefaults standardUserDefaults] objectForKey: @"cachedRepos"];
+	NSDictionary *customConfig = [globalConfig objectForKey: [rbd repository]];
 
 	NSMutableDictionary *newCustomConfig = [NSMutableDictionary dictionaryWithDictionary: customConfig];
 	[newCustomConfig setObject: onoff forKey: @"onofftimes"];
