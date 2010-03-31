@@ -15,20 +15,16 @@
 	[timeTracks setObject: arr forKey: [rbd repository]];
 }
 
-- (NSArray *)getOnOffTimesForRBD: (RepoButtonDelegate *)rbd {
+- (NSMutableArray *)getOnOffTimesForRBD: (RepoButtonDelegate *)rbd {
 	NSDictionary *globalConfig = [[NSUserDefaults standardUserDefaults] objectForKey: @"cachedRepos"];
 	NSDictionary *customConfig = [globalConfig objectForKey: [rbd repository]];
 	NSArray *onofftimes = [customConfig objectForKey: @"onofftimes"];
-	return onofftimes;	
+	if (onofftimes)
+		return [NSMutableArray arrayWithArray: onofftimes];
+	return [NSMutableArray arrayWithCapacity: 1];
 }
 
-- (NSMutableArray *) removeDuplicatesForRBD: (RepoButtonDelegate *)rbd {
-	NSArray *onofftimes = [self getOnOffTimesForRBD: rbd];
-	if (onofftimes == nil)
-		return [NSMutableArray arrayWithCapacity: 1];
-	
-	NSMutableArray *onoff = [NSMutableArray arrayWithArray: onofftimes];
-	
+- (void) removeDuplicatesInList: (NSMutableArray *)onoff {
 	int i;
 	NSDate *lastOn = nil;
 	BOOL currentlyOn = NO;
@@ -59,7 +55,14 @@
 					[onoff removeObjectAtIndex: i];
 				}
 			} else {
-				// Duplicate offs? That's simple, always remove the second one!
+				// Duplicate offs? We need to be careful with our commit messages.
+				
+				NSArray *arr = [[onoff objectAtIndex: i] objectForKey: @"messsages"];
+				if (arr) {
+					NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary: [onoff objectAtIndex: i - 1]];
+					[dict setObject: arr forKey: @"messages"];
+					[onoff replaceObjectAtIndex: i - 1 withObject: dict];
+				}
 				[onoff removeObjectAtIndex: i];
 			}
 			
@@ -67,15 +70,18 @@
 			i--;
 			continue;
 		}
+		currentlyOn = setting;
 	}
-	return onoff;
+	NSLog(@"Cleaned up: %@", onoff);
 }
 
 - (void) doWorkingChange: (id) notification {
 	RepoButtonDelegate *rbd = [notification object];
-	NSMutableArray *onoff = [self removeDuplicatesForRBD: rbd];
 	NSLog(@"doWorkingChange in TimeTracker for %@", rbd);
-	
+
+	// Get the list as it stands now.
+	NSMutableArray *onoff = [self getOnOffTimesForRBD: rbd];	
+
 	// Create the new time item to be inserted.
 	NSDictionary *item =
 		[NSDictionary dictionaryWithObjectsAndKeys:
@@ -87,6 +93,9 @@
 	
 	// Insert the object into the newly expanded array of onoff times.
 	[onoff addObject: item];
+
+	// Now we remove our duplicates.
+	[self removeDuplicatesInList: onoff];	
 	
 	// Now, let's clean up the timers. This is tricky code that must be just right.
 	BOOL currentlyOn = NO;
@@ -157,6 +166,8 @@
 
 	NSMutableDictionary *newCustomConfig = [NSMutableDictionary dictionaryWithDictionary: customConfig];
 	[newCustomConfig setObject: onoff forKey: @"onofftimes"];
+	
+	NSLog(@"New settings: %@", newCustomConfig);
 	
 	NSMutableDictionary *newGlobalConfig = [NSMutableDictionary dictionaryWithDictionary: globalConfig];
 	[newGlobalConfig setObject: newCustomConfig forKey: [rbd repository]];
