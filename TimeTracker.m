@@ -87,8 +87,13 @@
 		if (setting) {
 			// If we turned off less than 30 minutes ago, bill for the gap time. We were probably working
 			// in one form or another.
-			if (!(lastOff && [ts timeIntervalSinceDate: lastOff] < 60 * 30))
+			if (!(lastOff && [ts timeIntervalSinceDate: lastOff] < 60 * 30)) {
 				lastOn = ts;
+			} else {
+				if (lastOff) {
+					NSLog(@"Billing for a gap of %d seconds", (unsigned int)[ts timeIntervalSinceDate: lastOff]);
+				}
+			}
 		} else {
 			lastOff = ts;
 			seconds += [ts timeIntervalSinceDate: lastOn];
