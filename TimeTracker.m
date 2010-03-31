@@ -72,7 +72,6 @@
 		}
 		currentlyOn = setting;
 	}
-	NSLog(@"Cleaned up: %@", onoff);
 }
 
 - (void) doWorkingChange: (id) notification {
@@ -80,7 +79,8 @@
 	NSLog(@"doWorkingChange in TimeTracker for %@", rbd);
 
 	// Get the list as it stands now.
-	NSMutableArray *onoff = [self getOnOffTimesForRBD: rbd];	
+	NSMutableArray *onoff = [self getOnOffTimesForRBD: rbd];
+	NSLog(@"Initial: %@", onoff);
 
 	// Create the new time item to be inserted.
 	NSDictionary *item =
@@ -93,9 +93,13 @@
 	
 	// Insert the object into the newly expanded array of onoff times.
 	[onoff addObject: item];
+	
+	NSLog(@"Add item: %@", onoff);
 
 	// Now we remove our duplicates.
 	[self removeDuplicatesInList: onoff];	
+	
+	NSLog(@"Remove duplicates: %@", onoff);
 	
 	// Now, let's clean up the timers. This is tricky code that must be just right.
 	BOOL currentlyOn = NO;
@@ -164,17 +168,16 @@
 		}
 		currentlyOn = setting;
 	}
-	NSLog(@"Time spent on %@: %02d:%02d:%02d",
-		[[rbd repository] lastPathComponent],
-		seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60);
+	NSLog(@"Cleanup: %@", onoff);
+	// NSLog(@"Time spent on %@: %02d:%02d:%02d",
+	// 	[[rbd repository] lastPathComponent],
+	// 	seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60);
 
 	NSDictionary *globalConfig = [[NSUserDefaults standardUserDefaults] objectForKey: @"cachedRepos"];
 	NSDictionary *customConfig = [globalConfig objectForKey: [rbd repository]];
 
 	NSMutableDictionary *newCustomConfig = [NSMutableDictionary dictionaryWithDictionary: customConfig];
 	[newCustomConfig setObject: onoff forKey: @"onofftimes"];
-	
-	NSLog(@"New settings: %@", newCustomConfig);
 	
 	NSMutableDictionary *newGlobalConfig = [NSMutableDictionary dictionaryWithDictionary: globalConfig];
 	[newGlobalConfig setObject: newCustomConfig forKey: [rbd repository]];
