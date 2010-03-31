@@ -135,7 +135,7 @@
 						if ([dict objectForKey: @"messages"])
 							newArray = [previousItems arrayByAddingObjectsFromArray: [dict objectForKey: @"messages"]];
 						else
-							newArray = previousItems;
+							newArray = previousItems; 
 							
 						NSLog(@"New array: %@", newArray);
 						if (newArray) {
