@@ -138,9 +138,7 @@
 							newArray = previousItems;
 							
 						NSLog(@"New array: %@", newArray);
-						if (newArray == nil) {
-							NSLog(@"new array wound up null. dict was %@", dict);
-						} else {
+						if (newArray) {
 							[dict setObject: newArray forKey: @"messages"];
 							[onoff replaceObjectAtIndex: i + 1 withObject: dict];
 
