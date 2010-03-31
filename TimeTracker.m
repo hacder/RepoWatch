@@ -136,8 +136,12 @@
 							[onoff replaceObjectAtIndex: i + 1 withObject: dict];
 
 							// Now we remove our previous off.
+							NSLog(@"Removing %@", [onoff objectAtIndex: i - 1]);
 							[onoff removeObjectAtIndex: i - 1];
+							NSLog(@"Removing %@", [onoff objectAtIndex: i - 1]);
 							[onoff removeObjectAtIndex: i - 1];
+							NSLog(@"Last on: %@", lastOn);
+							NSLog(@"Last off: %@", lastOff); 
 							i -= 2;
 						}
 
