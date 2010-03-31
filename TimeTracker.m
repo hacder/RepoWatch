@@ -133,7 +133,7 @@
 						
 						NSArray *newArray;
 						if ([dict objectForKey: @"messages"])
-							newArray = [[dict objectForKey: @"messages"] arrayByAddingObjectsFromArray: previousItems];
+							newArray = [previousItems arrayByAddingObjectsFromArray: [dict objectForKey: @"messages"]];
 						else
 							newArray = previousItems;
 							
