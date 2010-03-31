@@ -3,6 +3,12 @@
 
 @implementation TimeTracker
 
+- (void) addCommitMessage: (id) notification {
+	RepoButtonDelegate *rbd = [notification object];
+	NSString *message = [[notification userInfo] objectForKey: @"commitMessage"];
+	NSLog(@"%@ used message %@", rbd, message);
+}
+
 - (void) doWorkingChange: (id) notification {
 	RepoButtonDelegate *rbd = [notification object];
 	
@@ -90,6 +96,7 @@
 	[timeTracks retain];
 	
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(doWorkingChange:) name: @"repoModChange" object: nil];
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(addCommitMessage:) name: @"repoAddCommit" object: nil];
 	return self;
 }
 
