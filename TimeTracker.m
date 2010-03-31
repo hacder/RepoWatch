@@ -138,9 +138,7 @@
 							lastOn = lastOff;
 
 							// Now we remove our previous off.
-							NSLog(@"Removing %@", [onoff objectAtIndex: i - 1]);
 							[onoff removeObjectAtIndex: i - 1];
-							NSLog(@"Removing %@", [onoff objectAtIndex: i - 1]);
 							[onoff removeObjectAtIndex: i - 1];
 							i -= 2;
 						}
@@ -157,7 +155,6 @@
 			lastOn = ts;
 		} else {
 			lastOff = ts;
-			NSLog(@"Adding interval between %@ and %@", ts, lastOn);
 			seconds += [ts timeIntervalSinceDate: lastOn];
 		}
 		currentlyOn = setting;
