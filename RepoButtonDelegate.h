@@ -46,6 +46,7 @@
 - (void) setDirty: (BOOL)b;
 - (NSString *)repositoryPath;
 - (NSString *)getTimeWorked;
+- (NSString *)repository;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;

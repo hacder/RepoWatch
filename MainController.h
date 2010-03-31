@@ -2,6 +2,7 @@
 #import <AppKit/AppKit.h>
 #import "Scanner.h"
 #import "QuitButtonDelegate.h"
+#import "TimeTracker.h"
 
 // This is the mega class. Many things need to be moved out of here.
 
@@ -21,6 +22,7 @@
 	Scanner *scanner;
 	QuitButtonDelegate *quit;
 	ButtonDelegate *activeBD;
+	TimeTracker *tt;
 
 @public	
 	IBOutlet NSWindow *commitWindow;

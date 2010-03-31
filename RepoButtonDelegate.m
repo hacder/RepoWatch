@@ -210,45 +210,16 @@ void callbackFunction(
 
 - (void) setLocalMod: (BOOL) b {
 	if (localMod != b) {
-		NSLog(@"Setting local mod of %@ to %d at %@", repository, b, [NSDate date]);
-		NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys: [NSDate date], @"date", [NSNumber numberWithBool: b], @"setting", nil];
-
-		NSArray *arr = [config objectForKey: @"onofftimes"];
-		arr = [arr arrayByAddingObject: item];
-		[config setObject: arr forKey: @"onofftimes"];
-		
-		NSDictionary *dict = [[NSUserDefaults standardUserDefaults] objectForKey: @"cachedRepos"];
-		NSMutableDictionary *dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
-		[dict2 setObject: config forKey: repository];
-		[[NSUserDefaults standardUserDefaults] setObject: dict2 forKey: @"cachedRepos"];
-		[[NSUserDefaults standardUserDefaults] synchronize];
 		localMod = b;
 		
-		if (!localMod) {
-			int i;
-			int seconds = 0;
-			BOOL currentlyOn = NO;
-			NSDate *lastOn;
-			
-			for (i = 0; i < [arr count]; i++) {
-				NSDictionary *item = [arr objectAtIndex: i];
-				NSDate *ts = [item objectForKey: @"date"];
-				BOOL nowOn = [[item objectForKey: @"setting"] boolValue];
-				
-				if (nowOn == currentlyOn)
-					continue;
-				
-				if (nowOn) {
-					lastOn = ts;
-				} else {
-					seconds += [ts timeIntervalSinceDate: lastOn];
-				}
-				currentlyOn = nowOn;
-			}
-			
-			NSLog(@"Time spent on %@: %02d:%02d:%02d", [repository lastPathComponent], seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60);
-		}
+		[[NSNotificationCenter defaultCenter] postNotificationName: @"repoModChange" object: self];
+		
+		NSLog(@"Setting local mod of %@ to %d at %@", repository, b, [NSDate date]);
 	}
+}
+
+- (NSString *)repository {
+	return repository;
 }
 
 - (void) checkLocal: (NSTimer *) t {

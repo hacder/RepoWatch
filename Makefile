@@ -2,7 +2,7 @@
 
 SRC = icons.m ButtonDelegate.m RepoButtonDelegate.m Scanner.m \
 	MainController.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
-	QuitButtonDelegate.m BugController.m \
+	QuitButtonDelegate.m BugController.m TimeTracker.m \
 	BubbleFactory.m RepoHelper.m TaskQueue.m DiffSet.m Diff.m FileDiff.m
 
 CFLAGS=-F./RepoWatch.app/Contents/Frameworks -Wall -Werror -g -arch x86_64 -arch i386

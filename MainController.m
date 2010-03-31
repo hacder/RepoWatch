@@ -75,6 +75,9 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 - init {
 	self = [super init];
 	
+	tt = [[TimeTracker alloc] init];
+	[tt retain];
+	
 	// The active button delegate. This is the Button Delegate that has control of the main menu
 	// text and image.
 	activeBD = nil;
