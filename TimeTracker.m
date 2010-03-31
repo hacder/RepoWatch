@@ -139,6 +139,8 @@
 							[onoff removeObjectAtIndex: i - 1];							
 							i--;
 						}
+						
+						// Stupid debug for now.
 						NSLog(@"Hit the magical branch.");
 						continue;
 					}
