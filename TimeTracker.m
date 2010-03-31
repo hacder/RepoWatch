@@ -164,6 +164,7 @@
 			lastOn = ts;
 		} else {
 			lastOff = ts;
+			NSLog(@"Adding interval between %@ and %@", ts, lastOn);
 			seconds += [ts timeIntervalSinceDate: lastOn];
 		}
 		currentlyOn = setting;
