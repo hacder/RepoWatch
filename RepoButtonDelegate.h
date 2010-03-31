@@ -17,7 +17,6 @@
 	NSTimer *timer;
 	NSArray *currentUntracked;
 	NSDate *lastRemote;
-	NSMutableDictionary *config;
 	
 	NSString *localDiffSummary; // lines changed, files modified, etc.
 	NSAttributedString *localDiff; // the actual diff

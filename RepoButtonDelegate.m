@@ -30,11 +30,6 @@ void callbackFunction(
 	localMod = NO;
 	upstreamMod = NO;
 	untrackedFiles = NO;
-	config = [[NSMutableDictionary alloc] init];
-	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSDictionary *allRepos = [defaults objectForKey: @"cachedRepos"];
-	NSDictionary *thisRepo = [allRepos objectForKey: repo];
-	[config setDictionary: thisRepo];
 	
 	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
 	[timer retain];
