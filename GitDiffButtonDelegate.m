@@ -194,10 +194,12 @@
 		
 	[mc->commitWindow setTitle: repository];
 	[mc->commitWindow makeFirstResponder: mc->tv];
+	
+	NSLog(@"Doing it, right here.");
+	[mc->fileList setDataSource: currLocalDiff];
 
 	if (localMod) {	
 		[mc->tv setEditable: YES];
-
 		[mc->tv setString: @""];
 
 		// Insert text is the only method that is documented to take an attributed string.
