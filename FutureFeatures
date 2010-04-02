@@ -38,6 +38,8 @@ Done:
 * Make files in Diff class actually be represented by FileDiff.
 * Continue settling on more sane per-repository set of code.
 * Startup time is very very poor. Why?
+	* Seems to be network related. Killing the network obviously kills some features,
+	  but also makes it load very quickly.
 
 Future Features
 ---------------

@@ -6,11 +6,23 @@
 	self = [super init];
 	files = [NSMutableArray arrayWithCapacity: 10];
 	[files retain];
+	backingStore = [NSMutableArray arrayWithCapacity: 10];
+	[backingStore retain];
 	return self;
 }
 
+- (void) start {
+	[backingStore removeAllObjects];
+}
+
+- (void) flip {
+	NSMutableArray *tmp = backingStore;
+	backingStore = files;
+	files = tmp;
+}
+
 - (void) addFile: (NSString *)fileName {
-	[files addObject: fileName];
+	[backingStore addObject: fileName];
 }
 
 - (int) numberOfRowsInTableView: (NSTableView *)tv {

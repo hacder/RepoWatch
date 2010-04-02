@@ -18,11 +18,32 @@
 	return self;
 }
 
+- (void) doFileDiff {
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff-files", @"--name-only", nil]];
+	[tq addTask: t withCallback: ^(NSArray *resultarr) {
+		if (!currLocalDiff) {
+			currLocalDiff = [[Diff alloc] init];
+			[currLocalDiff retain];
+		}
+		int i;
+		[currLocalDiff start];
+		for (i = 0; i < [resultarr count]; i++) {
+			[currLocalDiff addFile: [resultarr objectAtIndex: i]];
+		}
+		[currLocalDiff flip];
+		if ([mc->fileList dataSource] == currLocalDiff)
+			[mc->fileList reloadData];
+		[[NSNotificationCenter defaultCenter] postNotificationName: @"localFilesChange" object: self];
+	}];
+}
+
 - (void) checkLocal: (NSTimer *)ti {
 	if (!dirty) {
 		[super checkLocal: ti];
 		return;
 	}
+	[self doFileDiff];
+	
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", @"HEAD", nil];
 	NSTask *t = [self taskFromArguments: arr];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
@@ -48,18 +69,8 @@
 			[localDiff autorelease];
 			localDiff = [RepoHelper colorizedDiffFromArray: resultarr];
 			[localDiff retain];
-			NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff-files", @"--name-only", nil]];
-			[tq addTask: t withCallback: ^(NSArray *resultarr) {
-				[currLocalDiff autorelease];
-				currLocalDiff = [[Diff alloc] init];
-				int i;
-				for (i = 0; i < [resultarr count]; i++) {
-					[currLocalDiff addFile: [resultarr objectAtIndex: i]];
-				}
-				[currLocalDiff retain];
-				[super checkLocal: ti];
-				[self realFire];
-			}];
+			[super checkLocal: ti];
+			[self realFire];
 		}];
 	}];
 }
@@ -188,15 +199,11 @@
 	}];
 }
 
-- (void) commit: (id) menuItem {
+- (void) commit: (id) mi {
 	if (!localMod)
 		return;
-		
-	[mc->commitWindow setTitle: repository];
-	[mc->commitWindow makeFirstResponder: mc->tv];
-	
-	NSLog(@"Doing it, right here.");
-	[mc->fileList setDataSource: currLocalDiff];
+
+	[super commit: mi];
 
 	if (localMod) {	
 		[mc->tv setEditable: YES];

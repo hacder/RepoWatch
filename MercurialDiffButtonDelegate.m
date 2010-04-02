@@ -120,9 +120,11 @@
 }
 
 - (void) commit: (id) something {
-	[mc->commitWindow setTitle: repository];
-	[mc->commitWindow makeFirstResponder: mc->tv];
-
+	if (!localMod)
+		return;
+		
+	[super commit: something];
+	
 	[mc->tv setString: @""];
 	[mc->tv setNeedsDisplay: YES];
 	if (localMod) {	

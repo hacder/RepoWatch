@@ -180,6 +180,10 @@ void callbackFunction(
 	}
 }
 
+- (Diff *)diff {
+	return currLocalDiff;
+}
+
 - (NSString *)repository {
 	return repository;
 }
@@ -295,6 +299,9 @@ void callbackFunction(
 }
 
 - (void) commit: (id) menuItem {
+	[mc->fileList setDataSource: currLocalDiff];
+	[mc->commitWindow setTitle: repository];
+	[mc->commitWindow makeFirstResponder: mc->tv];
 }
 
 - (void) pull: (id) menuItem {

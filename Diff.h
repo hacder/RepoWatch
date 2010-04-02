@@ -9,9 +9,12 @@
 	NSString *author;
 	NSDate *ts;
 	NSMutableArray *files; // Array of FileDiff objects
+	NSMutableArray *backingStore;
 }
 
 - (void) addFile: (NSString *)fileName;
+- (void) flip;
+- (void) start;
 - (int) numberOfRowsInTableView: (NSTableView *)tv;
 - (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)col row: (NSInteger)r;
 - init;

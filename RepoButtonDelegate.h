@@ -3,6 +3,7 @@
 #import "MainController.h"
 #import "ButtonDelegate.h"
 #import "TaskQueue.h"
+#import "Diff.h"
 
 // The general class for Repository types. This needs to be renamed, cleaned up, and made
 // more powerful. Eventually I want the ability to easily add new repository types, and this
@@ -17,6 +18,7 @@
 	NSTimer *timer;
 	NSArray *currentUntracked;
 	NSDate *lastRemote;
+	Diff *currLocalDiff;
 	
 	NSString *localDiffSummary; // lines changed, files modified, etc.
 	NSAttributedString *localDiff; // the actual diff
@@ -42,6 +44,7 @@
 - (void) setDirty: (BOOL)b;
 - (NSString *)repositoryPath;
 - (NSString *)repository;
+- (Diff *)diff;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;
