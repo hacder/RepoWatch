@@ -25,7 +25,9 @@
 
 - (void) showWindow {
 	NSLog(@"Got here...");
+	[NSApp activateIgnoringOtherApps: YES];
 	[taskSwitcherWindow makeKeyAndOrderFront: NSApp];
+	[taskSwitcherWindow center];
 }
 
 @end
