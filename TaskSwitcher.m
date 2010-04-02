@@ -14,7 +14,7 @@
 		[oldCommits setObject: [NSMutableArray arrayWithCapacity: 1] forKey: key];
 	if ([[oldCommits objectForKey: key] containsObject: [[note userInfo] objectForKey: @"commitMessage"]])
 		return;
-	[[oldCommits objectForKey: key] addObject: [[note userInfo] objectForKey: @"commitMessage"]];
+	[[oldCommits objectForKey: key] addObject: [[note userInfo] objectForKey: @"commitMessage"]]; 
 	
 	NSLog(@"Old Commits is now %@", oldCommits);
 }
