@@ -3,6 +3,7 @@
 #import "Scanner.h"
 #import "QuitButtonDelegate.h"
 #import "TimeTracker.h"
+#import "TaskSwitcher.h"
 
 // This is the mega class. Many things need to be moved out of here.
 
@@ -31,6 +32,8 @@
 	IBOutlet NSTextView *tv;
 	IBOutlet NSButton *butt;
 	IBOutlet NSTextView *diffView;
+	
+	IBOutlet TaskSwitcher *tc;
 	
 	IBOutlet NSWindow *diffCommitWindow;
 	IBOutlet NSButton *undoSingleButton;

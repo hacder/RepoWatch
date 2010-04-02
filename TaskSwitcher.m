@@ -23,4 +23,8 @@
 	return self;
 }
 
+- (void) showWindow {
+	[taskSwitcherWindow makeKeyAndOrderFront: nil];
+}
+
 @end

@@ -60,11 +60,8 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 				return noErr;
 			}
 			
-			// If we found the "most important" Repo Button and there is no action, nothing
-			// "less important" will have an action, so we'll just bail early. Nothing to do...
-			// I need to integrate task switching here. You can't task switch if you have
-			// repository work to do (this is a good thing), but if you're wanting to do something
-			// with no repository work, maybe you're trying to task switch.
+			// Alright, let's let the user use the task switcher.
+			[mc->tc showWindow];
 			
 			return noErr;
 		}

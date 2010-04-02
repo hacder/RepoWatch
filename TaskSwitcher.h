@@ -5,6 +5,10 @@
 
 @interface TaskSwitcher : NSObject {
 	NSMutableDictionary *oldCommits;
+
+	IBOutlet NSWindow *taskSwitcherWindow;
 }
+
+- (void) showWindow;
 
 @end
