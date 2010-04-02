@@ -24,6 +24,7 @@
 }
 
 - (void) showWindow {
+	NSLog(@"Got here...");
 	[taskSwitcherWindow makeKeyAndOrderFront: nil];
 }
 
