@@ -302,6 +302,7 @@ void callbackFunction(
 	[mc->fileList setDataSource: currLocalDiff];
 	[mc->commitWindow setTitle: repository];
 	[mc->commitWindow makeFirstResponder: mc->tv];
+	[mc->diffSearch setStringValue: @""];
 }
 
 - (void) pull: (id) menuItem {

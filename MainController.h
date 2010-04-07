@@ -32,6 +32,7 @@
 	IBOutlet NSTextView *tv;
 	IBOutlet NSButton *butt;
 	IBOutlet NSTextView *diffView;
+	IBOutlet NSSearchField *diffSearch;
 	
 	IBOutlet TaskSwitcher *tc;
 	
