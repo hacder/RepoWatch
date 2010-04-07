@@ -2,8 +2,8 @@
 
 @implementation QuitButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
+- initWithTitle: (NSString *)s mainController: (MainController *)mcc {
+	self = [super initWithTitle: s mainController: mcc];
 	return self;
 }
 

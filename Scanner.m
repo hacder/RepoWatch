@@ -151,8 +151,8 @@ char *find_execable(const char *filename) {
 	[[NSNotificationCenter defaultCenter] postNotificationName: @"scannerDone" object: self];
 }
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
+- initWithTitle: (NSString *)s mainController: (MainController *)mcc {
+	self = [super initWithTitle: s mainController: mcc];
 	lock = [[NSLock alloc] init];
 	
 	git = find_execable("git");
@@ -167,7 +167,6 @@ char *find_execable(const char *filename) {
 }
 
 - (void) beep: (id) something {
-	[statusItem setTitle: @"Scanning..."];
 	[self findSupportedSCMS];
 }
 
@@ -187,7 +186,6 @@ char *find_execable(const char *filename) {
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self searchAllPaths];
 		dispatch_async(dispatch_get_main_queue(), ^{
-			[statusItem setTitle: @"Done scanning"];
 			[lock unlock];
 			[mc ping];
 		});
@@ -230,9 +228,6 @@ char *find_execable(const char *filename) {
 				[paths addObject: s];
 			}
 		}
-		dispatch_async(dispatch_get_main_queue(), ^{			
-			[statusItem setTitle: [NSString stringWithFormat: @"Scanning %d directories", [paths count]]];
-		});
 		if ([paths count] > 1000) {
 			int delay = [paths count] / 100;
 			struct timespec ts;
@@ -251,17 +246,17 @@ char *find_execable(const char *filename) {
 	if ([contents containsObject: @".git"]) {
 		if (git) {
 			[self addCachedRepoPath: path];
-			[[GitDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
-				menu: menu statusItem: statusItem mainController: mc
-				gitPath: git repository: path];
+			GitDiffButtonDelegate *gdbd = [[GitDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
+				mainController: mc gitPath: git repository: path];
+			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: gdbd];
 			return YES;
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
 			[self addCachedRepoPath: path];
-			[[MercurialDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
-				menu: menu statusItem: statusItem mainController: mc
-				hgPath: hg repository: path];
+			MercurialDiffButtonDelegate *mdbd = [[MercurialDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
+				mainController: mc hgPath: hg repository: path];
+			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: mdbd];
 			return YES;
 		}
 	}

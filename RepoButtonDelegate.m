@@ -18,8 +18,18 @@ void callbackFunction(
 	[rbd setDirty: YES];
 }
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc repository: (NSString *)repo {
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
+- (int) getStateValue {
+	if ([self hasUntracked])
+		return 40;
+	if ([self hasLocal])
+		return 30;
+	if ([self hasUpstream])
+		return 20;
+	return 10;
+}
+
+- initWithTitle: (NSString *)s mainController: (MainController *)mcc repository: (NSString *)repo {
+	self = [super initWithTitle: s mainController: mcc];
 
 	repository = repo;
 	[repository retain];
@@ -31,8 +41,7 @@ void callbackFunction(
 	upstreamMod = NO;
 	untrackedFiles = NO;
 	
-	timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
-	[timer retain];
+	[self checkLocal: nil];
 	
 	if (!repos) {
 		repos = [NSMutableArray arrayWithCapacity: 10];
@@ -73,13 +82,6 @@ void callbackFunction(
 - (void) setDirty: (BOOL)b {
 	if (dirty != b)
 		dirty = b;
-}
-
-- (void) addMenuItem {
-	menuItem = [menu insertItemWithTitle: title action: @selector(beep:) keyEquivalent: @"" atIndex: 1];
-	[menuItem retain];
-	[menuItem setTarget: self];
-	[menuItem setAction: @selector(beep:)];
 }
 
 - (void) setupUpstream {
@@ -177,6 +179,7 @@ void callbackFunction(
 	if (localMod != b) {
 		localMod = b;		
 		[[NSNotificationCenter defaultCenter] postNotificationName: @"repoModChange" object: self];
+		[[NSNotificationCenter defaultCenter] postNotificationName: @"repoStateChange" object: self];
 	}
 }
 
@@ -191,7 +194,6 @@ void callbackFunction(
 - (void) checkLocal: (NSTimer *) t {
 	// NOTE: Doing this on a background thread makes NSTimer confused about where to run when it fires, so it starts missing.
 	//       Since we're only re-creating this timer as a result of this timer running, we REALLY do not want to miss.
-	NSLog(@"checkLocal: %@", [repository lastPathComponent]);
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[timer autorelease];
 		[timer invalidate];

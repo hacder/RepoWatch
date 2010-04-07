@@ -2,30 +2,22 @@
 #import <AppKit/AppKit.h>
 #import "Scanner.h"
 #import "QuitButtonDelegate.h"
-#import "TimeTracker.h"
 #import "TaskSwitcher.h"
+#import "MainMenu.h"
 
 // This is the mega class. Many things need to be moved out of here.
 
 @class ButtonDelegate;
 
 @interface MainController : NSObject {
-	NSStatusItem *statusItem;
-	NSMenu *theMenu;
+	MainMenu *theMenu;
 
-	NSMenuItem *normalSeparator;
-	NSMenuItem *upstreamSeparator;
-	NSMenuItem *localSeparator;
-	
 	char *date;
 	char *time;
 	
 	Scanner *scanner;
 	QuitButtonDelegate *quit;
 	ButtonDelegate *activeBD;
-	
-	// This is a TimeTracker, but we're not hard-coding the existance of that class anywhere
-	id tt;
 
 @public	
 	IBOutlet NSWindow *commitWindow;

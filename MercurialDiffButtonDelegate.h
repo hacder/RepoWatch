@@ -8,6 +8,6 @@
 	char *hg;
 }
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mc hgPath: (char *)hgPath repository: (NSString *)rep;
+- initWithTitle: (NSString *)s mainController: (MainController *)mc hgPath: (char *)hgPath repository: (NSString *)rep;
 
 @end

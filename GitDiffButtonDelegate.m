@@ -4,11 +4,9 @@
 
 @implementation GitDiffButtonDelegate
 
-- initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc
-		gitPath: (char *)gitPath repository: (NSString *)rep {
-
+- initWithTitle: (NSString *)s mainController: (MainController *)mcc gitPath: (char *)gitPath repository: (NSString *)rep {
 	git = gitPath;
-	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
+	self = [super initWithTitle: s mainController: mcc repository: rep];
 	
 	diffCommitTV = mc->diffCommitTextView;
 	[diffCommitTV retain];

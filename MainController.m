@@ -77,32 +77,11 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 - init {
 	self = [super init];
 	
-	tt = [[NSClassFromString(@"TimeTracker") alloc] init];
-	[tt retain];
-	
 	// The active button delegate. This is the Button Delegate that has control of the main menu
 	// text and image.
 	activeBD = nil;
 	
-	// Set up our main status bar. This is the area where the most pressing information is
-	// displayed.
-	NSStatusBar *bar = [NSStatusBar systemStatusBar];
-	statusItem = [bar statusItemWithLength: NSVariableStatusItemLength];
-	[statusItem retain];
-	
-	// Let's put up some text that lets the user know that we're doing something.
-	[statusItem setTitle: NSLocalizedString(@"Starting Up...", @"")];
-	[statusItem setHighlightMode: YES];
-	
-	// I am really not sure what this title means. This is the submenu that all of our
-	// repositories put their main menu inside.
-	theMenu = [[[NSMenu alloc] initWithTitle: @"Testing"] retain];
-	
-	// We want our items to always be enabled. Screw what the system thinks should happen.
-	[theMenu setAutoenablesItems: NO];
-	
-	// Put our submenu into our main menu.
-	[statusItem setMenu: theMenu];
+	theMenu = [[[MainMenu alloc] init] retain];
 	
 	// Set up a universal ID. This is used a lot on the backend to collate things into individual
 	// users. It's not personally identifying (at least, not without you helping me out a bit),
@@ -130,18 +109,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	myHotKeyID.id = 1;
 	RegisterEventHotKey(36, cmdKey + optionKey, myHotKeyID, GetApplicationEventTarget(), 0, &myHotKeyRef);
 	
-	// Allocate our separator bars. These aren't visible, but are used in our sorting algorithms to identify
-	// boundaries between types of repositories. We cheat.
-	localSeparator = [NSMenuItem separatorItem];
-	[localSeparator setHidden: YES];
-	[theMenu addItem: localSeparator];
-	upstreamSeparator = [NSMenuItem separatorItem];
-	[upstreamSeparator setHidden: YES];
-	[theMenu addItem: upstreamSeparator];
-	normalSeparator = [NSMenuItem separatorItem];
-	[normalSeparator setHidden: YES];  
-	[theMenu addItem: normalSeparator];
-	
 	// Set up Sparkle. Unfortunately I haven't started using this yet, and I'm not sure how to make it do the
 	// updates correctly, but it's here already.
 	SUUpdater *updater = [SUUpdater sharedUpdater];
@@ -153,16 +120,10 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			[build stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding]]]];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
 
-	// Put in the bottom menu items that are not controlled by individual repositories.
-	[theMenu addItem: [NSMenuItem separatorItem]];
-	
-	scanner = [[Scanner alloc] initWithTitle: @"Scan For Repositories" menu: theMenu statusItem: statusItem mainController: self];
-	quit = [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self];
+	scanner = [[Scanner alloc] initWithTitle: @"Scan For Repositories" mainController: self];
+	quit = [[QuitButtonDelegate alloc] initWithTitle: @"Quit" mainController: self];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
-	// If we have no repositories, we should ask the user to scan. This will be undone somewhat when we have a 
-	// startup wizard. But this is a LOT better than what we did have.
-	[statusItem setTitle: NSLocalizedString(@"No Repositories? Try Scanning", @"")];
     return self;
 }
 
@@ -308,23 +269,12 @@ NSInteger intSort(id num1, id num2, void *context) {
 	NSApplication *app = [NSApplication sharedApplication];
 	if ([rbd hasUntracked]) {
 		[app setApplicationIconImage: [[BubbleFactory getBlueOfSize: [[app dockTile] size].height] autorelease]];
-		[statusItem setImage: [BubbleFactory getBlueOfSize: 15]];
-		if (withString)
-			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasLocal]) {
 		[app setApplicationIconImage: [[BubbleFactory getRedOfSize: [[app dockTile] size].height] autorelease]];
-		[statusItem setImage: [BubbleFactory getRedOfSize: 15]];
-		if (withString)
-			[statusItem setTitle: [rbd shortTitle]];
 	} else if ([rbd hasUpstream]) {
 		[app setApplicationIconImage: [[BubbleFactory getYellowOfSize: [[app dockTile] size].height] autorelease]];
-		[statusItem setImage: [BubbleFactory getYellowOfSize: 15]];
-		if (withString)
-			[statusItem setTitle: [rbd shortTitle]];
 	} else {
 		[app setApplicationIconImage: [[BubbleFactory getGreenOfSize: [[app dockTile] size].height] autorelease]];
-		[statusItem setImage: [BubbleFactory getGreenOfSize: 15]];
-		[statusItem setTitle: @""];
 	}
 }
 
@@ -332,6 +282,8 @@ NSInteger intSort(id num1, id num2, void *context) {
 // and any time that the system knows that things have changed. It is the main method for updating global state.
 - (void) ping {
 	dispatch_async(dispatch_get_main_queue(), ^{
+		if (![theMenu numberOfItems])
+			return;
 		NSMenuItem *mi = [theMenu itemAtIndex: 1];
 		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
 		if (!rbd) {
@@ -341,9 +293,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 		activeBD = rbd;
 	
 		int noString = [[NSUserDefaults standardUserDefaults] integerForKey: @"suppressText"];
-		if (noString)
-			[statusItem setTitle: @""];
-		
 		[self setProperIconForButton: rbd withString: !noString];
 	});
 }
