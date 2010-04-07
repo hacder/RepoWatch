@@ -132,38 +132,41 @@ char *find_execable(const char *filename) {
 	return NULL;
 }
 
+- (void) findRepositories {
+	NSDate *start = [NSDate date];
+	NSDictionary *dict;
+	NSArray *contents;
+	
+	dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
+	if ([dict count]) {
+		for (NSString *key in dict) {
+			contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
+			[self testDirectoryContents: contents ofPath: [key stringByStandardizingPath]];
+		}
+	} else {
+		[self searchAllPaths];
+	}
+	NSDate *end = [NSDate date];
+	NSLog(@"Time interval: %0.2f", [end timeIntervalSinceDate: start]);	
+	[[NSNotificationCenter defaultCenter] postNotificationName: @"scannerDone" object: self];
+}
+
 - initWithTitle: (NSString *)s menu: (NSMenu *)m statusItem: (NSStatusItem *)si mainController: (MainController *)mcc {
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc];
-	done = NO;
-	lock = [[NSLock alloc] init];	
-
+	lock = [[NSLock alloc] init];
+	
 	git = find_execable("git");
 	hg = find_execable("hg");
 	NSLog(@"Git: %s Mercurial: %s", git, hg);
 	
-	NSDictionary *dict;
-	dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"cachedRepos"];
-	for (NSString *key in dict) {
-		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
-		[self testDirectoryContents: contents ofPath: [key stringByStandardizingPath]];
-	}
-
-	dict = [[NSUserDefaults standardUserDefaults] dictionaryForKey: @"manualRepos"];
-	for (NSString *key in dict) {
-		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: key error: nil];
-		[self testDirectoryContents: contents ofPath: [key stringByStandardizingPath]];
-	}
-	done = YES;
-
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		[self findRepositories];
+	});
+	
 	return self;
 }
 
-- (BOOL) isDone {
-	return done;
-}
-
 - (void) beep: (id) something {
-	done = NO;
 	[statusItem setTitle: @"Scanning..."];
 	[self findSupportedSCMS];
 }
@@ -186,7 +189,6 @@ char *find_execable(const char *filename) {
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[statusItem setTitle: @"Done scanning"];
 			[lock unlock];
-			done = YES;
 			[mc ping];
 		});
 	});
@@ -228,7 +230,9 @@ char *find_execable(const char *filename) {
 				[paths addObject: s];
 			}
 		}
-		[statusItem setTitle: [NSString stringWithFormat: @"Scanning %d directories", [paths count]]];
+		dispatch_async(dispatch_get_main_queue(), ^{			
+			[statusItem setTitle: [NSString stringWithFormat: @"Scanning %d directories", [paths count]]];
+		});
 		if ([paths count] > 1000) {
 			int delay = [paths count] / 100;
 			struct timespec ts;

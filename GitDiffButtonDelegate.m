@@ -9,7 +9,6 @@
 
 	git = gitPath;
 	self = [super initWithTitle: s menu: m statusItem: si mainController: mcc repository: rep];
-	[menuItem setAction: nil];
 	
 	diffCommitTV = mc->diffCommitTextView;
 	[diffCommitTV retain];

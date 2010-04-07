@@ -235,24 +235,26 @@
 
 - (void) handleRemoteForMenu: (NSMenu *)m {
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"incoming", @"-p", nil]];
-	NSString *remoteDiffSt = [self diffStatOfTask: t];
-	
-	NSString *s2 = [self lastGoodComponentOfString: remoteDiffSt];
-	if (![s2 isEqual: @"0 files changed"]) {
-		upstreamMod = YES;
-		[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
-		NSString *sTit = [NSString stringWithFormat: @"%@: %@",
-			[RepoHelper makeNameFromRepo: self],
-			[RepoHelper shortenDiff: [s2 stringByTrimmingCharactersInSet:
-				[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self setTitle: sTit];
-			[self setShortTitle: sTit];
-			[menuItem setHidden: NO];
-		});
-	} else {
-		upstreamMod = NO;
-	}
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		NSString *remoteDiffSt = [self diffStatOfTask: t];
+
+		NSString *s2 = [self lastGoodComponentOfString: remoteDiffSt];
+		if (![s2 isEqual: @"0 files changed"]) {
+			upstreamMod = YES;
+			[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
+			NSString *sTit = [NSString stringWithFormat: @"%@: %@",
+				[RepoHelper makeNameFromRepo: self],
+				[RepoHelper shortenDiff: [s2 stringByTrimmingCharactersInSet:
+					[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[self setTitle: sTit];
+				[self setShortTitle: sTit];
+				[menuItem setHidden: NO];
+			});
+		} else {
+			upstreamMod = NO;
+		}		
+	});
 }
 
 - (void) handleLogsForMenu: (NSMenu *)m {

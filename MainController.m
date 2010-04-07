@@ -69,6 +69,11 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	return noErr;
 }
 
+- (void) scannerDone: (id)ignored {
+	NSLog(@"Scanner done");
+	[self ping];
+}
+
 - init {
 	self = [super init];
 	
@@ -150,11 +155,11 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 	// Put in the bottom menu items that are not controlled by individual repositories.
 	[theMenu addItem: [NSMenuItem separatorItem]];
+	
 	scanner = [[Scanner alloc] initWithTitle: @"Scan For Repositories" menu: theMenu statusItem: statusItem mainController: self];
 	quit = [[QuitButtonDelegate alloc] initWithTitle: @"Quit" menu: theMenu statusItem: statusItem mainController: self];
 
-	[self ping];
-	
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
 	// If we have no repositories, we should ask the user to scan. This will be undone somewhat when we have a 
 	// startup wizard. But this is a LOT better than what we did have.
 	[statusItem setTitle: NSLocalizedString(@"No Repositories? Try Scanning", @"")];
@@ -199,11 +204,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 
 // Let's do the sorting!
 - (void) maybeRefresh: (ButtonDelegate *)bd {
-	// Don't do this auto-sort if the scanner isn't complete. I'm really not sure why
-	// I did this...
-	if (![scanner isDone])
-		return;
-	
 	// Most of the menu-level work HAS to be done on the main queue, so we just do it all.
 	// When I have more time to really think this through most of this work should be done
 	// in the background. Then again, I should probably measure if that's even worth the
@@ -305,11 +305,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 }
 
 - (void) setProperIconForButton: (RepoButtonDelegate *)rbd withString: (BOOL)withString {
-	if (![scanner isDone]) {
-		withString = NO;
-		[statusItem setTitle: @"Scanning..."];
-	}
-
 	NSApplication *app = [NSApplication sharedApplication];
 	if ([rbd hasUntracked]) {
 		[app setApplicationIconImage: [[BubbleFactory getBlueOfSize: [[app dockTile] size].height] autorelease]];
@@ -336,9 +331,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 // Stupid little method that does little except call other, more important methods. This method is called periodically
 // and any time that the system knows that things have changed. It is the main method for updating global state.
 - (void) ping {
-	if (![scanner isDone])
-		return;
-	
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSMenuItem *mi = [theMenu itemAtIndex: 1];
 		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
