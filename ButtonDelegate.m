@@ -5,10 +5,8 @@
 
 @implementation ButtonDelegate
 
-- initWithTitle: (NSString *)s mainController: (MainController *)mcc {
+- initWithTitle: (NSString *)s {
 	self = [super init];
-	mc = mcc;
-	[mc retain];
 	[self setTitle: s];
 	[self setShortTitle: s];
 	return self;

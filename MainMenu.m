@@ -41,13 +41,13 @@
 	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [rbd shortTitle] action: nil keyEquivalent: @""];
 	// NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [NSString stringWithFormat: @"%@ (%d)", [rbd shortTitle], [rbd getStateValue]] action: nil keyEquivalent: @""];
 	if ([rbd getStateValue] == 40) {
-		[menuItem setOffStateImage: [BubbleFactory getBlueOfSize: 16]];
+		[menuItem setOffStateImage: [BubbleFactory getBlueOfSize: 12]];
 	} else if ([rbd getStateValue] == 30) {
-		[menuItem setOffStateImage: [BubbleFactory getRedOfSize: 16]];
+		[menuItem setOffStateImage: [BubbleFactory getRedOfSize: 12]];
 	} else if ([rbd getStateValue] == 20) {			
-		[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 16]];
+		[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 12]];
 	} else if ([rbd getStateValue] == 10) {
-		[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 16]];
+		[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 12]];
 	}	
 	
 	[menuItem setTarget: rbd];

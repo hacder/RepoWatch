@@ -35,7 +35,7 @@
 
 // In this section are the functions where the flow has been redesigned. These are the good functions.
 // After the first line break are things that might be no longer good.
-- initWithTitle: (NSString *)t mainController: (MainController *)mcc repository: (NSString *)repo;
+- initWithTitle: (NSString *)t repository: (NSString *)repo;
 - (void)setupUpstream;
 - (void) checkLocal: (NSTimer *) t;
 - (NSString *) getShort;

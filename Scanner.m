@@ -151,8 +151,8 @@ char *find_execable(const char *filename) {
 	[[NSNotificationCenter defaultCenter] postNotificationName: @"scannerDone" object: self];
 }
 
-- initWithTitle: (NSString *)s mainController: (MainController *)mcc {
-	self = [super initWithTitle: s mainController: mcc];
+- init {
+	self = [super init];
 	lock = [[NSLock alloc] init];
 	
 	git = find_execable("git");
@@ -187,7 +187,6 @@ char *find_execable(const char *filename) {
 		[self searchAllPaths];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[lock unlock];
-			[mc ping];
 		});
 	});
 }
@@ -247,7 +246,7 @@ char *find_execable(const char *filename) {
 		if (git) {
 			[self addCachedRepoPath: path];
 			GitDiffButtonDelegate *gdbd = [[GitDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
-				mainController: mc gitPath: git repository: path];
+				gitPath: git repository: path];
 			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: gdbd];
 			return YES;
 		}
@@ -255,7 +254,7 @@ char *find_execable(const char *filename) {
 		if (hg) {
 			[self addCachedRepoPath: path];
 			MercurialDiffButtonDelegate *mdbd = [[MercurialDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
-				mainController: mc hgPath: hg repository: path];
+				hgPath: hg repository: path];
 			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: mdbd];
 			return YES;
 		}

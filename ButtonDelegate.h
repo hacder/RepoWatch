@@ -9,13 +9,12 @@
 @class MainController;
 
 @interface ButtonDelegate : NSObject {
-	MainController *mc;
 	NSString *shortTitle;
 	NSMenuItem *menuItem;
 	NSString *title;
 }
 
-- initWithTitle: (NSString *)t mainController: (MainController *)mc;
+- initWithTitle: (NSString *)t;
 - (void) fire: (NSTimer *)t;
 - (NSString *) shortTitle;
 - (void) setShortTitle: (NSString *)t;

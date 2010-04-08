@@ -1,6 +1,5 @@
 #import "MainController.h"
 #import "ButtonDelegate.h"
-#import "QuitButtonDelegate.h"
 #import "GitDiffButtonDelegate.h"
 #import "MercurialDiffButtonDelegate.h"
 #import "RepoButtonDelegate.h"
@@ -120,8 +119,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			[build stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding]]]];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
 
-	scanner = [[Scanner alloc] initWithTitle: @"Scan For Repositories" mainController: self];
-	quit = [[QuitButtonDelegate alloc] initWithTitle: @"Quit" mainController: self];
+	scanner = [[Scanner alloc] init];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
     return self;

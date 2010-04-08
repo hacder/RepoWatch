@@ -4,12 +4,9 @@
 
 @implementation GitDiffButtonDelegate
 
-- initWithTitle: (NSString *)s mainController: (MainController *)mcc gitPath: (char *)gitPath repository: (NSString *)rep {
+- initWithTitle: (NSString *)s gitPath: (char *)gitPath repository: (NSString *)rep {
 	git = gitPath;
-	self = [super initWithTitle: s mainController: mcc repository: rep];
-	
-	diffCommitTV = mc->diffCommitTextView;
-	[diffCommitTV retain];
+	self = [super initWithTitle: s repository: rep];
 	
 	[self fire: nil];
 	return self;
@@ -28,8 +25,6 @@
 			[currLocalDiff addFile: [resultarr objectAtIndex: i]];
 		}
 		[currLocalDiff flip];
-		if ([mc->fileList dataSource] == currLocalDiff)
-			[mc->fileList reloadData];
 		[[NSNotificationCenter defaultCenter] postNotificationName: @"localFilesChange" object: self];
 	}];
 }
@@ -78,7 +73,6 @@
 		NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"add", [currentUntracked objectAtIndex: i], nil]];
 		[tq addTask: t withCallback: nil];
 	}
-	[mc->untrackedWindow close];
 	[self fire: nil];
 }
 
@@ -100,7 +94,6 @@
 	}
 	[fh synchronizeFile];
 	[fh closeFile];
-	[mc->untrackedWindow close];
 	[self fire: nil];
 }
 
@@ -168,30 +161,13 @@
 }
 
 - (void) pull: (id) menuItem {
-	[mc->commitWindow setTitle: repository];
-	[mc->commitWindow makeFirstResponder: mc->tv];
-
 	NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %s", nil];
 	NSTask *t = [self taskFromArguments: arr];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
-		[mc->butt setTitle: @"Update from upstream"];
-		[mc->butt setTarget: self];
-		[mc->butt setAction: @selector(upstreamUpdate:)];
-	
-		NSString *string = [resultarr componentsJoinedByString: @"\n"];
-		[mc->tv setString: string];
-		[mc->tv setEditable: NO];
-			
 		NSArray *arr = [NSArray arrayWithObjects: @"diff", @"HEAD..origin", nil];
 		NSTask *t = [self taskFromArguments: arr];
 		[tq addTask: t withCallback: ^(NSArray *resultarr) {
-			NSString *string = [resultarr componentsJoinedByString: @"\n"];
-			[mc->diffView setString: string];
-			[mc->diffView setEditable: NO];
-		
-			[mc->commitWindow center];
 			[NSApp activateIgnoringOtherApps: YES];
-			[mc->commitWindow makeKeyAndOrderFront: NSApp];
 		}];
 	}];
 }
@@ -201,22 +177,7 @@
 		return;
 
 	[super commit: mi];
-
-	if (localMod) {	
-		[mc->tv setEditable: YES];
-		[mc->tv setString: @""];
-
-		// Insert text is the only method that is documented to take an attributed string.
-		[[mc->diffView textStorage] setAttributedString: localDiff];
-		[mc->diffView scrollRangeToVisible: NSMakeRange(0, 0)];
-		[mc->butt setTitle: @"Do Commit"];
-		[mc->butt setTarget: self];
-		[mc->butt setAction: @selector(clickUpdate:)];
-	}
-	[mc->commitWindow center];
 	[NSApp activateIgnoringOtherApps: YES];
-	[mc->commitWindow makeKeyAndOrderFront: NSApp];
-	[mc->commitWindow makeFirstResponder: mc->tv];
 }
 
 - (void) upstreamUpdate: (id) sender {
@@ -224,23 +185,12 @@
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"rebase", @"origin", nil]];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
 		[NSApp hide: self];
-		[mc->commitWindow close];
 		[sender setEnabled: YES];
 		[self fire: nil];
 	}];
 }
 
 - (void) clickUpdate: (id) button {
-	NSString *commitMessage = [[mc->tv textStorage] string];
-
-	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", commitMessage, nil]];
-	[[NSNotificationCenter defaultCenter] postNotificationName: @"repoCommit" object: self userInfo: [NSDictionary dictionaryWithObjectsAndKeys: commitMessage, @"commitMessage", nil]];
-	[tq addTask: t withCallback: ^(NSArray *resultarr) {
-		[NSApp hide: self];
-		[mc->commitWindow close];
-		[self checkLocal: nil];
-		[self realFire];
-	}];
 }
 
 - (void) setupUpstream {

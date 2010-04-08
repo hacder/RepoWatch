@@ -2,7 +2,7 @@
 
 SRC = icons.m ButtonDelegate.m RepoButtonDelegate.m Scanner.m \
 	MainController.m MercurialDiffButtonDelegate.m GitDiffButtonDelegate.m \
-	QuitButtonDelegate.m BugController.m BubbleFactory.m RepoHelper.m \
+	BugController.m BubbleFactory.m RepoHelper.m \
 	TaskQueue.m DiffSet.m Diff.m FileDiff.m TaskSwitcher.m MainMenu.m
 PRO_SRC = TimeTracker.m
 

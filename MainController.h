@@ -1,7 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import "Scanner.h"
-#import "QuitButtonDelegate.h"
 #import "TaskSwitcher.h"
 #import "MainMenu.h"
 
@@ -16,7 +15,6 @@
 	char *time;
 	
 	Scanner *scanner;
-	QuitButtonDelegate *quit;
 	ButtonDelegate *activeBD;
 
 @public	

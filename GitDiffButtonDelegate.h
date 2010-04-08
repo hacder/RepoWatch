@@ -10,7 +10,7 @@
 	NSString *currentBranch;
 }
 
-- (id) initWithTitle: (NSString *)s mainController: (MainController *)mc gitPath: (char *)gitPath repository: (NSString *)rep;
+- (id) initWithTitle: (NSString *)s gitPath: (char *)gitPath repository: (NSString *)rep;
 - (NSTask *)taskFromArguments: (NSArray *)args;
 
 @end

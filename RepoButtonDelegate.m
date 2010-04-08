@@ -28,8 +28,8 @@ void callbackFunction(
 	return 10;
 }
 
-- initWithTitle: (NSString *)s mainController: (MainController *)mcc repository: (NSString *)repo {
-	self = [super initWithTitle: s mainController: mcc];
+- initWithTitle: (NSString *)s repository: (NSString *)repo {
+	self = [super initWithTitle: s];
 
 	repository = repo;
 	[repository retain];
@@ -92,14 +92,7 @@ void callbackFunction(
 	[currentUntracked release];
 	currentUntracked = [self getUntracked];
 	[currentUntracked retain];
-	[mc->untrackedTable setDataSource: self];
-	[mc->untrackedWindow center];
-	[mc->untrackedIgnoreAll setAction: @selector(ignoreAll:)];
-	[mc->untrackedIgnoreAll setTarget: self];
-	[mc->untrackedAddAll setAction: @selector(addAll:)];
-	[mc->untrackedAddAll setTarget: self];
 	[NSApp activateIgnoringOtherApps: YES];
-	[mc->untrackedWindow makeKeyAndOrderFront: NSApp];	
 }
 
 - (void) ignoreAll: (id) sender {
@@ -167,7 +160,6 @@ void callbackFunction(
 	}	
 
 	[d synchronize];
-	[mc maybeRefresh: self];
 	FSEventStreamStop(stream);
 }
 
@@ -309,10 +301,6 @@ void callbackFunction(
 }
 
 - (void) commit: (id) menuItem {
-	[mc->fileList setDataSource: currLocalDiff];
-	[mc->commitWindow setTitle: repository];
-	[mc->commitWindow makeFirstResponder: mc->tv];
-	[mc->diffSearch setStringValue: @""];
 }
 
 - (void) pull: (id) menuItem {

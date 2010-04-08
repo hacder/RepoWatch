@@ -4,9 +4,9 @@
 
 @implementation MercurialDiffButtonDelegate
 
-- initWithTitle: (NSString *)s mainController: (MainController *)mcc hgPath: (char *)hgPath repository: (NSString *)rep {
+- initWithTitle: (NSString *)s hgPath: (char *)hgPath repository: (NSString *)rep {
 	hg = hgPath;
-	self = [super initWithTitle: s mainController: mcc repository: rep];
+	self = [super initWithTitle: s repository: rep];
 	[self fire: nil];
 	return self;
 }
@@ -29,36 +29,18 @@
 	// We do not care about the return value, really. Except that errors should be handled.
 	[tq addTask: t withCallback: ^(NSArray *resultarr){
 		[NSApp hide: self];
-		[mc->commitWindow close];
 		[sender setEnabled: YES];
 		[self fire: nil];
 	}];
 }
 
 - (void) pull: (id) menuItem {
-	[mc->commitWindow setTitle: repository];
-	[mc->commitWindow makeFirstResponder: mc->tv];
-
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"in", @"--template", @"{node|short} {desc}\n", nil]];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
-		[mc->butt setTitle: @"Update from upstream"];
-		[mc->butt setTarget: self];
-		[mc->butt setAction: @selector(upstreamUpdate:)];
-	
-		NSString *string = [resultarr componentsJoinedByString: @"\n"];
-		[mc->tv setString: string];
-		[mc->tv setEditable: NO];
-			
 		NSArray *arr = [NSArray arrayWithObjects: @"in", @"-p", nil];
 		NSTask *t2 = [self taskFromArguments: arr];
 		[tq addTask: t2 withCallback: ^(NSArray *resultarr) {
-			NSString *string2 = [resultarr componentsJoinedByString: @"\n"];
-			[mc->diffView setString: string2];
-			[mc->diffView setEditable: NO];
-		
-			[mc->commitWindow center];
 			[NSApp activateIgnoringOtherApps: YES];
-			[mc->commitWindow makeKeyAndOrderFront: NSApp];
 		}];
 	}];
 }
@@ -69,7 +51,6 @@
 		NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"add", [currentUntracked objectAtIndex: i], nil]];
 		[tq addTask: t withCallback: nil];
 	}
-	[mc->untrackedWindow close];
 	[self fire: nil];
 }
 
@@ -91,7 +72,6 @@
 	}
 	[fh synchronizeFile];
 	[fh closeFile];
-	[mc->untrackedWindow close];
 	[self fire: nil];
 }
 
@@ -121,47 +101,12 @@
 - (void) commit: (id) something {
 	if (!localMod)
 		return;
-		
-	[super commit: something];
-	
-	[mc->tv setString: @""];
-	[mc->tv setNeedsDisplay: YES];
-	if (localMod) {	
-		[mc->tv setString: @""];
-
-		// Insert text is the only method that is documented to take an attributed string.
-		[mc->diffView insertText: localDiff];
-		[mc->diffView scrollRangeToVisible: NSMakeRange(0, 0)];
-		[mc->butt setTitle: @"Do Commit"];
-		[mc->butt setTarget: self];
-		[mc->butt setAction: @selector(clickUpdate:)];
-	} else if (upstreamMod) {
-		NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %an %s", nil];
-		NSTask *t = [self taskFromArguments: arr];
-		[tq addTask: t withCallback: ^(NSArray *resultarr) {
-			[mc->butt setTitle: @"Update from upstream"];
-			[mc->butt setTarget: self];
-			[mc->butt setAction: @selector(upstreamUpdate:)];
-			NSString *string = [resultarr componentsJoinedByString: @"\n"];
-			[mc->tv insertText: string];
-			[mc->tv setEditable: NO];
-		}];
-	}
-	[mc->commitWindow center];
+	[super commit: something];	
 	[NSApp activateIgnoringOtherApps: YES];
-	[mc->commitWindow makeKeyAndOrderFront: NSApp];
-	[mc->commitWindow makeFirstResponder: mc->tv];
 }
 
 - (void) clickUpdate: (id) button {
 	[NSApp hide: self];
-	[mc->commitWindow close];
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-m", [[mc->tv textStorage] mutableString], nil]];
-		[tq addTask: t withCallback: ^(NSArray *resultarr) {
-			[self fire: nil];
-		}];
-	});
 }
 
 - (void) setAllTitles: (NSString *)s {
