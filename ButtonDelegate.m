@@ -28,7 +28,7 @@
 	[t retain];
 	[shortTitle release];
 	shortTitle = t;
-	[mc maybeRefresh: self];
+	[[NSNotificationCenter defaultCenter] postNotificationName: @"updateTitle" object: self];
 }
 
 - (NSString *) shortTitle {

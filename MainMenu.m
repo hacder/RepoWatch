@@ -17,7 +17,23 @@
 	
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(newRepository:) name: @"repoFound" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(rearrangeRepository:) name: @"repoStateChange" object: nil];
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(repositoryTitleUpdate:) name: @"updateTitle" object: nil];
 	return self;
+}
+
+- (NSMenuItem *) menuItemForRepository: (RepoButtonDelegate *)rbd {
+	int i;
+	for (i = 0; i < [self numberOfItems]; i++) {
+		RepoButtonDelegate *rbd2 = [[self itemAtIndex: i] target];
+		if (rbd2 == rbd)
+			return [self itemAtIndex: i];
+	}
+	return nil;
+}
+
+- (void) repositoryTitleUpdate: (NSNotification *)note {
+	NSMenuItem *mi = [self menuItemForRepository: [note object]];
+	[mi setTitle: [[note object] shortTitle]];
 }
 
 - (void) insertRepository: (RepoButtonDelegate *)rbd {
