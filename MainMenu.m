@@ -48,9 +48,16 @@
 	[self addItem: menuItem];
 }
 
+- (void) updateTitle {
+	if ([self numberOfItems]) {
+		[statusItem setTitle: [[[self itemAtIndex: 0] target] shortTitle]];
+	} else {
+		[statusItem setTitle: @"No Items"];
+	}
+}
+
 - (void) rearrangeRepository: (NSNotification *)notification {
 	RepoButtonDelegate *rbd = [notification object];
-	NSLog(@"Rearranging %@: %d", [[rbd repository] lastPathComponent], [rbd getStateValue]);
 	int i;
 	for (i = 0; i < [self numberOfItems]; i++) {
 		if ([[self itemAtIndex: i] target] == rbd) {
@@ -59,18 +66,14 @@
 			break;
 		}
 	}
-	NSLog(@"Inserting");
 	[self insertRepository: rbd];
+	[self updateTitle];
 }
 
 - (void) newRepository: (NSNotification *)notification {
 	RepoButtonDelegate *rbd = [notification object];
 	[self insertRepository: rbd];
-	if ([self numberOfItems]) {
-		[statusItem setTitle: [[[self itemAtIndex: 0] target] shortTitle]];
-	} else {
-		[statusItem setTitle: @"No Items"];
-	}
+	[self updateTitle];
 }
 
 @end
