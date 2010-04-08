@@ -14,6 +14,10 @@
 	NSMutableAttributedString *res = [[NSMutableAttributedString alloc] initWithString: @""];
 	for (i = 0; i < [arr count]; i++) {
 		NSString *thisLine = [arr objectAtIndex: i];
+		if (![thisLine length]) {
+			[res appendAttributedString: [[NSAttributedString alloc] initWithString: @"\n"]];
+			continue;
+		}
 		NSFont *font;
 		CGFloat fontSize = 14;
 		NSColor *color;

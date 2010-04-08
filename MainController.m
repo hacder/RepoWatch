@@ -4,7 +4,7 @@
 #import "MercurialDiffButtonDelegate.h"
 #import "RepoButtonDelegate.h"
 #import "Scanner.h"
-#import "BubbleFactory.h"
+#import "RepoHelper.h"
 #import <Sparkle/Sparkle.h>
 #import <Carbon/Carbon.h>
 
@@ -48,7 +48,15 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 			// Local changes should be commited locally before you pull in upstream updates.
 			if ([rbd hasLocal]) {
-				[rbd commit: nil];
+				[mc->commitWindow center];
+				[mc->commitWindow makeKeyAndOrderFront: mc];
+				[[mc->diffView textStorage] setAttributedString:
+				
+				[RepoHelper colorizedDiffFromArray: 
+				[[rbd getDiff] componentsSeparatedByString: @"\n"]]];
+				[NSApp activateIgnoringOtherApps: YES];
+				[mc->commitWindow makeFirstResponder: mc->tv];
+				
 				return noErr;
 			}
 			
@@ -263,19 +271,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 	return [rotated autorelease];
 }
 
-- (void) setProperIconForButton: (RepoButtonDelegate *)rbd withString: (BOOL)withString {
-	NSApplication *app = [NSApplication sharedApplication];
-	if ([rbd hasUntracked]) {
-		[app setApplicationIconImage: [[BubbleFactory getBlueOfSize: [[app dockTile] size].height] autorelease]];
-	} else if ([rbd hasLocal]) {
-		[app setApplicationIconImage: [[BubbleFactory getRedOfSize: [[app dockTile] size].height] autorelease]];
-	} else if ([rbd hasUpstream]) {
-		[app setApplicationIconImage: [[BubbleFactory getYellowOfSize: [[app dockTile] size].height] autorelease]];
-	} else {
-		[app setApplicationIconImage: [[BubbleFactory getGreenOfSize: [[app dockTile] size].height] autorelease]];
-	}
-}
-
 // Stupid little method that does little except call other, more important methods. This method is called periodically
 // and any time that the system knows that things have changed. It is the main method for updating global state.
 - (void) ping {
@@ -289,9 +284,6 @@ NSInteger intSort(id num1, id num2, void *context) {
 			return;
 		}
 		activeBD = rbd;
-	
-		int noString = [[NSUserDefaults standardUserDefaults] integerForKey: @"suppressText"];
-		[self setProperIconForButton: rbd withString: !noString];
 	});
 }
 

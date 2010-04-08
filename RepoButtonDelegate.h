@@ -54,10 +54,8 @@
 - (void) commit: (id) menuItem;
 - (void) pull: (id) menuItem;
 - (void) dealWithUntracked: (id) menuItem;
-
 - (NSInteger) numberOfRowsInTableView: (NSTableView *)tv;
 - (id)tableView: (NSTableView *)tvv objectValueForTableColumn: (NSTableColumn *)column row: (NSInteger) row;
-
 - (void) clickUpdate: (id) button;
 - (NSTask *)taskFromArguments: (NSArray *)args; 
 - (NSString *)getDiff;
@@ -67,7 +65,6 @@
 - (NSTask *)taskFromArguments: (NSArray *)args;
 - (void) ignore: (id) sender;
 - (void) ignoreAll: (id) sender;
-- (void) realFire;
 - (NSArray *)getUntracked;
 
 + (NSUInteger)numLocalEdit;

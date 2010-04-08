@@ -222,10 +222,6 @@ void callbackFunction(
 		});
 		return;
 	}
-	[self realFire];
-}
-
-- (void) realFire {
 }
 
 + (NSUInteger) numModified {

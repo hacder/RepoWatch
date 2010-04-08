@@ -182,14 +182,12 @@
 			localDiff = [RepoHelper colorizedDiffFromArray: resultarr];
 			[localDiff retain];
 			[super checkLocal: ti];
-			[self realFire];			
 		}];
 		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [RepoHelper makeNameFromRepo: self], localDiffSummary];
 		[self setAllTitles: sTit];
 	} else {
 		[self setLocalMod: NO];
 		[super checkLocal: ti];
-		[self realFire];
 		[self setDirty: NO];
 	}
 }

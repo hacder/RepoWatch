@@ -46,7 +46,6 @@
 			[localDiff autorelease];
 			localDiff = nil;
 			[super checkLocal: ti];
-			[self realFire];
 			[self setDirty: NO];
 			return;
 		}
@@ -62,7 +61,6 @@
 			localDiff = [RepoHelper colorizedDiffFromArray: resultarr];
 			[localDiff retain];
 			[super checkLocal: ti];
-			[self realFire];
 		}];
 	}];
 }

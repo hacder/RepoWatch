@@ -40,14 +40,16 @@
 - (void) insertRepository: (RepoButtonDelegate *)rbd {
 	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [rbd shortTitle] action: nil keyEquivalent: @""];
 	// NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [NSString stringWithFormat: @"%@ (%d)", [rbd shortTitle], [rbd getStateValue]] action: nil keyEquivalent: @""];
+
+	int size = 10;
 	if ([rbd getStateValue] == 40) {
-		[menuItem setOffStateImage: [BubbleFactory getBlueOfSize: 12]];
+		[menuItem setOffStateImage: [BubbleFactory getBlueOfSize: size]];
 	} else if ([rbd getStateValue] == 30) {
-		[menuItem setOffStateImage: [BubbleFactory getRedOfSize: 12]];
+		[menuItem setOffStateImage: [BubbleFactory getRedOfSize: size]];
 	} else if ([rbd getStateValue] == 20) {			
-		[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 12]];
+		[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: size]];
 	} else if ([rbd getStateValue] == 10) {
-		[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 12]];
+		[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: size]];
 	}	
 	
 	[menuItem setTarget: rbd];
