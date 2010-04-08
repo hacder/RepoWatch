@@ -204,90 +204,6 @@
 	return s2;
 }
 
-- (void) handleUntracked {
-	NSArray *untracked = [self getUntracked];
-	if (untracked && [untracked count]) {
-		untrackedFiles = YES;
-		NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [RepoHelper makeNameFromRepo: self], [untracked count]];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self setTitle: s];
-			[self setShortTitle: s];
-			[menuItem setHidden: NO];
-		});
-	} else {
-		untrackedFiles = NO;	
-	}	
-}
-
-- (void) handleLocalForMenu: (NSMenu *)m {
-	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", nil]];
-	NSString *localChanges = [self lastGoodComponentOfString: [self diffStatOfTask: t]];
-	if (![localChanges isEqual: @"0 files changed"]) {
-		localMod = YES;
-		[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
-		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [RepoHelper makeNameFromRepo: self], [RepoHelper shortenDiff: localChanges]];
-		[self setAllTitles: sTit];
-	} else {
-		localMod = NO;
-	}	
-}
-
-- (void) handleRemoteForMenu: (NSMenu *)m {
-	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"incoming", @"-p", nil]];
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		NSString *remoteDiffSt = [self diffStatOfTask: t];
-
-		NSString *s2 = [self lastGoodComponentOfString: remoteDiffSt];
-		if (![s2 isEqual: @"0 files changed"]) {
-			[self setUpstreamMod: YES];
-			[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
-			NSString *sTit = [NSString stringWithFormat: @"%@: %@",
-				[RepoHelper makeNameFromRepo: self],
-				[RepoHelper shortenDiff: [s2 stringByTrimmingCharactersInSet:
-					[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[self setTitle: sTit];
-				[self setShortTitle: sTit];
-				[menuItem setHidden: NO];
-			});
-		} else {
-			[self setUpstreamMod: NO];
-		}		
-	});
-}
-
-- (void) handleLogsForMenu: (NSMenu *)m {
-	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {desc}\n", nil]];
-	[tq addTask: t withCallback: ^(NSArray *logs) {
-		int i;
-		NSFont *firstFont = [NSFont userFixedPitchFontOfSize: 16.0];
-		NSFont *secondFont = [NSFont userFixedPitchFontOfSize: 12.0];
-		NSMenuItem *mi;
-		if ([logs count] == 0) {
-			mi = [[NSMenuItem alloc] initWithTitle: @"No history for this project" action: nil keyEquivalent: @""];
-			[m addItem: mi];
-		} else {
-			for (i = 0; i < [logs count]; i++) {
-				NSString *tmp = [logs objectAtIndex: i];
-	
-				NSDictionary *attributes;
-				if (i == 0) {
-					attributes = [NSDictionary dictionaryWithObject: firstFont forKey: NSFontAttributeName];
-				} else {
-					attributes = [NSDictionary dictionaryWithObject: secondFont forKey: NSFontAttributeName];
-				}
-				NSAttributedString *attr = [[[NSAttributedString alloc] initWithString: tmp attributes: attributes] autorelease];
-				if (tmp && [tmp length] > 0) {
-					mi = [[NSMenuItem alloc] initWithTitle: tmp action: nil keyEquivalent: @""];
-					[mi autorelease];
-					[mi setAttributedTitle: attr];
-					[m addItem: mi];
-				}
-			}
-		}
-	}];
-}
-
 - (void) setupUpstream {
 	NSArray *arr = [NSArray arrayWithObjects: @"showconfig", @"paths.default", nil];
 	NSTask *t = [self taskFromArguments: arr];
@@ -331,36 +247,6 @@
 		[self realFire];
 		[self setDirty: NO];
 	}
-}
-
-- (void) realFire {
-	NSMenu *m = [[NSMenu alloc] initWithTitle: @"Testing"];	
-
-	[self handleLogsForMenu: m];
-	[m insertItem: [NSMenuItem separatorItem] atIndex: [m numberOfItems]];
-	[self handleUntracked];
-	[self handleLocalForMenu: m];
-	
-	if (upstreamName)
-		[self handleRemoteForMenu: m];
-	
-	if (!untrackedFiles && !localMod && !upstreamMod)
-		[self setAllTitles: [NSString stringWithFormat: @"%@", [RepoHelper makeNameFromRepo: self]]];
-		
-	[[m insertItemWithTitle: @"Open in Finder" action: @selector(openInFinder:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
-	[[m insertItemWithTitle: @"Open in Terminal" action: @selector(openInTerminal:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
-	[[m insertItemWithTitle: @"Ignore" action: @selector(ignore:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
-
-	dispatch_async(dispatch_get_main_queue(), ^{
-		if (localMod)
-			[menuItem setOffStateImage: [BubbleFactory getRedOfSize: 15]];
-		else if (upstreamMod)
-			[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 15]];
-		else
-			[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 15]];
-		[[menuItem offStateImage] autorelease];
-		[menuItem setSubmenu: m];
-	});
 }
 
 @end
