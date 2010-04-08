@@ -1,5 +1,6 @@
 #import "MainMenu.h"
 #import "RepoButtonDelegate.h"
+#import "BubbleFactory.h"
 
 @implementation MainMenu
 
@@ -39,6 +40,16 @@
 - (void) insertRepository: (RepoButtonDelegate *)rbd {
 	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [rbd shortTitle] action: nil keyEquivalent: @""];
 	// NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [NSString stringWithFormat: @"%@ (%d)", [rbd shortTitle], [rbd getStateValue]] action: nil keyEquivalent: @""];
+	if ([rbd getStateValue] == 40) {
+		[menuItem setOffStateImage: [BubbleFactory getBlueOfSize: 16]];
+	} else if ([rbd getStateValue] == 30) {
+		[menuItem setOffStateImage: [BubbleFactory getRedOfSize: 16]];
+	} else if ([rbd getStateValue] == 20) {			
+		[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: 16]];
+	} else if ([rbd getStateValue] == 10) {
+		[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: 16]];
+	}	
+	
 	[menuItem setTarget: rbd];
 	
 	int i;
@@ -67,7 +78,17 @@
 
 - (void) updateTitle {
 	if ([self numberOfItems]) {
-		[statusItem setTitle: [[[self itemAtIndex: 0] target] shortTitle]];
+		RepoButtonDelegate *rbd = [[self itemAtIndex: 0] target];
+		[statusItem setTitle: [rbd shortTitle]];
+		if ([rbd getStateValue] == 40) {
+			[statusItem setImage: [BubbleFactory getBlueOfSize: 16]];
+		} else if ([rbd getStateValue] == 30) {
+			[statusItem setImage: [BubbleFactory getRedOfSize: 16]];
+		} else if ([rbd getStateValue] == 20) {			
+			[statusItem setImage: [BubbleFactory getYellowOfSize: 16]];
+		} else if ([rbd getStateValue] == 10) {
+			[statusItem setImage: [BubbleFactory getGreenOfSize: 16]];
+		}	
 	} else {
 		[statusItem setTitle: @"No Items"];
 	}
