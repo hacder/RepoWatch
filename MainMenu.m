@@ -37,7 +37,8 @@
 }
 
 - (void) insertRepository: (RepoButtonDelegate *)rbd {
-	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [rbd shortTitle] action: nil keyEquivalent: @""];
+//	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [rbd shortTitle] action: nil keyEquivalent: @""];
+	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [NSString stringWithFormat: @"%@ (%d)", [rbd shortTitle], [rbd getStateValue]] action: nil keyEquivalent: @""];
 	[menuItem setTarget: rbd];
 	
 	int i;

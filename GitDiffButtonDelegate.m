@@ -143,7 +143,7 @@
 //	NSTask *t = [self taskFromArguments: arr];
 	// [tq addTask: t withCallback: ^(NSArray *resultarr) {
 	// 	if (![resultarr count]) {
-	// 		upstreamMod = NO;
+	// 		[self setUpstreamMod: NO];
 	// 		return nil;
 	// 	}
 	// 	NSString *string2 = [resultarr objectAtIndex: 0];

@@ -40,6 +40,7 @@
 - (void) checkLocal: (NSTimer *) t;
 - (NSString *) getShort;
 - (void) setLocalMod: (BOOL)b;
+- (void) setUpstreamMod: (BOOL)b;
 - (void) setDirty: (BOOL)b;
 - (NSString *)repositoryPath;
 - (NSString *)repository;

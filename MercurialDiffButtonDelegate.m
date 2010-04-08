@@ -239,7 +239,7 @@
 
 		NSString *s2 = [self lastGoodComponentOfString: remoteDiffSt];
 		if (![s2 isEqual: @"0 files changed"]) {
-			upstreamMod = YES;
+			[self setUpstreamMod: YES];
 			[[m insertItemWithTitle: @"Update From Origin" action: @selector(pull:) keyEquivalent: @"" atIndex: [m numberOfItems]] setTarget: self];
 			NSString *sTit = [NSString stringWithFormat: @"%@: %@",
 				[RepoHelper makeNameFromRepo: self],
@@ -251,7 +251,7 @@
 				[menuItem setHidden: NO];
 			});
 		} else {
-			upstreamMod = NO;
+			[self setUpstreamMod: NO];
 		}		
 	});
 }

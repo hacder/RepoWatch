@@ -175,6 +175,13 @@ void callbackFunction(
 	return nil;
 }
 
+- (void) setUpstreamMod: (BOOL) b {
+	if (upstreamMod != b) {
+		upstreamMod = b;
+		[[NSNotificationCenter defaultCenter] postNotificationName: @"repoStateChange" object: self];		
+	}
+}
+
 - (void) setLocalMod: (BOOL) b {
 	if (localMod != b) {
 		localMod = b;		
