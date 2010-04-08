@@ -59,7 +59,7 @@
 		localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
 		[localDiffSummary retain];
 		[self setLocalMod: YES];
-		
+ 		
 		NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
 		NSTask *t = [self taskFromArguments: arr];
 		[tq addTask: t withCallback: ^(NSArray *resultarr) {
@@ -291,26 +291,6 @@
 	});
 }
 
-- (void) localModsWithMenu: (NSMenu *)m {
-	NSString *sTit;
-	[[m insertItemWithTitle: @"Commit these changes" action: @selector(commit:) keyEquivalent: @"" atIndex: [m numberOfItems]]
-		setTarget: self];
-	if (currentBranch == nil || [currentBranch isEqual: @"master"]) {
-		sTit = [NSString stringWithFormat: @"%@: %@",
-			[RepoHelper makeNameFromRepo: self],
-			[localDiffSummary stringByTrimmingCharactersInSet:
-				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
-	} else {
-		sTit = [NSString stringWithFormat: @"%@: %@ (%@)",
-			[RepoHelper makeNameFromRepo: self],
-			[localDiffSummary stringByTrimmingCharactersInSet:
-			[NSCharacterSet whitespaceAndNewlineCharacterSet]], currentBranch];
-	}
-	[self setTitle: sTit];
-	[self setShortTitle: sTit];
-	[menuItem setHidden: NO];
-}
-
 - (void) setupUpstream {
 	NSArray *arr = [NSArray arrayWithObjects: @"remote", nil];
 	NSTask *t = [self taskFromArguments: arr];
@@ -322,6 +302,14 @@
 			upstreamName = nil;
 		}
 	}];
+}
+
+- (NSString *)shortTitle {
+	if (localMod) {
+		return [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], localDiffSummary];
+	} else {
+		return [repository lastPathComponent];
+	}
 }
 
 - (void) realFire {
@@ -350,8 +338,6 @@
 	} else if (!upstreamMod) {
 		if (!localMod) {
 			[self noMods];
-		} else {
-			[self localModsWithMenu: m];
 		}
 	} else {
 		// There is a remote diff.
