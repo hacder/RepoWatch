@@ -79,7 +79,11 @@
 - (void) updateTitle {
 	if ([self numberOfItems]) {
 		RepoButtonDelegate *rbd = [[self itemAtIndex: 0] target];
-		[statusItem setTitle: [rbd shortTitle]];
+		if ([rbd getStateValue] == 10) {
+			[statusItem setTitle: @""];
+		} else {
+			[statusItem setTitle: [rbd shortTitle]];			
+		}
 		if ([rbd getStateValue] == 40) {
 			[statusItem setImage: [BubbleFactory getBlueOfSize: 16]];
 		} else if ([rbd getStateValue] == 30) {
