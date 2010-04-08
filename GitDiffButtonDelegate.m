@@ -264,39 +264,4 @@
 	}
 }
 
-- (void) realFire {
-	NSArray *untracked;
-//	NSString *string;
-	
-	untracked = [self getUntracked];
-	if (untracked && [untracked count]) {
-		untrackedFiles = YES;
-	} else {
-		untrackedFiles = NO;
-	}
-		
-	if (untrackedFiles) {
-		NSString *s = [NSString stringWithFormat: @"%@: %d untracked files", [RepoHelper makeNameFromRepo: self], [untracked count]];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self setTitle: s];
-			[self setShortTitle: s];
-			[menuItem setHidden: NO];
-		});
-	} else if (!upstreamMod) {
-	} else {
-		// There is a remote diff.
-		NSString *sTit;
-//		sTit = [NSString stringWithFormat: @"%@: %@",
-//			[repository lastPathComponent],
-//			[remoteString stringByTrimmingCharactersInSet:
-//				[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
-
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self setTitle: sTit];
-			[self setShortTitle: sTit];
-			[menuItem setHidden: NO];
-		});
-	}
-}
-
 @end
