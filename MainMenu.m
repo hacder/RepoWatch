@@ -78,7 +78,6 @@
 	int i;
 	for (i = 0; i < [self numberOfItems]; i++) {
 		if ([[self itemAtIndex: i] target] == rbd) {
-			NSLog(@"Found the item to remove");
 			[self removeItemAtIndex: i];
 			break;
 		}

@@ -55,10 +55,10 @@
 			[self setDirty: NO];
 			return;
 		}
-		[self setLocalMod: YES];
 		[localDiffSummary autorelease];
 		localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
 		[localDiffSummary retain];
+		[self setLocalMod: YES];
 		
 		NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
 		NSTask *t = [self taskFromArguments: arr];
