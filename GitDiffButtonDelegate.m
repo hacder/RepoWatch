@@ -248,6 +248,18 @@
 		if ([resultarr count]) {
 			upstreamName = [resultarr objectAtIndex: 0];
 			[upstreamName retain];
+			
+			NSArray *arr = [NSArray arrayWithObjects: @"config", [NSString stringWithFormat: @"remote.%@.url", upstreamName], nil];
+			NSTask *t = [self taskFromArguments: arr];
+			[tq addTask: t withCallback: ^(NSArray *resultarr) {
+				if ([resultarr count]) {
+					upstreamURL = [resultarr objectAtIndex: 0];
+					[upstreamURL retain];
+					NSLog(@"Upstream URL is %@", upstreamURL);
+				} else {
+					upstreamURL = nil;
+				}
+			}];
 		} else {
 			upstreamName = nil;
 		}

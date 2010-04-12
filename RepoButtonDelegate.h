@@ -12,6 +12,7 @@
 @interface RepoButtonDelegate : ButtonDelegate <NSTableViewDataSource> {
 	NSString *repository;
 	NSString *upstreamName;
+	NSString *upstreamURL;
 	NSButton *butt;
 	NSTextView *tv;
 	NSWindow *window;

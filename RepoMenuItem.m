@@ -30,6 +30,7 @@
 		NSString *currentPiece = [logs objectAtIndex: i];
 		NSArray *pieces = [currentPiece componentsSeparatedByString: @" "];
 		NSString *timestamp = [pieces objectAtIndex: 1];
+		NSString *hash = [pieces objectAtIndex: 2];
 		NSRange theRange;
 		theRange.location = 2;
 		theRange.length = [pieces count] - 2;
@@ -44,6 +45,7 @@
 		mi = [sub addItemWithTitle: title action: nil keyEquivalent: @""];
 		[mi setAttributedTitle: dateAttrString];
 		[mi setToolTip: logString];
+		[mi setRepresentedObject: hash];
 	}
 	
 	if ([repo hasUntracked] || [repo hasLocal] || [repo hasUpstream])
@@ -64,6 +66,7 @@
 	self = [super initWithTitle: [rep shortTitle] action: nil keyEquivalent: @""];
 	repo = rep;
 	[repo retain];
+	[self setToolTip: [repo repository]];
 	
 	// Update the menu no matter what the notification is. We may have to filter some out later on to not go into an
 	// endless loop.
