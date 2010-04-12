@@ -43,8 +43,9 @@
 		[dateAttrString appendAttributedString: [[NSAttributedString alloc] initWithString: logString attributes: logAttributes]];
 		
 		NSString *title = [NSString stringWithFormat: @"%@ %@", dateString, logString];
-		
-		[[sub addItemWithTitle: title action: nil keyEquivalent: @""] setAttributedTitle: dateAttrString];
+		NSMenuItem *mi = [sub addItemWithTitle: title action: nil keyEquivalent: @""];
+		[mi setAttributedTitle: dateAttrString];
+		[mi setToolTip: logString];
 	}
 	[lastUpdate release];
 	lastUpdate = [NSDate date];
