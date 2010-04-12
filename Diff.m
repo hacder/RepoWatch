@@ -16,6 +16,9 @@
 }
 
 - (void) flip {
+	if ([files isEqualToArray: backingStore])
+		[[NSNotificationCenter defaultCenter] postNotificationName: @"localFilesChange" object: self];
+		
 	NSMutableArray *tmp = backingStore;
 	backingStore = files;
 	files = tmp;

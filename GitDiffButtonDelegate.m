@@ -25,7 +25,6 @@
 			[currLocalDiff addFile: [resultarr objectAtIndex: i]];
 		}
 		[currLocalDiff flip];
-		[[NSNotificationCenter defaultCenter] postNotificationName: @"localFilesChange" object: self];
 	}];
 }
 
