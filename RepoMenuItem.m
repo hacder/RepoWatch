@@ -3,10 +3,6 @@
 @implementation RepoMenuItem
 
 - (void) updateMenu: (NSNotification *)notif {
-	if (notif)
-		NSLog(@"Updating menu: %@", notif);
-	else
-		NSLog(@"Updating menu");
 	[sub removeAllItems];
 	
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
