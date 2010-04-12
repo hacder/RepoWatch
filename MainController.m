@@ -11,7 +11,18 @@
 
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData);
 
+static MainController *shared;
+
 @implementation MainController
+
++ (MainController *)sharedInstance {
+	NSLog(@"Returning %@", shared);
+	return shared;
+}
+
+- (void) commitFromMenu: (id) menu {
+	[self doCommitWindowForRepository: [menu representedObject]];
+}
 
 // This is what is called when you press our global hot key: Command + Option + Enter. A lot of
 // logic is in here because the goal of this app is simplicity. There is ONE global hot key that
@@ -49,19 +60,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 			// Local changes should be commited locally before you pull in upstream updates.
 			if ([rbd hasLocal]) {
-				[mc->commitWindow center];
-				[mc->commitWindow makeKeyAndOrderFront: mc];
-				[[mc->diffView textStorage] setAttributedString: [RepoHelper colorizedDiffFromArray: [[rbd getDiff] componentsSeparatedByString: @"\n"]]];
-				[NSApp activateIgnoringOtherApps: YES];
-				[mc->tv setString: @""];
-				[mc->commitWindow makeFirstResponder: mc->tv];
-				[rbd setCommitMessage: [mc->tv string]];
-				[mc->butt setTarget: rbd];
-				[mc->butt setAction: @selector(commit:)];
-				
-				Diff *d = [rbd diff];
-				[mc->fileList setDataSource: d];
-				
+				[mc doCommitWindowForRepository: rbd];
 				return noErr;
 			}
 			
@@ -81,6 +80,21 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	return noErr;
 }
 
+- (void) doCommitWindowForRepository: (RepoButtonDelegate *)rbd {
+	[commitWindow center];
+	[commitWindow makeKeyAndOrderFront: self];
+	[[diffView textStorage] setAttributedString: [RepoHelper colorizedDiffFromArray: [[rbd getDiff] componentsSeparatedByString: @"\n"]]];
+	[NSApp activateIgnoringOtherApps: YES];
+	[tv setString: @""];
+	[commitWindow makeFirstResponder: tv];
+	[rbd setCommitMessage: [tv string]];
+	[butt setTarget: rbd];
+	[butt setAction: @selector(commit:)];
+	
+	Diff *d = [rbd diff];
+	[fileList setDataSource: d];
+}
+
 - (void) scannerDone: (id)ignored {
 	NSLog(@"Scanner done");
 	[self ping];
@@ -88,6 +102,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 - init {
 	self = [super init];
+	shared = self;
 	
 	// The active button delegate. This is the Button Delegate that has control of the main menu
 	// text and image.

@@ -25,6 +25,7 @@
 
  	NSArray *logs = [repo logs];
 	int i;
+	NSMenuItem *mi;
 	for (i = 0; i < [logs count]; i++) {
 		NSString *currentPiece = [logs objectAtIndex: i];
 		NSArray *pieces = [currentPiece componentsSeparatedByString: @" "];
@@ -40,10 +41,20 @@
 		[dateAttrString appendAttributedString: [[NSAttributedString alloc] initWithString: logString attributes: logAttributes]];
 		
 		NSString *title = [NSString stringWithFormat: @"%@ %@", dateString, logString];
-		NSMenuItem *mi = [sub addItemWithTitle: title action: nil keyEquivalent: @""];
+		mi = [sub addItemWithTitle: title action: nil keyEquivalent: @""];
 		[mi setAttributedTitle: dateAttrString];
 		[mi setToolTip: logString];
 	}
+	
+	if ([repo hasUntracked] || [repo hasLocal] || [repo hasUpstream])
+		[sub addItem: [NSMenuItem separatorItem]];
+	
+	if ([repo hasLocal]) {
+		mi = [sub addItemWithTitle: @"Commit Local Changes" action: @selector(commitFromMenu:) keyEquivalent: @""];
+		[mi setRepresentedObject: repo];
+		[mi setTarget: [MainController sharedInstance]];
+	}
+	
 	[lastUpdate release];
 	lastUpdate = [NSDate date];
 	[lastUpdate retain];	

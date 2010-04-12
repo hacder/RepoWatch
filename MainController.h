@@ -7,6 +7,7 @@
 // This is the mega class. Many things need to be moved out of here.
 
 @class ButtonDelegate;
+@class RepoButtonDelegate;
 
 @interface MainController : NSObject {
 	MainMenu *theMenu;
@@ -44,5 +45,7 @@
 - (void) maybeRefresh: (ButtonDelegate *)bd;
 - (IBAction) openFile: (id) sender;
 - (void) ping;
+- (void) doCommitWindowForRepository: (RepoButtonDelegate *)rbd;
++ (MainController *)sharedInstance;
 
 @end
