@@ -28,6 +28,29 @@
 	}];
 }
 
+- (void) checkUntracked {
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", @"-z", nil]];
+	[tq addTask: t withCallback: ^(NSArray *arr) {
+		if (![arr count]) {
+			[self setUntracked: NO];
+			return;
+		}
+		[self setUntracked: YES];
+
+		NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];
+		int i;
+		for (i = 0; i < [arrmut count]; i++) {
+			NSMutableString *original = [NSMutableString stringWithString: [arrmut objectAtIndex: i]];
+			if ([original characterAtIndex: 0] == '"' && [original characterAtIndex: [original length] - 1] == '"') {
+				[original deleteCharactersInRange: NSMakeRange(0, 1)];
+				[original deleteCharactersInRange: NSMakeRange([original length] - 1, 1)];
+				[arrmut replaceObjectAtIndex: i withObject: original];
+			}
+		}
+		NSLog(@"Untracked: %@", arrmut);
+	}];	
+}
+
 - (void) checkLocal: (NSTimer *)ti {
 	if (!dirty) {
 		[super checkLocal: ti];

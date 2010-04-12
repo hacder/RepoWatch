@@ -38,6 +38,7 @@
 // After the first line break are things that might be no longer good.
 - initWithTitle: (NSString *)t repository: (NSString *)repo;
 - (void)setupUpstream;
+- (void) setUntracked: (BOOL) b;
 - (void) checkLocal: (NSTimer *) t;
 - (NSString *) getShort;
 - (void) setLocalMod: (BOOL)b;
@@ -49,6 +50,7 @@
 - (int) getStateValue;
 - (void) setCommitMessage: (NSString *)cm;
 - (NSArray *)logs;
+- (void) checkUntracked;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;

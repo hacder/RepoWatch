@@ -178,6 +178,13 @@ void callbackFunction(
 	}
 }
 
+- (void) setUntracked: (BOOL) b {
+	if (untrackedFiles != b) {
+		untrackedFiles = b;
+		[[NSNotificationCenter defaultCenter] postNotificationName: @"repoStateChange" object: self];
+	}
+}
+
 - (void) setLocalMod: (BOOL) b {
 	if (localMod != b) {
 		localMod = b;		
@@ -201,8 +208,15 @@ void callbackFunction(
 		[timer autorelease];
 		[timer invalidate];
 		timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
+		
+		// Note: This only works because we are on the time timing frequency as check local. Don't ignore the reason that this
+		//       works.
+		[self checkUntracked];
 		[timer retain];
 	});
+}
+
+- (void) checkUntracked {
 }
 
 - (NSString *)getShort {
