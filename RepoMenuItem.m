@@ -3,12 +3,25 @@
 @implementation RepoMenuItem
 
 - (void) updateMenu: (NSNotification *)notif {
- 	[sub removeAllItems];
+	[sub removeAllItems];
 	
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[dateFormatter setDoesRelativeDateFormatting:YES];
+
+	NSDictionary *dateAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSColor grayColor],
+		NSForegroundColorAttributeName,
+		[NSFont labelFontOfSize: 10],
+		NSFontAttributeName,
+		nil];
+	NSDictionary *logAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSColor blackColor],
+		NSForegroundColorAttributeName,
+		[NSFont systemFontOfSize: 14],
+		NSFontAttributeName,
+		nil];
 
  	NSArray *logs = [repo logs];
 	int i;
@@ -23,18 +36,6 @@
 		NSArray *logMessage = [pieces subarrayWithRange: theRange];
 		NSString *logString = [NSString stringWithFormat: @" %@", [logMessage componentsJoinedByString: @" "]];
 		NSString *dateString = [dateFormatter stringFromDate: [NSDate dateWithTimeIntervalSince1970: [timestamp intValue]]];
-		NSDictionary *dateAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSColor grayColor],
-			NSForegroundColorAttributeName,
-			[NSFont labelFontOfSize: 10],
-			NSFontAttributeName,
-			nil];
-		NSDictionary *logAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSColor blackColor],
-			NSForegroundColorAttributeName,
-			[NSFont systemFontOfSize: 14],
-			NSFontAttributeName,
-			nil];
 		NSMutableAttributedString *dateAttrString = [[NSMutableAttributedString alloc] initWithString: dateString attributes: dateAttributes];
 		[dateAttrString appendAttributedString: [[NSAttributedString alloc] initWithString: logString attributes: logAttributes]];
 		
