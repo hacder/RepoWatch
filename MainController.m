@@ -53,6 +53,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 				[mc->commitWindow makeKeyAndOrderFront: mc];
 				[[mc->diffView textStorage] setAttributedString: [RepoHelper colorizedDiffFromArray: [[rbd getDiff] componentsSeparatedByString: @"\n"]]];
 				[NSApp activateIgnoringOtherApps: YES];
+				[mc->tv setString: @""];
 				[mc->commitWindow makeFirstResponder: mc->tv];
 				[rbd setCommitMessage: [mc->tv string]];
 				[mc->butt setTarget: rbd];
