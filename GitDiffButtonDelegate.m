@@ -173,9 +173,11 @@
 - (void) commit: (id) mi {
 	if (!localMod)
 		return;
-
-	[super commit: mi];
-	[NSApp activateIgnoringOtherApps: YES];
+	
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", commitMessage, nil]];
+	[tq addTask: t withCallback: ^(NSArray *resultarr) {
+		[self setLocalMod: NO];
+	}];
 }
 
 - (void) upstreamUpdate: (id) sender {

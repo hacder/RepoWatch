@@ -280,6 +280,12 @@ void callbackFunction(
 	return localMod;
 }
 
+- (void) setCommitMessage: (NSString *)cm {
+	[commitMessage release];
+	commitMessage = cm;
+	[commitMessage retain];
+}
+
 + (BOOL) alreadyHasPath: (NSString *)path {
 	int i = 0;
 	for (i = 0; i < [repos count]; i++) {

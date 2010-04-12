@@ -22,6 +22,7 @@
 	
 	NSString *localDiffSummary; // lines changed, files modified, etc.
 	NSAttributedString *localDiff; // the actual diff
+	NSString *commitMessage;
 
 	NSWindow *diffCommitWindow;
 	NSTextView *diffCommitTV;
@@ -46,6 +47,7 @@
 - (NSString *)repository;
 - (Diff *)diff;
 - (int) getStateValue;
+- (void) setCommitMessage: (NSString *)cm;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;

@@ -7,6 +7,7 @@
 #import "RepoHelper.h"
 #import <Sparkle/Sparkle.h>
 #import <Carbon/Carbon.h>
+#import <AppKit/NSApplication.h>
 
 OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData);
 
@@ -50,12 +51,15 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			if ([rbd hasLocal]) {
 				[mc->commitWindow center];
 				[mc->commitWindow makeKeyAndOrderFront: mc];
-				[[mc->diffView textStorage] setAttributedString:
-				
-				[RepoHelper colorizedDiffFromArray: 
-				[[rbd getDiff] componentsSeparatedByString: @"\n"]]];
+				[[mc->diffView textStorage] setAttributedString: [RepoHelper colorizedDiffFromArray: [[rbd getDiff] componentsSeparatedByString: @"\n"]]];
 				[NSApp activateIgnoringOtherApps: YES];
 				[mc->commitWindow makeFirstResponder: mc->tv];
+				[rbd setCommitMessage: [mc->tv string]];
+				[mc->butt setTarget: rbd];
+				[mc->butt setAction: @selector(commit:)];
+				
+				Diff *d = [rbd diff];
+				[mc->fileList setDataSource: d];
 				
 				return noErr;
 			}
@@ -122,9 +126,12 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
 	NSString *build = [infoDict objectForKey: @"CFBundleVersion"];
 	
-	[updater setFeedURL: [NSURL URLWithString: [NSString stringWithFormat: @"http://www.doomstick.com/mm_update_feed.xml?uuid=%@&version=%@",
+	NSURL *appcastURL = [NSURL URLWithString: [NSString stringWithFormat: @"http://www.doomstick.com/shine/appcast.php?id=7&uuid=%@&version=%@&osv=%f",
 			[[NSUserDefaults standardUserDefaults] stringForKey: @"UUID"],
-			[build stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding]]]];
+			[build stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding],
+			NSAppKitVersionNumber]];
+		NSLog(@"Using url: %@", appcastURL);
+	[updater setFeedURL: appcastURL];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
 
 	scanner = [[Scanner alloc] init];
