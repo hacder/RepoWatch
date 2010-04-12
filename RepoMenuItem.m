@@ -3,7 +3,7 @@
 @implementation RepoMenuItem
 
 - (void) updateMenu: (NSNotification *)notif {
-	[sub removeAllItems];
+ 	[sub removeAllItems];
 	
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
