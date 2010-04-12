@@ -16,7 +16,6 @@ static MainController *shared;
 @implementation MainController
 
 + (MainController *)sharedInstance {
-	NSLog(@"Returning %@", shared);
 	return shared;
 }
 
