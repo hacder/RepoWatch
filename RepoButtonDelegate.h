@@ -48,6 +48,7 @@
 - (Diff *)diff;
 - (int) getStateValue;
 - (void) setCommitMessage: (NSString *)cm;
+- (NSArray *)logs;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;

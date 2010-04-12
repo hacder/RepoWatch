@@ -158,6 +158,32 @@
 	// }];
 }
 
+- (NSArray *)logs {
+	NSArray *arr = [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ct %s", nil];
+	NSTask *t = [self taskFromArguments: arr];
+
+	NSFileHandle *file = [RepoHelper pipeForTask: t];
+	NSFileHandle *err = [RepoHelper errForTask: t];
+
+	[t launch];
+	NSString *string = [RepoHelper stringFromFile: file];
+	NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
+	[t waitUntilExit];
+	if ([t terminationStatus] != 0) {
+		return nil;
+	}
+	[err closeFile];
+	[file closeFile];
+
+	if ([[result objectAtIndex: [result count] - 1] isEqualToString: @""]) {
+		NSMutableArray *result2 = [NSMutableArray arrayWithArray: result];
+		[result2 removeObjectAtIndex: [result2 count] - 1];
+		return result2;
+	}
+
+	return result;
+}
+
 - (void) pull: (id) menuItem {
 	NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %s", nil];
 	NSTask *t = [self taskFromArguments: arr];

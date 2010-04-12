@@ -1,6 +1,7 @@
 #import "MainMenu.h"
 #import "RepoButtonDelegate.h"
 #import "BubbleFactory.h"
+#import "RepoMenuItem.h"
 
 @implementation MainMenu
 
@@ -22,24 +23,29 @@
 	return self;
 }
 
-- (NSMenuItem *) menuItemForRepository: (RepoButtonDelegate *)rbd {
+- (RepoMenuItem *) menuItemForRepository: (RepoButtonDelegate *)rbd {
 	int i;
 	for (i = 0; i < [self numberOfItems]; i++) {
 		RepoButtonDelegate *rbd2 = [[self itemAtIndex: i] target];
 		if (rbd2 == rbd)
-			return [self itemAtIndex: i];
+			return (RepoMenuItem *)[self itemAtIndex: i];
 	}
 	return nil;
 }
 
 - (void) repositoryTitleUpdate: (NSNotification *)note {
-	NSMenuItem *mi = [self menuItemForRepository: [note object]];
+	RepoMenuItem *mi = [self menuItemForRepository: [note object]];
 	[mi setTitle: [[note object] shortTitle]];
 }
 
 - (void) insertRepository: (RepoButtonDelegate *)rbd {
-	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [rbd shortTitle] action: nil keyEquivalent: @""];
-	// NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [NSString stringWithFormat: @"%@ (%d)", [rbd shortTitle], [rbd getStateValue]] action: nil keyEquivalent: @""];
+	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self insertRepository: rbd];
+		});
+		return;
+	}
+	RepoMenuItem *menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
 
 	int size = 10;
 	if ([rbd getStateValue] == 40) {
@@ -79,6 +85,13 @@
 }
 
 - (void) updateTitle {
+	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self updateTitle];
+		});
+		return;
+	}
+	
 	if ([self numberOfItems]) {
 		RepoButtonDelegate *rbd = [[self itemAtIndex: 0] target];
 		if ([rbd getStateValue] == 10) {
@@ -101,6 +114,13 @@
 }
 
 - (void) rearrangeRepository: (NSNotification *)notification {
+	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self rearrangeRepository: notification];
+		});
+		return;
+	}
+	
 	RepoButtonDelegate *rbd = [notification object];
 	int i;
 	for (i = 0; i < [self numberOfItems]; i++) {

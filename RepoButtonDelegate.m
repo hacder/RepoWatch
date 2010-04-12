@@ -75,6 +75,10 @@ void callbackFunction(
 	return self;
 }
 
+- (NSArray *)logs {
+	return nil;
+}
+
 - (NSString *)repositoryPath {
 	return repository;
 }
