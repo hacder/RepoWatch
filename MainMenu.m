@@ -35,7 +35,11 @@
 
 - (void) repositoryTitleUpdate: (NSNotification *)note {
 	RepoMenuItem *mi = [self menuItemForRepository: [note object]];
-	[mi setTitle: [[note object] shortTitle]];
+	RepoButtonDelegate *rbd = [note object];
+	[mi setTitle: [rbd shortTitle]];
+	
+	// What if this repository is our most important one?
+	[self updateTitle];
 }
 
 - (void) insertRepository: (RepoButtonDelegate *)rbd {

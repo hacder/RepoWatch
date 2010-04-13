@@ -71,9 +71,24 @@
 			[self setDirty: NO];
 			return;
 		}
-		[localDiffSummary autorelease];
-		localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
-		[localDiffSummary retain];
+		NSString *newSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
+		if (localDiffSummary != nil) {
+			if ([newSummary caseInsensitiveCompare: localDiffSummary] == NSOrderedSame) {
+				// The summary did not change. The details might have, though, so we can't completely short-circuit.
+			} else {
+				NSLog(@"Got here!");
+				[localDiffSummary autorelease];
+				localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
+				[localDiffSummary retain];
+				[[NSNotificationCenter defaultCenter] postNotificationName: @"updateTitle" object: self];		
+			}
+		} else {
+			// Repeated code. BAD.
+			[localDiffSummary autorelease];
+			localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
+			[localDiffSummary retain];
+			[[NSNotificationCenter defaultCenter] postNotificationName: @"updateTitle" object: self];					
+		}
 		[self setLocalMod: YES];
  		
 		NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
