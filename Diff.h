@@ -10,6 +10,7 @@
 	NSDate *ts;
 	NSMutableArray *files; // Array of FileDiff objects
 	NSMutableArray *backingStore;
+	NSLock *lock;
 }
 
 - (void) addFile: (NSString *)fileName;
