@@ -88,6 +88,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[tv setString: @""];
 	[commitWindow makeFirstResponder: tv];
 	[rbd setCommitMessage: [tv string]];
+	[butt setEnabled: YES];
 	[butt setTarget: rbd];
 	[butt setAction: @selector(commit:)];
 	
@@ -104,7 +105,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 }
 
 - (void) commitDone: (id)ignored {
-	[butt setEnabled: YES];
 	[commitWindow close];
 }
 
