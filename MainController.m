@@ -81,6 +81,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 - (void) doCommitWindowForRepository: (RepoButtonDelegate *)rbd {
 	[commitWindow center];
+	[commitWindow setTitle: [rbd shortTitle]];
 	[commitWindow makeKeyAndOrderFront: self];
 	[[diffView textStorage] setAttributedString: [RepoHelper colorizedDiffFromArray: [[rbd getDiff] componentsSeparatedByString: @"\n"]]];
 	[NSApp activateIgnoringOtherApps: YES];

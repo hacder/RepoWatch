@@ -13,15 +13,6 @@ Topic Branches
 	do next, so one magic key press no longer becomes possible. Do we do multiple hotkeys, or maybe we bring
 	up a more complicated dialog that allows us to do what we would have done before AND switch branches?
 
-Notifications
--------------
-	NSNotificationCenter
-		There is one notification per app, usually, although more can be created. Control does not return to the
-		thread posting the notification until all listeners have processed the event. No return values are permitted.
-	"Notification Queues"
-		No class name given yet. This allows returning before all receivers have processed the event.
-
-
 Done:
 	* Make diff show new files as well as modified ones.
 	* Ultra ultra basics of project time tracking.
