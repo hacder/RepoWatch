@@ -12,6 +12,10 @@
 	return self;
 }
 
+
+
+
+
 - (void) doFileDiff {
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff-files", @"--name-only", nil]];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
@@ -28,6 +32,10 @@
 	}];
 }
 
+// A git mailing list person said that to get untracked you would write
+// git ls-files -t -m -o --exclude-standard
+// our addition of -z looks sane, as it just changes what the lines are terminated with
+// -t and -m both are truly missing from ours. -m especially seems misleading.
 - (void) checkUntracked {
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exclude-standard", @"-z", nil]];
 	[tq addTask: t withCallback: ^(NSArray *arr) {
