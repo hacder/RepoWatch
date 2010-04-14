@@ -76,7 +76,6 @@
 			if ([newSummary caseInsensitiveCompare: localDiffSummary] == NSOrderedSame) {
 				// The summary did not change. The details might have, though, so we can't completely short-circuit.
 			} else {
-				NSLog(@"Got here!");
 				[localDiffSummary autorelease];
 				localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
 				[localDiffSummary retain];

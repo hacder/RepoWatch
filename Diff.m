@@ -44,7 +44,9 @@
 
 - (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)col row: (NSInteger)r {
 	[lock lock];
-	id ret = [files objectAtIndex: r];
+	id ret = nil;
+	if ([files count] > r)
+		ret = [files objectAtIndex: r];
 	[lock unlock];
 	return ret;
 }
