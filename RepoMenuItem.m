@@ -3,12 +3,17 @@
 @implementation RepoMenuItem
 
 - (void) updateMenu: (NSNotification *)notif {
-	[sub removeAllItems];
+	if (dispatch_get_current_queue() != dispatch_get_global_queue(0, 0)) {
+		dispatch_async(dispatch_get_global_queue(0, 0), ^{
+			[self updateMenu: notif];
+			return;
+		});
+	}
 	
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
-	[dateFormatter setDoesRelativeDateFormatting:YES];
+	[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
+	[dateFormatter setDateStyle: NSDateFormatterMediumStyle];
+	[dateFormatter setDoesRelativeDateFormatting: YES];
 
 	NSDictionary *dateAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSColor grayColor],
@@ -25,7 +30,11 @@
 
  	NSArray *logs = [repo logs];
 	int i;
-	NSMenuItem *mi;
+	
+	NSMutableArray *menuItems = [NSMutableArray arrayWithCapacity: [logs count]];
+	NSMutableArray *dateAttrStrings = [NSMutableArray arrayWithCapacity: [logs count]];
+	NSMutableArray *logStrings = [NSMutableArray arrayWithCapacity: [logs count]];
+	NSMutableArray *hashs = [NSMutableArray arrayWithCapacity: [logs count]];
 	for (i = 0; i < [logs count]; i++) {
 		NSString *currentPiece = [logs objectAtIndex: i];
 		NSArray *pieces = [currentPiece componentsSeparatedByString: @" "];
@@ -42,24 +51,35 @@
 		[dateAttrString appendAttributedString: [[NSAttributedString alloc] initWithString: logString attributes: logAttributes]];
 		
 		NSString *title = [NSString stringWithFormat: @"%@ %@", dateString, logString];
-		mi = [sub addItemWithTitle: title action: nil keyEquivalent: @""];
-		[mi setAttributedTitle: dateAttrString];
-		[mi setToolTip: logString];
-		[mi setRepresentedObject: hash];
+		[menuItems addObject: title];
+		[dateAttrStrings addObject: dateAttrString];
+		[logStrings addObject: logString];
+		[hashs addObject: hash];
 	}
-	
-	if ([repo hasUntracked] || [repo hasLocal] || [repo hasUpstream])
-		[sub addItem: [NSMenuItem separatorItem]];
-	
-	if ([repo hasLocal]) {
-		mi = [sub addItemWithTitle: @"Commit Local Changes" action: @selector(commitFromMenu:) keyEquivalent: @""];
-		[mi setRepresentedObject: repo];
-		[mi setTarget: [MainController sharedInstance]];
-	}
-	
-	[lastUpdate release];
-	lastUpdate = [NSDate date];
-	[lastUpdate retain];	
+	dispatch_async(dispatch_get_main_queue(), ^{
+		int i;
+		NSMenuItem *mi;
+		[sub removeAllItems];
+		for (i = 0; i < [menuItems count]; i++) {
+			mi = [sub addItemWithTitle: [menuItems objectAtIndex: i] action: nil keyEquivalent: @""];
+			[mi setAttributedTitle: [dateAttrStrings objectAtIndex: i]];
+			[mi setToolTip: [logStrings objectAtIndex: i]];
+			[mi setRepresentedObject: [hashs objectAtIndex: i]];
+		}
+		
+		if ([repo hasUntracked] || [repo hasLocal] || [repo hasUpstream])
+			[sub addItem: [NSMenuItem separatorItem]];
+
+		if ([repo hasLocal]) {
+			mi = [sub addItemWithTitle: @"Commit Local Changes" action: @selector(commitFromMenu:) keyEquivalent: @""];
+			[mi setRepresentedObject: repo];
+			[mi setTarget: [MainController sharedInstance]];
+		}
+
+		[lastUpdate release];
+		lastUpdate = [NSDate date];
+		[lastUpdate retain];	
+	});	
 }
 
 - (id) initWithRepository: (RepoButtonDelegate *)rep {
