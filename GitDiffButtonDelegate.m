@@ -241,6 +241,7 @@
 		return;
 	
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"commit", @"-a", @"-m", commitMessage, nil]];
+	[[NSNotificationCenter defaultCenter] postNotificationName: @"commitStart" object: self];		
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
 		[self setLocalMod: NO];
 		[[NSNotificationCenter defaultCenter] postNotificationName: @"commitDone" object: self];		

@@ -99,7 +99,12 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[self ping];
 }
 
+- (void) commitStart: (id) ignored {
+	[butt setEnabled: NO];
+}
+
 - (void) commitDone: (id)ignored {
+	[butt setEnabled: YES];
 	[commitWindow close];
 }
 
@@ -157,6 +162,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitDone:) name: @"commitDone" object: nil];
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitStart:) name: @"commitDone" object: nil];
     return self;
 }
 
