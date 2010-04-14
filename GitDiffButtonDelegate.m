@@ -12,10 +12,6 @@
 	return self;
 }
 
-
-
-
-
 - (void) doFileDiff {
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff-files", @"--name-only", nil]];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
