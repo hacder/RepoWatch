@@ -96,8 +96,11 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 }
 
 - (void) scannerDone: (id)ignored {
-	NSLog(@"Scanner done");
 	[self ping];
+}
+
+- (void) commitDone: (id)ignored {
+	[commitWindow close];
 }
 
 - init {
@@ -153,6 +156,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	scanner = [[Scanner alloc] init];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitDone:) name: @"commitDone" object: nil];
     return self;
 }
 
