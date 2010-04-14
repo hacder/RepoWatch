@@ -10,6 +10,11 @@
 		});
 	}
 	
+	// Do this before we do work, so that it serves as a stupid little race preventor.
+	[lastUpdate release];
+	lastUpdate = [NSDate date];
+	[lastUpdate retain];
+	
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
 	[dateFormatter setDateStyle: NSDateFormatterMediumStyle];
@@ -75,10 +80,6 @@
 			[mi setRepresentedObject: repo];
 			[mi setTarget: [MainController sharedInstance]];
 		}
-
-		[lastUpdate release];
-		lastUpdate = [NSDate date];
-		[lastUpdate retain];	
 	});	
 }
 
@@ -87,6 +88,7 @@
 	repo = rep;
 	[repo retain];
 	[self setToolTip: [repo repository]];
+	lock = [[NSLock alloc] init];
 	
 	// Update the menu no matter what the notification is. We may have to filter some out later on to not go into an
 	// endless loop.
@@ -96,6 +98,9 @@
 
 // Lazy construction/updating.
 - (id) submenu {
+	if (![lock tryLock])
+		return sub;
+		
 	if (sub == nil) {
 		sub = [[NSMenu alloc] initWithTitle: [repo repository]];
 		[sub retain];
@@ -111,9 +116,12 @@
 	if (interval >= 60) {
 		dispatch_async(dispatch_get_global_queue(0, 0), ^{
 			dispatch_async(dispatch_get_main_queue(), ^{
-				[self updateMenu: nil];				
+				[self updateMenu: nil];
+				[lock unlock];
 			});
 		});
+	} else {
+		[lock unlock];
 	}
 	
 	return sub;

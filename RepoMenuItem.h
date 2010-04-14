@@ -6,6 +6,7 @@
 	RepoButtonDelegate *repo;
 	NSMenu *sub;
 	NSDate *lastUpdate;
+	NSLock *lock;
 }
 
 - (id) initWithRepository: (RepoButtonDelegate *)repo;
