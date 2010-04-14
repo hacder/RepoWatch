@@ -52,6 +52,7 @@
 - (void) setCommitMessage: (NSString *)cm;
 - (NSArray *)logs;
 - (void) checkUntracked;
+- (BOOL) logFromToday;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;

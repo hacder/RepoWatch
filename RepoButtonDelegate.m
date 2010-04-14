@@ -19,13 +19,37 @@ void callbackFunction(
 }
 
 - (int) getStateValue {
-	if ([self hasUntracked])
-		return 40;
-	if ([self hasLocal])
-		return 30;
-	if ([self hasUpstream])
-		return 20;
-	return 10;
+	int ret;
+	
+	if ([self hasUntracked]) {
+		ret = 40;
+	} else if ([self hasLocal]) {
+		ret = 30;
+	} else if ([self hasUpstream]) {
+		ret = 20;
+	} else {
+		ret = 10;
+	}
+	if ([self logFromToday])
+		ret += 1;
+	return ret;
+}
+
+- (BOOL) logFromToday {
+	NSArray *logs = [self logs];
+	if (![logs count])
+		return NO;
+		
+	NSString *currentPiece = [logs objectAtIndex: 0];
+	NSArray *pieces = [currentPiece componentsSeparatedByString: @" "];
+	NSString *timestamp = [pieces objectAtIndex: 1];
+
+	NSDate *then = [NSDate dateWithTimeIntervalSince1970: [timestamp intValue]];
+	NSTimeInterval interval = -1 * [then timeIntervalSinceNow];
+	if (interval < 60 * 60 * 24)
+		return YES;
+
+	return NO;
 }
 
 - initWithTitle: (NSString *)s repository: (NSString *)repo {

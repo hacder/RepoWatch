@@ -52,13 +52,18 @@
 	RepoMenuItem *menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
 
 	int size = 10;
-	if ([rbd getStateValue] == 40) {
+	int stateValue = [rbd getStateValue];
+
+	if ([rbd logFromToday])
+		size = 16;
+	
+	if (stateValue >= 40) {
 		[menuItem setOffStateImage: [BubbleFactory getBlueOfSize: size]];
-	} else if ([rbd getStateValue] == 30) {
+	} else if (stateValue >= 30) {
 		[menuItem setOffStateImage: [BubbleFactory getRedOfSize: size]];
-	} else if ([rbd getStateValue] == 20) {			
+	} else if (stateValue >= 20) {			
 		[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: size]];
-	} else if ([rbd getStateValue] == 10) {
+	} else if (stateValue >= 10) {
 		[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: size]];
 	}	
 	
@@ -103,14 +108,16 @@
 		} else {
 			[statusItem setTitle: [rbd shortTitle]];			
 		}
-		if ([rbd getStateValue] == 40) {
-			[statusItem setImage: [BubbleFactory getBlueOfSize: 16]];
-		} else if ([rbd getStateValue] == 30) {
-			[statusItem setImage: [BubbleFactory getRedOfSize: 16]];
-		} else if ([rbd getStateValue] == 20) {			
-			[statusItem setImage: [BubbleFactory getYellowOfSize: 16]];
-		} else if ([rbd getStateValue] == 10) {
-			[statusItem setImage: [BubbleFactory getGreenOfSize: 16]];
+
+		int size = 16;
+		if ([rbd getStateValue] >= 40) {
+			[statusItem setImage: [BubbleFactory getBlueOfSize: size]];
+		} else if ([rbd getStateValue] >= 30) {
+			[statusItem setImage: [BubbleFactory getRedOfSize: size]];
+		} else if ([rbd getStateValue] >= 20) {			
+			[statusItem setImage: [BubbleFactory getYellowOfSize: size]];
+		} else if ([rbd getStateValue] >= 10) {
+			[statusItem setImage: [BubbleFactory getGreenOfSize: size]];
 		}	
 	} else {
 		[statusItem setTitle: @"No Items"];
