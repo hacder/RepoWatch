@@ -103,7 +103,7 @@
 	
 	if ([self numberOfItems]) {
 		RepoButtonDelegate *rbd = [[self itemAtIndex: 0] target];
-		if ([rbd getStateValue] == 10) {
+		if ([rbd getStateValue] < 20) {
 			[statusItem setTitle: @""];
 		} else {
 			[statusItem setTitle: [rbd shortTitle]];			
