@@ -141,10 +141,11 @@
 	[tq addTask: t withCallback: ^(NSArray *arr) {
 		NSMutableArray *arrmut = [NSMutableArray arrayWithArray: arr];
 		int i;
+		NSRange range01 = NSMakeRange(0, 1);
 		for (i = 0; i < [arrmut count]; i++) {
 			NSMutableString *original = [NSMutableString stringWithString: [arrmut objectAtIndex: i]];
 			if ([original characterAtIndex: 0] == '"' && [original characterAtIndex: [original length] - 1] == '"') {
-				[original deleteCharactersInRange: NSMakeRange(0, 1)];
+				[original deleteCharactersInRange: range01];
 				[original deleteCharactersInRange: NSMakeRange([original length] - 1, 1)];
 			}
 		}
