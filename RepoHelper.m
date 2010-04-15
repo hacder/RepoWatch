@@ -12,6 +12,9 @@
 + (NSAttributedString *)colorizedDiffFromArray: (NSArray *)arr {
 	int i;
 	NSMutableAttributedString *res = [[NSMutableAttributedString alloc] initWithString: @""];
+	NSAttributedString *newline = [[NSAttributedString alloc] initWithString: @"\n"];
+	[newline autorelease];
+
 	for (i = 0; i < [arr count]; i++) {
 		NSString *thisLine = [arr objectAtIndex: i];
 		if (![thisLine length]) {
@@ -33,10 +36,12 @@
 			color = [NSColor grayColor];
 		}
 		NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys: color, NSForegroundColorAttributeName, font, NSFontAttributeName, nil];
-		newString = [[NSAttributedString alloc] initWithString: thisLine attributes: dict];			
+		newString = [[NSAttributedString alloc] initWithString: thisLine attributes: dict];
+		[newString autorelease];
 		[res appendAttributedString: newString];
-		[res appendAttributedString: [[NSAttributedString alloc] initWithString: @"\n"]];
+		[res appendAttributedString: newline];
 	}
+	[res autorelease];
 	return res;
 }
 

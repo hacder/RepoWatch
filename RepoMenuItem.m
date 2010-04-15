@@ -3,6 +3,8 @@
 @implementation RepoMenuItem
 
 - (void) updateMenu: (NSNotification *)notif {
+	if (notif)
+		NSLog(@"updateMenu: %@", notif);
 	if (dispatch_get_current_queue() != dispatch_get_global_queue(0, 0)) {
 		dispatch_async(dispatch_get_global_queue(0, 0), ^{
 			[self updateMenu: notif];
@@ -16,6 +18,7 @@
 	[lastUpdate retain];
 	
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+	[dateFormatter autorelease];
 	[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
 	[dateFormatter setDateStyle: NSDateFormatterMediumStyle];
 	[dateFormatter setDoesRelativeDateFormatting: YES];
@@ -53,7 +56,10 @@
 		NSString *logString = [NSString stringWithFormat: @" %@", [logMessage componentsJoinedByString: @" "]];
 		NSString *dateString = [dateFormatter stringFromDate: [NSDate dateWithTimeIntervalSince1970: [timestamp intValue]]];
 		NSMutableAttributedString *dateAttrString = [[NSMutableAttributedString alloc] initWithString: dateString attributes: dateAttributes];
-		[dateAttrString appendAttributedString: [[NSAttributedString alloc] initWithString: logString attributes: logAttributes]];
+		NSAttributedString *logAttributed = [[NSAttributedString alloc] initWithString: logString attributes: logAttributes];
+		[logAttributed autorelease];
+		[dateAttrString appendAttributedString: logAttributed];
+		[dateAttrString autorelease];
 		
 		NSString *title = [NSString stringWithFormat: @"%@ %@", dateString, logString];
 		[menuItems addObject: title];

@@ -7,6 +7,7 @@
 	
 	NSColor *color = [highlightColor blendedColorWithFraction: 0.75 ofColor: [NSColor whiteColor]];
 	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
+	[ret autorelease];
 	[ret lockFocus];
 	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(lineWidth / 2, lineWidth / 2, size - lineWidth, size - lineWidth)];
 	NSGradient *aGradient = [[[NSGradient alloc] initWithStartingColor: color endingColor: highlightColor] autorelease];
