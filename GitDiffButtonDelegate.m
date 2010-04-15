@@ -220,8 +220,8 @@
 	[[NSNotificationCenter defaultCenter] postNotificationName: @"commitStart" object: self];		
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
 		[self setLocalMod: NO];
-		[[NSNotificationCenter defaultCenter] postNotificationName: @"commitDone" object: self];
 		[self updateLogs];
+		[[NSNotificationCenter defaultCenter] postNotificationName: @"commitDone" object: self];
 	}];
 }
 
