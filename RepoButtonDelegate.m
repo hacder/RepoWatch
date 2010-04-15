@@ -20,7 +20,6 @@ void callbackFunction(
 
 - (int) getStateValue {
 	int ret;
-	NSDate *start = [NSDate date];
 	
 	if ([self hasUntracked]) {
 		ret = 40;
@@ -31,12 +30,8 @@ void callbackFunction(
 	} else {
 		ret = 10;
 	}
-	NSDate *end = [NSDate date];
-	NSLog(@"pre-lFT: %0.2f", [end timeIntervalSinceDate: start]);	
 	if ([self logFromToday])
 		ret += 1;
-	end = [NSDate date];
-	NSLog(@"post-lFT: %0.2f", [end timeIntervalSinceDate: start]);	
 	return ret;
 }
 
