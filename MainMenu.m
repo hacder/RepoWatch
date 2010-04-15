@@ -50,15 +50,9 @@
 		return;
 	}
 	
-	NSDate *start = [NSDate date];
-	
-	NSLog(@"Inefficient code running");
 	// TODO: MASSIVE memory leak because this aren't re-used. I really need to find a way to re-use
 	//       them instead of throwing them away when we rearrange.
 	RepoMenuItem *menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
-
-	NSDate *end = [NSDate date];
-	NSLog(@"Just creation: %0.2f", [end timeIntervalSinceDate: start]);	
 
 	int size = 10;
 	int stateValue = [rbd getStateValue];
@@ -81,32 +75,31 @@
 	int i;
 	int state1 = [rbd getStateValue];
 	NSString *title1 = [rbd shortTitle];
+
 	for (i = 0; i < [self numberOfItems]; i++) {
 		// TODO: There will be other items in here. We can't actually guarantee that this type conversion
 		//       will work.
 		RepoButtonDelegate *rbd2 = [[self itemAtIndex: i] target];
-		if ([rbd2 getStateValue] > state1)
+		int stateValue = [rbd2 getStateValue];
+		if (stateValue > state1)
 			continue;
-		if ([rbd2 getStateValue] == state1) {
+		if (stateValue == state1) {
 			NSString *title2 = [rbd2 shortTitle];
 			NSComparisonResult res = [title1 caseInsensitiveCompare: title2];
+
 			if (res == NSOrderedAscending) {
 				[self insertItem: menuItem atIndex: i];
-				end = [NSDate date];
-				NSLog(@"Time interval insert 1: %0.2f", [end timeIntervalSinceDate: start]);	
 				return;
 			} else {
 				continue;
 			}
 		}
 		[self insertItem: menuItem atIndex: i];
-		end = [NSDate date];
-		NSLog(@"Time interval insert 2: %0.2f", [end timeIntervalSinceDate: start]);	
 		return;
 	}
+
+	// It goes at the end!
 	[self addItem: menuItem];
-	end = [NSDate date];
-	NSLog(@"Time interval insert 3: %0.2f", [end timeIntervalSinceDate: start]);	
 }
 
 - (void) updateTitle {
