@@ -41,7 +41,6 @@
 - (void)setupUpstream;
 - (void) setUntracked: (BOOL) b;
 - (void) checkLocal: (NSTimer *) t;
-- (NSString *) getShort;
 - (void) setLocalMod: (BOOL)b;
 - (void) setUpstreamMod: (BOOL)b;
 - (void) setDirty: (BOOL)b;

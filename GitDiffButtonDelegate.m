@@ -158,48 +158,6 @@
 	return [self baseTask: lp fromArguments: args];
 }
 
-- (void) getDiffRemoteWithCallback: (void (^)(NSString *)) callback {
-	NSArray *arr;
-	
-	if (!lastRemote) {
-		lastRemote = [NSDate date];
-		[lastRemote retain];
-	} else {
-		if ([lastRemote timeIntervalSinceNow] > 3600) {
-			[lastRemote release];
-			lastRemote = [NSDate date];
-			[lastRemote retain];
-		} else
-			return;
-	}
-	arr = [NSArray arrayWithObjects: @"remote", nil];
-//	NSTask *t = [self taskFromArguments: arr];
-	// [tq addTask: t withCallback: ^(NSArray *resultarr) {
-	// 	if (![resultarr count]) {
-	// 		[self setUpstreamMod: NO];
-	// 		return nil;
-	// 	}
-	// 	NSString *string2 = [resultarr objectAtIndex: 0];
-	// 	string2 = [string2 stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	// 	if (![string2 length]) {
-	// 		upstreamMod = NO;
-	// 		return nil;
-	// 	}
-	// 	string2 = [NSString stringWithFormat: @"HEAD...%@", string2];
-	// 	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", string2, nil];
-	// 	
-	// 	NSTask *t = [self taskFromArguments: arr];
-	// 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
-	// 		if (![resultarr count]) {
-	// 			upstreamMod = NO;
-	// 			return;
-	// 		}
-	// 		NSString *string = [resultarr objectAtIndex: 0];
-	// 		(callback)([RepoHelper shortenDiff: string]);
-	// 	}];	
-	// }];
-}
-
 - (NSArray *)logs {
 	NSArray *arr = [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ct %s", nil];
 	NSTask *t = [self taskFromArguments: arr];

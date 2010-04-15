@@ -243,10 +243,6 @@ void callbackFunction(
 - (void) checkUntracked {
 }
 
-- (NSString *)getShort {
-	return shortTitle;
-}
-
 - (NSString *)getDiff {
 	NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
 	NSTask *t = [self taskFromArguments: arr];

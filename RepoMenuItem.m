@@ -100,6 +100,7 @@
 	
 	// Update the menu no matter what the notification is. We may have to filter some out later on to not go into an
 	// endless loop.
+	NSLog(@"Registering for %@", [rep shortTitle]);
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(updateMenu:) name: nil object: rep];
 	return self;
 }

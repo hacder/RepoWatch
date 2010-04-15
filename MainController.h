@@ -42,7 +42,6 @@
 }
 
 - init;
-- (void) maybeRefresh: (ButtonDelegate *)bd;
 - (IBAction) openFile: (id) sender;
 - (void) ping;
 - (void) doCommitWindowForRepository: (RepoButtonDelegate *)rbd;
