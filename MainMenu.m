@@ -58,7 +58,7 @@
 	int stateValue = [rbd getStateValue];
 
 	if ([rbd logFromToday]) {
-		size = 16;
+		size = 12;
 	} else {
 		NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
 			[NSColor grayColor],

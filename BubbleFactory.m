@@ -3,18 +3,24 @@
 @implementation BubbleFactory
 
 + (NSImage *)getBubbleOfColor: (NSColor *)highlightColor andSize: (int) size {
+	if (size > 15)
+		size = 15;
+		
 	float lineWidth = 2 * (size / 15.0);
 	
-	if (size > 16)
-		size = 16;
-		
-	int x_offset = (16 - size) / 2;
+	int x_offset = (15 - size) / 2.0;
+	int y_offset = (15 - size) / 2.0;
 	
 	NSColor *color = [highlightColor blendedColorWithFraction: 0.75 ofColor: [NSColor whiteColor]];
-	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(16, 16)];
+	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(15, 15)];
 	[ret autorelease];
 	[ret lockFocus];
-	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(x_offset + (lineWidth / 2), lineWidth / 2, (size - lineWidth), size - lineWidth)];
+	float x = x_offset + (lineWidth / 2);
+	float y = y_offset + (lineWidth / 2);
+	float w = size - lineWidth;
+	float h = w;
+	
+	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(x, y, w, h)];
 	NSGradient *aGradient = [[[NSGradient alloc] initWithStartingColor: color endingColor: highlightColor] autorelease];
 	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.2, 0.2)];
 	[path setLineWidth: lineWidth];
