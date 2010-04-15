@@ -57,8 +57,18 @@
 	int size = 10;
 	int stateValue = [rbd getStateValue];
 
-	if ([rbd logFromToday])
+	if ([rbd logFromToday]) {
 		size = 16;
+	} else {
+		NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+			[NSColor grayColor],
+			NSForegroundColorAttributeName,
+			[NSFont labelFontOfSize: 12],
+			NSFontAttributeName,
+			nil];
+		NSMutableAttributedString *newTitle = [[NSMutableAttributedString alloc] initWithString: [menuItem title] attributes: attributes];
+		[menuItem setAttributedTitle: newTitle];
+	}
 	
 	if (stateValue >= 40) {
 		[menuItem setOffStateImage: [BubbleFactory getBlueOfSize: size]];
