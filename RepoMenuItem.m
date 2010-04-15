@@ -136,4 +136,9 @@
 	return sub;
 }
 
+- (void) dealloc {
+	[super dealloc];
+	NSLog(@"Deallocating RepoMenuItem");
+}
+
 @end
