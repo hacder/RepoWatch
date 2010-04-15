@@ -80,6 +80,13 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 }
 
 - (void) doCommitWindowForRepository: (RepoButtonDelegate *)rbd {
+	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self doCommitWindowForRepository: rbd];
+		});
+		return;
+	}
+	
 	[commitWindow center];
 	[commitWindow setTitle: [rbd shortTitle]];
 	[commitWindow makeKeyAndOrderFront: self];

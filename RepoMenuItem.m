@@ -3,14 +3,17 @@
 @implementation RepoMenuItem
 
 - (void) updateMenu: (NSNotification *)notif {
-	if (notif)
-		NSLog(@"updateMenu: %@", notif);
 	if (dispatch_get_current_queue() != dispatch_get_global_queue(0, 0)) {
 		dispatch_async(dispatch_get_global_queue(0, 0), ^{
 			[self updateMenu: notif];
 			return;
 		});
 	}
+	if (![lock tryLock])
+		return;
+
+	if (notif)
+		NSLog(@"updateMenu: %@", notif);
 	
 	// Do this before we do work, so that it serves as a stupid little race preventor.
 	[lastUpdate release];
@@ -86,6 +89,7 @@
 			[mi setRepresentedObject: repo];
 			[mi setTarget: [MainController sharedInstance]];
 		}
+		[lock unlock];
 	});	
 }
 
