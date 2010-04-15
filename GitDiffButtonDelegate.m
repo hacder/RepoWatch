@@ -53,7 +53,6 @@
 				[arrmut replaceObjectAtIndex: i withObject: original];
 			}
 		}
-		NSLog(@"Untracked: %@", arrmut);
 	}];	
 }
 
@@ -160,7 +159,6 @@
 }
 
 - (void) updateLogs {
-	NSLog(@"Updating logs");
 	[logLock lock];
 	
 	NSArray *arr = [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ct %s", nil];
@@ -183,11 +181,9 @@
 		NSMutableArray *result2 = [NSMutableArray arrayWithArray: result];
 		[result2 removeObjectAtIndex: [result2 count] - 1];
 		[result2 retain];
-		NSLog(@"Setting logs to %@", result2);
 		_logs = result2;
 	} else {
 		[result retain];
-		NSLog(@"Setting logs to %@", result);
 		_logs = result;		
 	}
 
