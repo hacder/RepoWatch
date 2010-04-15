@@ -5,11 +5,16 @@
 + (NSImage *)getBubbleOfColor: (NSColor *)highlightColor andSize: (int) size {
 	float lineWidth = 2 * (size / 15.0);
 	
+	if (size > 16)
+		size = 16;
+		
+	int x_offset = (16 - size) / 2;
+	
 	NSColor *color = [highlightColor blendedColorWithFraction: 0.75 ofColor: [NSColor whiteColor]];
-	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(size, size)];
+	NSImage *ret = [[NSImage alloc] initWithSize: NSMakeSize(16, 16)];
 	[ret autorelease];
 	[ret lockFocus];
-	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(lineWidth / 2, lineWidth / 2, size - lineWidth, size - lineWidth)];
+	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect(x_offset + (lineWidth / 2), lineWidth / 2, (size - lineWidth), size - lineWidth)];
 	NSGradient *aGradient = [[[NSGradient alloc] initWithStartingColor: color endingColor: highlightColor] autorelease];
 	[aGradient drawInBezierPath: path relativeCenterPosition: NSMakePoint(0.2, 0.2)];
 	[path setLineWidth: lineWidth];
