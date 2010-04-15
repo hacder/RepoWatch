@@ -160,6 +160,7 @@
 }
 
 - (void) updateLogs {
+	NSLog(@"Updating logs");
 	[logLock lock];
 	
 	NSArray *arr = [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ct %s", nil];
