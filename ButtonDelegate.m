@@ -5,20 +5,6 @@
 
 @implementation ButtonDelegate
 
-- initWithTitle: (NSString *)s {
-	self = [super init];
-	[self setTitle: s];
-	[self setShortTitle: s];
-	return self;
-}
-
-- (void) setTitle: (NSString *)t {
-	[t retain];
-	[menuItem setTitle: t];
-	[title release];
-	title = t;
-}
-
 - (void) setShortTitle: (NSString *)t {
 	if ([t isEqual: shortTitle])
 		return;
@@ -35,10 +21,6 @@
 
 - (void) forceRefresh {
 	[self fire: nil];
-}
-
-- (NSMenuItem *)getMenuItem {
-	return menuItem;
 }
 
 - (void) beep: (id) something {

@@ -5,6 +5,8 @@
 #import "TaskQueue.h"
 #import "Diff.h"
 
+@class RepoMenuItem;
+
 // The general class for Repository types. This needs to be renamed, cleaned up, and made
 // more powerful. Eventually I want the ability to easily add new repository types, and this
 // class being powerful and general is the main way that will happen.
@@ -17,9 +19,11 @@
 	NSTextView *tv;
 	NSWindow *window;
 	NSTimer *timer;
+	NSTimer *upstreamTimer;
 	NSArray *currentUntracked;
 	NSDate *lastRemote;
 	Diff *currLocalDiff;
+	RepoMenuItem *menuItem;
 	
 	NSString *localDiffSummary; // lines changed, files modified, etc.
 	NSAttributedString *localDiff; // the actual diff
@@ -37,10 +41,11 @@
 
 // In this section are the functions where the flow has been redesigned. These are the good functions.
 // After the first line break are things that might be no longer good.
-- initWithTitle: (NSString *)t repository: (NSString *)repo;
+- initWithRepositoryName: (NSString *)repo;
 - (void)setupUpstream;
 - (void) setUntracked: (BOOL) b;
 - (void) checkLocal: (NSTimer *) t;
+- (void) checkUpstream: (NSTimer *)t;
 - (void) setLocalMod: (BOOL)b;
 - (void) setUpstreamMod: (BOOL)b;
 - (void) setDirty: (BOOL)b;
@@ -52,6 +57,7 @@
 - (NSArray *)logs;
 - (void) checkUntracked;
 - (BOOL) logFromToday;
+- (void) setMenuItem: (RepoMenuItem *)mi;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;

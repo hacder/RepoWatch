@@ -10,16 +10,12 @@
 
 @interface ButtonDelegate : NSObject {
 	NSString *shortTitle;
-	NSMenuItem *menuItem;
 	NSString *title;
 }
 
-- initWithTitle: (NSString *)t;
 - (void) fire: (NSTimer *)t;
 - (NSString *) shortTitle;
 - (void) setShortTitle: (NSString *)t;
-- (void) setTitle: (NSString *)t;
-- (NSMenuItem *) getMenuItem;
 - (void) beep: (id) something;
 
 @end

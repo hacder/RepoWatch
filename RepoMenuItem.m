@@ -8,9 +8,6 @@
 			return;
 		
 		dispatch_async(dispatch_get_global_queue(0, 0), ^{
-			if (notif)
-				NSLog(@"updateMenu: %@", notif);
-	
 			// Do this before we do work, so that it serves as a stupid little race preventor.
 			[lastUpdate release];
 			lastUpdate = [NSDate date];
@@ -92,15 +89,16 @@
 }
 
 - (id) initWithRepository: (RepoButtonDelegate *)rep {
+	NSLog(@"Initing with %@: %@", rep, [rep shortTitle]);
 	self = [super initWithTitle: [rep shortTitle] action: nil keyEquivalent: @""];
 	repo = rep;
 	[repo retain];
 	[self setToolTip: [repo repository]];
 	lock = [[NSLock alloc] init];
+	[rep setMenuItem: self];
 	
 	// Update the menu no matter what the notification is. We may have to filter some out later on to not go into an
 	// endless loop.
-	NSLog(@"Registering for %@", [rep shortTitle]);
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(updateMenu:) name: nil object: rep];
 	return self;
 }

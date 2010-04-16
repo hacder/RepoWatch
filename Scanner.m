@@ -245,16 +245,14 @@ char *find_execable(const char *filename) {
 	if ([contents containsObject: @".git"]) {
 		if (git) {
 			[self addCachedRepoPath: path];
-			GitDiffButtonDelegate *gdbd = [[GitDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
-				gitPath: git repository: path];
+			GitDiffButtonDelegate *gdbd = [[GitDiffButtonDelegate alloc] initWithGit: git repository: path];
 			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: gdbd];
 			return YES;
 		}
 	} else if ([contents containsObject: @".hg"]) {
 		if (hg) {
 			[self addCachedRepoPath: path];
-			MercurialDiffButtonDelegate *mdbd = [[MercurialDiffButtonDelegate alloc] initWithTitle: [path lastPathComponent]
-				hgPath: hg repository: path];
+			MercurialDiffButtonDelegate *mdbd = [[MercurialDiffButtonDelegate alloc] initWithHG: hg repository: path];
 			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: mdbd];
 			return YES;
 		}

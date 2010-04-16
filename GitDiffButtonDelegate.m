@@ -4,13 +4,37 @@
 
 @implementation GitDiffButtonDelegate
 
-- initWithTitle: (NSString *)s gitPath: (char *)gitPath repository: (NSString *)rep {
+- initWithGit: (char *)gitPath repository: (NSString *)rep {
 	git = gitPath;
 	logLock = [[NSLock alloc] init];
 
-	self = [super initWithTitle: s repository: rep];	
+	self = [super initWithRepositoryName: rep];	
 	[self fire: nil];
 	return self;
+}
+
+- (void) checkUpstream: (NSTimer *)ti {
+	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", upstreamName, nil]];
+	[tq addTask: t withCallback: ^(NSArray *resultarr) {
+		// TODO: Do something sensible with branches.
+		NSString *diffString = [NSString stringWithFormat: @"master...%@/master", upstreamName];
+		NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", diffString, nil];
+		NSTask *t = [self taskFromArguments: arr];
+		[tq addTask: t withCallback: ^(NSArray *resultarr) {
+			if ([resultarr count]) {
+				upstreamMod = YES;
+				[remoteDiffStat autorelease];
+				remoteDiffStat = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
+				[remoteDiffStat retain];
+			} else {
+				upstreamMod = NO;
+				[remoteDiffStat autorelease];
+				remoteDiffStat = nil;
+			}
+			[super checkUpstream: ti];
+			[[NSNotificationCenter defaultCenter] postNotificationName: @"updateTitle" object: self];
+		}];
+	}];
 }
 
 - (void) doFileDiff {
@@ -248,10 +272,10 @@
 				if ([resultarr count]) {
 					upstreamURL = [resultarr objectAtIndex: 0];
 					[upstreamURL retain];
-					NSLog(@"Upstream URL is %@", upstreamURL);
 				} else {
 					upstreamURL = nil;
 				}
+				[self checkUpstream: nil];
 			}];
 		} else {
 			upstreamName = nil;
@@ -260,10 +284,15 @@
 }
 
 - (NSString *)shortTitle {
+	NSLog(@"Asking for shortTitle: %@: %@", self, repository);
 	if (localMod) {
 		return [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], localDiffSummary];
+	} else if (upstreamMod) {
+		return [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], remoteDiffStat];
 	} else {
-		return [repository lastPathComponent];
+		if (repository)
+			return [repository lastPathComponent];
+		return @"";
 	}
 }
 

@@ -70,7 +70,6 @@
 	}
 	if (appending)
 		logString = [NSString stringWithFormat: @"%@ %@", logString, appending];
-	NSLog(@"%@", logString);
 }
 
 + (NSString *)stringFromFile: (NSFileHandle *)file {

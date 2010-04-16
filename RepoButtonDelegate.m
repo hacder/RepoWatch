@@ -6,6 +6,8 @@
 @implementation RepoButtonDelegate
 
 static NSMutableArray *repos;
+static float fastFrequency = 5.0;
+static float slowFrequency = 5.0;
 
 void callbackFunction(
 		ConstFSEventStreamRef streamRef,
@@ -52,8 +54,8 @@ void callbackFunction(
 	return NO;
 }
 
-- initWithTitle: (NSString *)s repository: (NSString *)repo {
-	self = [super initWithTitle: s];
+- initWithRepositoryName: (NSString *)repo {
+	self = [super init];
 
 	repository = repo;
 	[repository retain];
@@ -97,6 +99,10 @@ void callbackFunction(
 	[self setupUpstream];
 	
 	return self;
+}
+
+- (void) setMenuItem: (RepoMenuItem *)mi {
+	menuItem = mi;
 }
 
 - (NSArray *)logs {
@@ -225,13 +231,22 @@ void callbackFunction(
 	return repository;
 }
 
+- (void) checkUpstream: (NSTimer *) t {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[upstreamTimer autorelease];
+		[upstreamTimer invalidate];
+		upstreamTimer = [NSTimer scheduledTimerWithTimeInterval: slowFrequency target: self selector: @selector(checkUpstream:) userInfo: nil repeats: NO];
+		[upstreamTimer retain];
+	});
+}
+
 - (void) checkLocal: (NSTimer *) t {
 	// NOTE: Doing this on a background thread makes NSTimer confused about where to run when it fires, so it starts missing.
 	//       Since we're only re-creating this timer as a result of this timer running, we REALLY do not want to miss.
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[timer autorelease];
 		[timer invalidate];
-		timer = [NSTimer scheduledTimerWithTimeInterval: 5.0 target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
+		timer = [NSTimer scheduledTimerWithTimeInterval: fastFrequency target: self selector: @selector(checkLocal:) userInfo: nil repeats: NO];
 		
 		// Note: This only works because we are on the time timing frequency as check local. Don't ignore the reason that this
 		//       works.

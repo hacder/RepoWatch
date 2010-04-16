@@ -19,7 +19,7 @@
 	
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(newRepository:) name: @"repoFound" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(rearrangeRepository:) name: @"repoStateChange" object: nil];
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(repositoryTitleUpdate:) name: @"updateTitle" object: nil];
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(rearrangeRepository:) name: @"updateTitle" object: nil];
 	return self;
 }
 
@@ -31,15 +31,6 @@
 			return (RepoMenuItem *)[self itemAtIndex: i];
 	}
 	return nil;
-}
-
-- (void) repositoryTitleUpdate: (NSNotification *)note {
-	RepoMenuItem *mi = [self menuItemForRepository: [note object]];
-	RepoButtonDelegate *rbd = [note object];
-	[mi setTitle: [rbd shortTitle]];
-	
-	// What if this repository is our most important one?
-	[self updateTitle];
 }
 
 - (void) insertRepository: (RepoButtonDelegate *)rbd {
@@ -66,7 +57,7 @@
 			[NSFont labelFontOfSize: 12],
 			NSFontAttributeName,
 			nil];
-		NSMutableAttributedString *newTitle = [[NSMutableAttributedString alloc] initWithString: [menuItem title] attributes: attributes];
+		NSMutableAttributedString *newTitle = [[NSMutableAttributedString alloc] initWithString: [rbd shortTitle] attributes: attributes];
 		[menuItem setAttributedTitle: newTitle];
 	}
 	
@@ -154,18 +145,23 @@
 	
 	RepoButtonDelegate *rbd = [notification object];
 	int i;
+	BOOL foundIt = NO;
 	for (i = 0; i < [self numberOfItems]; i++) {
 		if ([[self itemAtIndex: i] target] == rbd) {
 			[self removeItemAtIndex: i];
+			foundIt = YES;
 			break;
 		}
 	}
+	if (!foundIt)
+		NSLog(@"Uh oh, didn't find %@", rbd);
 	[self insertRepository: rbd];
 	[self updateTitle];
 }
 
 - (void) newRepository: (NSNotification *)notification {
 	RepoButtonDelegate *rbd = [notification object];
+	NSLog(@"newRepository: %@", rbd);
 	[self insertRepository: rbd];
 	[self updateTitle];
 }

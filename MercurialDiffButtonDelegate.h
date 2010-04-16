@@ -8,6 +8,6 @@
 	char *hg;
 }
 
-- initWithTitle: (NSString *)s hgPath: (char *)hgPath repository: (NSString *)rep;
+- initWithHG: (char *)hgPath repository: (NSString *)rep;
 
 @end

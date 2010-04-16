@@ -4,9 +4,9 @@
 
 @implementation MercurialDiffButtonDelegate
 
-- initWithTitle: (NSString *)s hgPath: (char *)hgPath repository: (NSString *)rep {
+- initWithHG: (char *)hgPath repository: (NSString *)rep {
 	hg = hgPath;
-	self = [super initWithTitle: s repository: rep];
+	self = [super initWithRepositoryName: rep];
 	[self fire: nil];
 	return self;
 }
@@ -109,15 +109,6 @@
 	[NSApp hide: self];
 }
 
-- (void) setAllTitles: (NSString *)s {
-	[s retain];
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[s autorelease];
-		[self setTitle: s];
-		[self setShortTitle: s];
-	});
-}
-
 - (NSString *) diffStatOfTask: (NSTask *)t {
 	NSPipe *pipe = [NSPipe pipe];
 	[t setStandardOutput: pipe];
@@ -162,6 +153,10 @@
 	}];
 }
 
+- (NSString *)shortTitle {
+	return @"Mercurial";
+}
+
 - (void) checkLocal: (NSTimer *)ti {
 	if (!dirty) {
 		[super checkLocal: ti];
@@ -183,8 +178,6 @@
 			[localDiff retain];
 			[super checkLocal: ti];
 		}];
-		NSString *sTit = [NSString stringWithFormat: @"%@: %@", [RepoHelper makeNameFromRepo: self], localDiffSummary];
-		[self setAllTitles: sTit];
 	} else {
 		[self setLocalMod: NO];
 		[super checkLocal: ti];
