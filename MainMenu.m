@@ -41,9 +41,9 @@
 		return;
 	}
 	
-	// TODO: MASSIVE memory leak because this aren't re-used. I really need to find a way to re-use
-	//       them instead of throwing them away when we rearrange.
-	RepoMenuItem *menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
+	RepoMenuItem *menuItem = [rbd getMenuItem];
+	if (!menuItem)
+		menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
 
 	int size = 10;
 	int stateValue = [rbd getStateValue];

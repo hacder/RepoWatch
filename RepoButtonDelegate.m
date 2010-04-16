@@ -105,6 +105,10 @@ void callbackFunction(
 	menuItem = mi;
 }
 
+- (RepoMenuItem *)getMenuItem {
+	return menuItem;
+}
+
 - (NSArray *)logs {
 	return nil;
 }

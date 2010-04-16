@@ -284,7 +284,6 @@
 }
 
 - (NSString *)shortTitle {
-	NSLog(@"Asking for shortTitle: %@: %@", self, repository);
 	if (localMod) {
 		return [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], localDiffSummary];
 	} else if (upstreamMod) {

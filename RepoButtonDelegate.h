@@ -58,6 +58,7 @@
 - (void) checkUntracked;
 - (BOOL) logFromToday;
 - (void) setMenuItem: (RepoMenuItem *)mi;
+- (RepoMenuItem *)getMenuItem;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;
