@@ -89,7 +89,6 @@
 }
 
 - (id) initWithRepository: (RepoButtonDelegate *)rep {
-	NSLog(@"Initing with %@: %@", rep, [rep shortTitle]);
 	self = [super initWithTitle: [rep shortTitle] action: nil keyEquivalent: @""];
 	repo = rep;
 	[repo retain];

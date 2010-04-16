@@ -161,7 +161,6 @@
 
 - (void) newRepository: (NSNotification *)notification {
 	RepoButtonDelegate *rbd = [notification object];
-	NSLog(@"newRepository: %@", rbd);
 	[self insertRepository: rbd];
 	[self updateTitle];
 }
