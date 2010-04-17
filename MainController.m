@@ -115,6 +115,10 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	[commitWindow close];
 }
 
+- (void) updater: (SUUpdater *)updater didFindValidUpdate: (SUAppcastItem *)item {
+	[NSApp activateIgnoringOtherApps: YES];
+}
+
 - init {
 	self = [super init];
 	shared = self;
@@ -154,6 +158,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	// Set up Sparkle. Unfortunately I haven't started using this yet, and I'm not sure how to make it do the
 	// updates correctly, but it's here already.
 	SUUpdater *updater = [SUUpdater sharedUpdater];
+	[updater setDelegate: self];
 	NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
 	NSString *build = [infoDict objectForKey: @"CFBundleVersion"];
 	
