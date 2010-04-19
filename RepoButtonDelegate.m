@@ -48,7 +48,7 @@ void callbackFunction(
 
 	NSDate *then = [NSDate dateWithTimeIntervalSince1970: [timestamp intValue]];
 	NSTimeInterval interval = -1 * [then timeIntervalSinceNow];
-	if (interval < 60 * 60 * 24)
+	if (interval < 60 * 60 * 48)
 		return YES;
 
 	return NO;
