@@ -21,6 +21,44 @@
 	return t;
 }
 
+- (int) logOffset {
+	return 3;
+}
+
+- (void) updateLogs {
+	[logLock lock];
+	
+	NSArray *arr = [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date|hgdate} {desc|firstline}\n", nil];
+	NSTask *t = [self taskFromArguments: arr];
+
+	NSFileHandle *file = [RepoHelper pipeForTask: t];
+	NSFileHandle *err = [RepoHelper errForTask: t];
+
+	[t launch];
+	NSString *string = [RepoHelper stringFromFile: file];
+	NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
+	[t waitUntilExit];
+	if ([t terminationStatus] != 0) {
+		[logLock unlock];
+		return;
+	}
+
+	[err closeFile];
+	[file closeFile];
+
+	if ([[result objectAtIndex: [result count] - 1] isEqualToString: @""]) {
+		NSMutableArray *result2 = [NSMutableArray arrayWithArray: result];
+		[result2 removeObjectAtIndex: [result2 count] - 1];
+		[result2 retain];
+		_logs = result2;
+	} else {
+		[result retain];
+		_logs = result;		
+	}
+
+	[logLock unlock];
+}
+
 - (void) upstreamUpdate: (id) sender {
 	[sender setEnabled: NO];
 
@@ -154,7 +192,7 @@
 }
 
 - (NSString *)shortTitle {
-	return @"Mercurial";
+	return [repository lastPathComponent];
 }
 
 - (void) checkLocal: (NSTimer *)ti {

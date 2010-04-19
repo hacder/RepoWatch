@@ -25,6 +25,9 @@
 	Diff *currLocalDiff;
 	RepoMenuItem *menuItem;
 	
+	NSLock *logLock;
+	NSArray *_logs;
+	
 	NSString *localDiffSummary; // lines changed, files modified, etc.
 	NSAttributedString *localDiff; // the actual diff
 	NSString *commitMessage;
@@ -59,6 +62,8 @@
 - (BOOL) logFromToday;
 - (void) setMenuItem: (RepoMenuItem *)mi;
 - (RepoMenuItem *)getMenuItem;
+- (void) updateLogs;
+- (int) logOffset;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;

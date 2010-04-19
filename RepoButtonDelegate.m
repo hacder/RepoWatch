@@ -56,6 +56,7 @@ void callbackFunction(
 
 - initWithRepositoryName: (NSString *)repo {
 	self = [super init];
+	logLock = [[NSLock alloc] init];
 
 	repository = repo;
 	[repository retain];
@@ -109,8 +110,17 @@ void callbackFunction(
 	return menuItem;
 }
 
+- (void) updateLogs {
+}
+
+- (int) logOffset {
+	return 2;
+}
+
 - (NSArray *)logs {
-	return nil;
+	if (_logs == nil)
+		[self updateLogs];
+	return _logs;
 }
 
 - (NSString *)repositoryPath {

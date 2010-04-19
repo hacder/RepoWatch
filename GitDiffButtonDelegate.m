@@ -6,7 +6,6 @@
 
 - initWithGit: (char *)gitPath repository: (NSString *)rep {
 	git = gitPath;
-	logLock = [[NSLock alloc] init];
 
 	self = [super initWithRepositoryName: rep];	
 	[self fire: nil];
@@ -130,36 +129,6 @@
 	}];
 }
 
-- (void) addAll: (id) button {
-	int i;
-	for (i = 0; i < [currentUntracked count]; i++) {
-		NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"add", [currentUntracked objectAtIndex: i], nil]];
-		[tq addTask: t withCallback: nil];
-	}
-	[self fire: nil];
-}
-
-- (void) ignoreAll: (id) button {
-	NSString *path = [NSString stringWithFormat: @"%@/%@", repository, @".gitignore"];
-	NSFileHandle *fh = [NSFileHandle fileHandleForWritingAtPath: path];
-	if (fh == nil) {
-		[@".gitignore\n" writeToFile: path atomically: NO encoding: NSASCIIStringEncoding error: nil];
-		fh = [NSFileHandle fileHandleForWritingAtPath: path];
-		if (fh == nil)
-			return;
-	}
-	[fh truncateFileAtOffset: [fh seekToEndOfFile]];
-	int i;
-	for (i = 0; i < [currentUntracked count]; i++) {
-		NSString *fileName = [currentUntracked objectAtIndex: i];
-		[fh writeData: [fileName dataUsingEncoding: NSUTF8StringEncoding]];
-		[fh writeData: [@"\n" dataUsingEncoding: NSASCIIStringEncoding]];
-	}
-	[fh synchronizeFile];
-	[fh closeFile];
-	[self fire: nil];
-}
-
 - (void)getUntrackedWithCallback: (void (^)(NSArray *)) callback {
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exlcude-standard", @"-z", nil]];
 	[tq addTask: t withCallback: ^(NSArray *arr) {
@@ -195,8 +164,10 @@
 	NSString *string = [RepoHelper stringFromFile: file];
 	NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
 	[t waitUntilExit];
-	if ([t terminationStatus] != 0)
+	if ([t terminationStatus] != 0) {
+		[logLock unlock];
 		return;
+	}
 
 	[err closeFile];
 	[file closeFile];
@@ -212,12 +183,6 @@
 	}
 
 	[logLock unlock];
-}
-
-- (NSArray *)logs {
-	if (_logs == nil)
-		[self updateLogs];
-	return _logs;
 }
 
 - (void) pull: (id) menuItem {

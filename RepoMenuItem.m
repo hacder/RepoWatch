@@ -39,14 +39,16 @@
 			NSMutableArray *dateAttrStrings = [NSMutableArray arrayWithCapacity: [logs count]];
 			NSMutableArray *logStrings = [NSMutableArray arrayWithCapacity: [logs count]];
 			NSMutableArray *hashs = [NSMutableArray arrayWithCapacity: [logs count]];
+
 			for (i = 0; i < [logs count]; i++) {
 				NSString *currentPiece = [logs objectAtIndex: i];
 				NSArray *pieces = [currentPiece componentsSeparatedByString: @" "];
 				NSString *timestamp = [pieces objectAtIndex: 1];
 				NSString *hash = [pieces objectAtIndex: 2];
+
 				NSRange theRange;
-				theRange.location = 2;
-				theRange.length = [pieces count] - 2;
+				theRange.location = [repo logOffset];
+				theRange.length = [pieces count] - [repo logOffset];
 		
 				NSArray *logMessage = [pieces subarrayWithRange: theRange];
 				NSString *logString = [NSString stringWithFormat: @" %@", [logMessage componentsJoinedByString: @" "]];

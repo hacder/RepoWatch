@@ -8,8 +8,6 @@
 @interface GitDiffButtonDelegate : RepoButtonDelegate {
 	char *git;
 	NSString *currentBranch;
-	NSLock *logLock;
-	NSArray *_logs;
 	NSString *remoteDiffStat;
 }
 
