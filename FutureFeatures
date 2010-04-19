@@ -1,3 +1,5 @@
+** Submenu text does not grow when you commit, bringing the latest commit to today.
+
 Topic Branches
 --------------
 	Assumptions: Never edit master. Never. When we go to commit, if we had master checked out, we should actually
