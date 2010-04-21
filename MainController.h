@@ -10,8 +10,6 @@
 @class RepoButtonDelegate;
 
 @interface MainController : NSObject {
-	MainMenu *theMenu;
-
 	char *date;
 	char *time;
 	
@@ -19,6 +17,8 @@
 	ButtonDelegate *activeBD;
 
 @public	
+	MainMenu *theMenu;
+
 	IBOutlet NSWindow *commitWindow;
 	IBOutlet NSTextView *tv;
 	IBOutlet NSButton *butt;

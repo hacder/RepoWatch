@@ -6,10 +6,8 @@
 #import "Scanner.h"
 #import "RepoHelper.h"
 #import <Sparkle/Sparkle.h>
-#import <Carbon/Carbon.h>
 #import <AppKit/NSApplication.h>
-
-OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData);
+#import "HotKey.h"
 
 static MainController *shared;
 
@@ -21,62 +19,6 @@ static MainController *shared;
 
 - (void) commitFromMenu: (id) menu {
 	[self doCommitWindowForRepository: [menu representedObject]];
-}
-
-// This is what is called when you press our global hot key: Command + Option + Enter. A lot of
-// logic is in here because the goal of this app is simplicity. There is ONE global hot key that
-// does the most logical thing at any given moment.
-OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
-	MainController *mc = (MainController *)userData;
-	
-	int t = [mc->theMenu numberOfItems];
-	int i;
-	
-	// Loop over all of the menu items. We'll break out quickly if there is something to do. We're sorted
-	// by priority already, so in the real world, the most important action is the top menu item.
-	for (i = 0; i < t; i++) {
-		NSMenuItem *mi = [mc->theMenu itemAtIndex: i];
-		
-		// The exception to the above rule, and the reason why we have to loop at all, is when
-		// an item is hidden. Unfortunately, currently, when you remove an item I'm lazy and just
-		// hide it. It's still officially in the menu. We can't look at that.
-		if (![mi isHidden]) {
-			
-			// Another exception to the rule is the hidden separator items. Or any other special Button
-			// Delegate instances I may put into the menu in the future. We want to make sure that
-			// we are dealing with some kind of repository.
-			if (![[mi target] isKindOfClass: [RepoButtonDelegate class]])
-				continue;
-
-			RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
-			
-			// Untracked files are the main concern when they exist. We can't deal with local changes
-			// really until we are sure if these untracked files should count as local edits.
-			if ([rbd hasUntracked]) {
-				[rbd dealWithUntracked: nil];
-				return noErr;
-			}
-
-			// Local changes should be commited locally before you pull in upstream updates.
-			if ([rbd hasLocal]) {
-				[mc doCommitWindowForRepository: rbd];
-				return noErr;
-			}
-			
-			// Upstream updates are the least important thing, though you should still pull
-			// as frequently as you can.
-			if ([rbd hasUpstream]) {
-				[rbd pull: nil];
-				return noErr;
-			}
-			
-			// Alright, let's let the user use the task switcher.
-			[mc->tc showWindow];
-			
-			return noErr;
-		}
-	}
-	return noErr;
 }
 
 /* This sets up the commit window for local commits. */
@@ -145,17 +87,11 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	}
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
-	// Drop into Carbon in order to setup global hotkeys.
-	EventHotKeyRef myHotKeyRef;
-	EventHotKeyID myHotKeyID;
-	EventTypeSpec eventType;
-	
-	eventType.eventClass = kEventClassKeyboard;
-	eventType.eventKind = kEventHotKeyPressed;
-	InstallApplicationEventHandler(&myHotKeyHandler, 1, &eventType, (void *)self, NULL);
-	myHotKeyID.signature = 'mhk1';
-	myHotKeyID.id = 1;
-	RegisterEventHotKey(36, cmdKey + optionKey, myHotKeyID, GetApplicationEventTarget(), 0, &myHotKeyRef);
+	// Set up the repositories. This winds up working on a background thread, but we want to spawn that
+	// thread as soon as possible, so that it finishes as soon as possible.
+	scanner = [[Scanner alloc] init];
+
+	setup_hotkey(self);
 	
 	// Set up Sparkle. Unfortunately I haven't started using this yet, and I'm not sure how to make it do the
 	// updates correctly, but it's here already.
@@ -171,8 +107,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		NSLog(@"Using url: %@", appcastURL);
 	[updater setFeedURL: appcastURL];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
-
-	scanner = [[Scanner alloc] init];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitDone:) name: @"commitDone" object: nil];
