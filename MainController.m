@@ -149,27 +149,6 @@ static MainController *shared;
 	[NSApp terminate: self];
 }
 
-#define PI 3.14159
-
-// This code might want to be put into a more general helper class. It's only currently used here, but that could change.
-// Note that this rotates "backwards", ie, counter clockwise.
-+ (NSImage*)rotateImage: (NSImage*)orig byDegrees: (float)deg {
-	NSImage *rotated = [[NSImage alloc] initWithSize:[orig size]];
-	NSRect rect;
-	rect.size = orig.size;
-	rect.origin = NSZeroPoint;
-	[rotated lockFocus];
-	NSAffineTransform *transform = [NSAffineTransform transform];
-	[transform translateXBy: [orig size].width * 0.5 yBy: [orig size].height * 0.5];
-	[transform rotateByDegrees:deg];
-	[transform translateXBy: [orig size].width * -0.5 yBy: [orig size].height * -0.5];
-	[transform concat];
-	[orig drawAtPoint: NSZeroPoint fromRect: rect operation:NSCompositeCopy fraction:1.0];
-	[rotated unlockFocus];
-	[orig autorelease];
-	return [rotated autorelease];
-}
-
 // Stupid little method that does little except call other, more important methods. This method is called periodically
 // and any time that the system knows that things have changed. It is the main method for updating global state.
 - (void) ping {
