@@ -79,6 +79,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	return noErr;
 }
 
+/* This sets up the commit window for local commits. */
 - (void) doCommitWindowForRepository: (RepoButtonDelegate *)rbd {
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		dispatch_async(dispatch_get_main_queue(), ^{
