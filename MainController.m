@@ -87,9 +87,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 		return;
 	}
 	
-	[commitWindow center];
 	[commitWindow setTitle: [rbd shortTitle]];
-	[commitWindow makeKeyAndOrderFront: self];
 	[[diffView textStorage] setAttributedString: [RepoHelper colorizedDiffFromArray: [[rbd getDiff] componentsSeparatedByString: @"\n"]]];
 	[NSApp activateIgnoringOtherApps: YES];
 	[tv setString: @""];
@@ -101,6 +99,9 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 	
 	Diff *d = [rbd diff];
 	[fileList setDataSource: d];
+
+	[commitWindow makeKeyAndOrderFront: self];
+	[commitWindow center];
 }
 
 - (void) scannerDone: (id)ignored {
