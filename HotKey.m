@@ -46,7 +46,7 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			// Upstream updates are the least important thing, though you should still pull
 			// as frequently as you can.
 			if ([rbd hasUpstream]) {
-				[rbd pull: nil];
+				[mc doCommitWindowForRepository: rbd];
 				return noErr;
 			}
 			
