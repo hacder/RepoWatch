@@ -272,14 +272,8 @@ void callbackFunction(
 - (void) checkUntracked {
 }
 
-- (NSString *)getDiff {
-	NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
-	NSTask *t = [self taskFromArguments: arr];
-	NSFileHandle *file = [RepoHelper pipeForTask: t];
-	[t launch];
-	NSString *result = [RepoHelper stringFromFile: file];
-	[file closeFile];
-	return result;
+- (NSAttributedString *) colorizedDiff {
+	return localDiff;
 }
 
 - (void) fire: (NSTimer *)t {

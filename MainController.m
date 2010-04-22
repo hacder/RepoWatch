@@ -31,7 +31,7 @@ static MainController *shared;
 	}
 	
 	[commitWindow setTitle: [rbd shortTitle]];
-	[[diffView textStorage] setAttributedString: [RepoHelper colorizedDiffFromArray: [[rbd getDiff] componentsSeparatedByString: @"\n"]]];
+	[[diffView textStorage] setAttributedString: [rbd colorizedDiff]];
 	[NSApp activateIgnoringOtherApps: YES];
 	[tv setString: @""];
 	[commitWindow makeFirstResponder: tv];

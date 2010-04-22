@@ -64,6 +64,7 @@
 - (RepoMenuItem *)getMenuItem;
 - (void) updateLogs;
 - (int) logOffset;
+- (NSAttributedString *) colorizedDiff;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;
@@ -76,7 +77,6 @@
 - (id)tableView: (NSTableView *)tvv objectValueForTableColumn: (NSTableColumn *)column row: (NSInteger) row;
 - (void) clickUpdate: (id) button;
 - (NSTask *)taskFromArguments: (NSArray *)args; 
-- (NSString *)getDiff;
 - (void) openInFinder: (id) sender;
 - (void) openInTerminal: (id) sender;
 - (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args;

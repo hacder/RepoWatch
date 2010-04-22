@@ -12,6 +12,10 @@
 	return self;
 }
 
+- (NSString *)getDiff {
+	return @"";
+}
+
 - (void) checkUpstream: (NSTimer *)ti {
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", upstreamName, nil]];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
@@ -99,6 +103,7 @@
 			[self setDirty: NO];
 			return;
 		}
+
 		NSString *newSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
 		if (localDiffSummary != nil) {
 			if ([newSummary caseInsensitiveCompare: localDiffSummary] == NSOrderedSame) {
