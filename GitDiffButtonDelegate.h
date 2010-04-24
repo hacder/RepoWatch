@@ -6,12 +6,12 @@
 // A representation of Git.
 
 @interface GitDiffButtonDelegate : RepoButtonDelegate {
-	char *git;
+	const char *git;
 	NSString *currentBranch;
 	NSString *remoteDiffStat;
 }
 
-- (id) initWithGit: (char *)gitPath repository: (NSString *)rep;
+- (id) initWithGit: (const char *)gitPath repository: (NSString *)rep;
 - (NSTask *)taskFromArguments: (NSArray *)args;
 
 @end

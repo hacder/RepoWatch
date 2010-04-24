@@ -4,7 +4,7 @@
 
 @implementation GitDiffButtonDelegate
 
-- initWithGit: (char *)gitPath repository: (NSString *)rep {
+- initWithGit: (const char *)gitPath repository: (NSString *)rep {
 	git = gitPath;
 
 	self = [super initWithRepositoryName: rep];	

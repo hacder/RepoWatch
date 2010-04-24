@@ -5,9 +5,9 @@
 // Represents Mercurial.
 
 @interface MercurialDiffButtonDelegate : RepoButtonDelegate {
-	char *hg;
+	const char *hg;
 }
 
-- initWithHG: (char *)hgPath repository: (NSString *)rep;
+- initWithHG: (const char *)hgPath repository: (NSString *)rep;
 
 @end

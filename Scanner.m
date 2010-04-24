@@ -1,7 +1,7 @@
-#import "GitDiffButtonDelegate.h"
-#import "RepoButtonDelegate.h"
 #import "Scanner.h"
-#import "MercurialDiffButtonDelegate.h"
+#import "GitRepository.h"
+#import "MercurialRepository.h"
+#import "RepoButtonDelegate.h"
 #import <dirent.h>
 #import <sys/stat.h>
 
@@ -61,77 +61,6 @@ void mc_callbackFunction(
 	[mc->lock unlock];
 }
 
-char *concat_path_file(const char *path, const char *filename) {
-	char *lc;
-	if (!path)
-		path = "";
-	if (path && *path) {
-		size_t sz = strlen(path) - 1;
-		if ((unsigned char)*(path + sz) == '/')
-			lc = (char *)(path + sz);
-		else
-			lc = NULL;
-	} else {
-		lc = NULL;
-	}
-	while (*filename == '/')
-		filename++;
-	char *tmp;
-	asprintf(&tmp, "%s%s%s", path, (lc == NULL ? "/" : ""), filename);
-	return tmp;
-}
-
-char *find_execable(const char *filename) {
-	char *path, *p, *n;
-	struct stat s;
-	
-	p = path = strdup(getenv("PATH"));
-	while (p) {
-		n = strchr(p, ':');
-		if (n)
-			*n++ = '\0';
-		if (*p != '\0') {
-			p = concat_path_file(p, filename);
-			if (!access(p, X_OK) && !stat(p, &s) && S_ISREG(s.st_mode)) {
-				free(path);
-				return p;
-			}
-			free(p);
-		}
-		p = n;
-	}
-	
-	// Because the mac is odd sometimes, let's look in a few places that may not
-	// be in the path.
-	
-	n = concat_path_file("/opt/local/bin/", filename);
-	if (!access(n, X_OK) && !stat(n, &s) && S_ISREG(s.st_mode))
-		return n;
-	free(n);
-
-	n = concat_path_file("/sw/bin/", filename);
-	if (!access(n, X_OK) && !stat(n, &s) && S_ISREG(s.st_mode))
-		return n;
-	free(n);
-
-	n = concat_path_file("/usr/local/bin/", filename);
-	if (!access(n, X_OK) && !stat(n, &s) && S_ISREG(s.st_mode))
-		return n;
-	free(n);
-	
-	n = concat_path_file("/usr/local/", filename);
-	p = concat_path_file(n, "/bin/");
-	free(n);
-	n = concat_path_file(p, filename);
-	free(p);
-	if (!access(n, X_OK) && !stat(n, &s) && S_ISREG(s.st_mode))
-		return n;
-	free(n);
-
-	free(path);
-	return NULL;
-}
-
 - (void) findRepositories {
 	NSDate *start = [NSDate date];
 	NSDictionary *dict;
@@ -154,11 +83,11 @@ char *find_execable(const char *filename) {
 - init {
 	self = [super init];
 	lock = [[NSLock alloc] init];
-	
-	git = find_execable("git");
-	hg = find_execable("hg");
-	NSLog(@"Git: %s Mercurial: %s", git, hg);
-	
+	repository_types = [NSArray arrayWithObjects:
+		[[GitRepository alloc] init],
+		[[MercurialRepository alloc] init],
+		nil];
+	[repository_types retain];
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self findRepositories];
 	});
@@ -240,20 +169,19 @@ char *find_execable(const char *filename) {
 }
 
 - (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path {
-	if ([RepoButtonDelegate alreadyHasPath: path])
-		return YES;
-	if ([contents containsObject: @".git"]) {
-		if (git) {
+//	TODO: This functionality NEEDS to be replicated, but that is relatively
+//	      difficult with the new class structure
+//	if ([RepoButtonDelegate alreadyHasPath: path])
+//		return YES;
+
+	int i;
+	NSLog(@"There are %d repository types", [repository_types count]);
+	for (i = 0; i < [repository_types count]; i++) {
+		BaseRepositoryType *brt = [repository_types objectAtIndex: i];
+		if ([brt validRepositoryContents: contents]) {
 			[self addCachedRepoPath: path];
-			GitDiffButtonDelegate *gdbd = [[GitDiffButtonDelegate alloc] initWithGit: git repository: path];
-			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: gdbd];
-			return YES;
-		}
-	} else if ([contents containsObject: @".hg"]) {
-		if (hg) {
-			[self addCachedRepoPath: path];
-			MercurialDiffButtonDelegate *mdbd = [[MercurialDiffButtonDelegate alloc] initWithHG: hg repository: path];
-			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: mdbd];
+			RepoButtonDelegate *rbd = [brt createRepository: path];
+			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: rbd];
 			return YES;
 		}
 	}

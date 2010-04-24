@@ -4,7 +4,7 @@
 
 @implementation MercurialDiffButtonDelegate
 
-- initWithHG: (char *)hgPath repository: (NSString *)rep {
+- initWithHG: (const char *)hgPath repository: (NSString *)rep {
 	hg = hgPath;
 	self = [super initWithRepositoryName: rep];
 	[self fire: nil];

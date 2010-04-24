@@ -6,8 +6,7 @@
 
 @interface Scanner : NSObject {
 	NSLock *lock;
-	char *git;
-	char *hg;	
+	NSArray *repository_types;
 }
 
 - (void) findSupportedSCMS;
