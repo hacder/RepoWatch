@@ -3,7 +3,17 @@
 #import "GitRepository.h"
 #import "GitDiffButtonDelegate.h"
 
+static GitRepository *shared = nil;
+
 @implementation GitRepository
+
++ (GitRepository *)sharedInstance {
+	if (shared == nil) {
+		shared = [[GitRepository alloc] init];
+		[shared retain];
+	}
+	return shared;
+}
 
 - init {
 	self = [super init];

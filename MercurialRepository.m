@@ -3,7 +3,17 @@
 #import "MercurialRepository.h"
 #import "MercurialDiffButtonDelegate.h"
 
+static MercurialRepository *shared = nil;
+
 @implementation MercurialRepository
+
++ (MercurialRepository *)sharedInstance {
+	if (shared == nil) {
+		shared = [[MercurialRepository alloc] init];
+		[shared retain];
+	}
+	return shared;
+}
 
 - init {
 	self = [super init];

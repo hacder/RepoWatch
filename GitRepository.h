@@ -7,4 +7,6 @@
 	const char *git;
 }
 
++ (GitRepository *)sharedInstance;
+
 @end

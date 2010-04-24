@@ -7,4 +7,6 @@
 	const char *hg;
 }
 
++ (MercurialRepository *)sharedInstance;
+
 @end

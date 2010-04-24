@@ -1,13 +1,14 @@
 #import "GitDiffButtonDelegate.h"
 #import "BubbleFactory.h"
 #import "RepoHelper.h"
+#import "GitRepository.h"
 
 @implementation GitDiffButtonDelegate
 
 - initWithGit: (const char *)gitPath repository: (NSString *)rep {
 	git = gitPath;
 
-	self = [super initWithRepositoryName: rep];	
+	self = [super initWithRepositoryName: rep type: [GitRepository sharedInstance]];	
 	[self fire: nil];
 	return self;
 }

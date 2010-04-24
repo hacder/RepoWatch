@@ -54,8 +54,9 @@ void callbackFunction(
 	return NO;
 }
 
-- initWithRepositoryName: (NSString *)repo {
+- initWithRepositoryName: (NSString *)repo type: (BaseRepositoryType *)type {
 	self = [super init];
+	repositoryType = type;
 	logLock = [[NSLock alloc] init];
 
 	repository = repo;

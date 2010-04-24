@@ -1,12 +1,13 @@
 #import "MercurialDiffButtonDelegate.h"
 #import "BubbleFactory.h"
 #import "RepoHelper.h"
+#import "MercurialRepository.h"
 
 @implementation MercurialDiffButtonDelegate
 
 - initWithHG: (const char *)hgPath repository: (NSString *)rep {
 	hg = hgPath;
-	self = [super initWithRepositoryName: rep];
+	self = [super initWithRepositoryName: rep type: [MercurialRepository sharedInstance]];
 	[self fire: nil];
 	return self;
 }

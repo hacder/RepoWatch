@@ -6,6 +6,7 @@
 #import "Diff.h"
 
 @class RepoMenuItem;
+@class BaseRepositoryType;
 
 // The general class for Repository types. This needs to be renamed, cleaned up, and made
 // more powerful. Eventually I want the ability to easily add new repository types, and this
@@ -24,6 +25,7 @@
 	NSDate *lastRemote;
 	Diff *currLocalDiff;
 	RepoMenuItem *menuItem;
+	BaseRepositoryType *repositoryType;
 	
 	NSLock *logLock;
 	NSArray *_logs;
@@ -45,7 +47,7 @@
 
 // In this section are the functions where the flow has been redesigned. These are the good functions.
 // After the first line break are things that might be no longer good.
-- initWithRepositoryName: (NSString *)repo;
+- initWithRepositoryName: (NSString *)repo type: (BaseRepositoryType *)type;
 - (void) setupUpstream;
 - (void) setUntracked: (BOOL) b;
 - (void) checkLocal: (NSTimer *) t;
