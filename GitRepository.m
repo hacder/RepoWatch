@@ -36,5 +36,22 @@ static GitRepository *shared = nil;
 	return [contents containsObject: @".git"];
 }
 
+- (BOOL) logFromToday: (RepoButtonDelegate *)data {
+	NSArray *logs = [data logs];
+	if (![logs count])
+		return NO;
+		
+	NSString *currentPiece = [logs objectAtIndex: 0];
+	NSArray *pieces = [currentPiece componentsSeparatedByString: @" "];
+	NSString *timestamp = [pieces objectAtIndex: 1];
+
+	NSDate *then = [NSDate dateWithTimeIntervalSince1970: [timestamp intValue]];
+	NSTimeInterval interval = -1 * [then timeIntervalSinceNow];
+	if (interval < 60 * 60 * 48)
+		return YES;
+
+	return NO;
+}
+
 
 @end

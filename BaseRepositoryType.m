@@ -12,6 +12,10 @@
 	return NO;
 }
 
+- (BOOL) logFromToday: (RepoButtonDelegate *)data {
+	return NO;
+}
+
 @end
 
 char *find_execable(const char *filename) {

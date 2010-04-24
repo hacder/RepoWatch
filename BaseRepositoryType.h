@@ -10,5 +10,6 @@ char *find_execable(const char *filename);
 
 - (BOOL) validRepositoryContents: (NSArray *)contents;
 - (RepoButtonDelegate *)createRepository: (NSString *)path;
+- (BOOL) logFromToday: (RepoButtonDelegate *)data;
 
 @end

@@ -1,5 +1,6 @@
 #import "RepoButtonDelegate.h"
 #import "RepoHelper.h"
+#import "BaseRepositoryType.h"
 #import <dispatch/dispatch.h>
 #import <sys/time.h>
 
@@ -38,20 +39,7 @@ void callbackFunction(
 }
 
 - (BOOL) logFromToday {
-	NSArray *logs = [self logs];
-	if (![logs count])
-		return NO;
-		
-	NSString *currentPiece = [logs objectAtIndex: 0];
-	NSArray *pieces = [currentPiece componentsSeparatedByString: @" "];
-	NSString *timestamp = [pieces objectAtIndex: 1];
-
-	NSDate *then = [NSDate dateWithTimeIntervalSince1970: [timestamp intValue]];
-	NSTimeInterval interval = -1 * [then timeIntervalSinceNow];
-	if (interval < 60 * 60 * 48)
-		return YES;
-
-	return NO;
+	return [repositoryType logFromToday: self];
 }
 
 - initWithRepositoryName: (NSString *)repo type: (BaseRepositoryType *)type {
