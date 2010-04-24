@@ -16,13 +16,9 @@
 	NSString *repository;
 	NSString *upstreamName;
 	NSString *upstreamURL;
-	NSButton *butt;
-	NSTextView *tv;
-	NSWindow *window;
 	NSTimer *timer;
 	NSTimer *upstreamTimer;
 	NSArray *currentUntracked;
-	NSDate *lastRemote;
 	Diff *currLocalDiff;
 	RepoMenuItem *menuItem;
 	BaseRepositoryType *repositoryType;
@@ -34,9 +30,7 @@
 	NSAttributedString *localDiff; // the actual diff
 	NSAttributedString *remoteDiff;
 	NSString *commitMessage;
-
-	NSWindow *diffCommitWindow;
-	NSTextView *diffCommitTV;
+	
 	FSEventStreamRef stream;
 	BOOL localMod;
 	BOOL upstreamMod;
@@ -45,15 +39,12 @@
 	TaskQueue *tq;
 }
 
-// In this section are the functions where the flow has been redesigned. These are the good functions.
-// After the first line break are things that might be no longer good.
 - initWithRepositoryName: (NSString *)repo type: (BaseRepositoryType *)type;
 - (void) setupUpstream;
 - (void) setUntracked: (BOOL) b;
 - (void) checkLocal: (NSTimer *) t;
 - (void) checkUpstream: (NSTimer *)t;
 - (void) setLocalMod: (BOOL)b;
-- (void) setUpstreamMod: (BOOL)b;
 - (void) setDirty: (BOOL)b;
 - (NSString *)repositoryPath;
 - (NSString *)repository;
@@ -65,32 +56,19 @@
 - (BOOL) logFromToday;
 - (void) setMenuItem: (RepoMenuItem *)mi;
 - (RepoMenuItem *)getMenuItem;
-- (void) updateLogs;
 - (int) logOffset;
 - (NSAttributedString *) colorizedDiff;
 - (NSAttributedString *) colorizedRemoteDiff;
-
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;
 - (BOOL) hasLocal;
-
 - (void) commit: (id) menuItem;
-- (void) pull: (id) menuItem;
 - (void) dealWithUntracked: (id) menuItem;
 - (NSInteger) numberOfRowsInTableView: (NSTableView *)tv;
 - (id)tableView: (NSTableView *)tvv objectValueForTableColumn: (NSTableColumn *)column row: (NSInteger) row;
-- (void) clickUpdate: (id) button;
-- (NSTask *)taskFromArguments: (NSArray *)args; 
 - (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args;
-- (NSTask *)taskFromArguments: (NSArray *)args;
-- (void) ignore: (id) sender;
-- (void) ignoreAll: (id) sender;
 - (NSArray *)getUntracked;
-
-+ (NSUInteger)numLocalEdit;
-+ (NSUInteger)numRemoteEdit;
-+ (NSUInteger)numUpToDate;
 + (BOOL) alreadyHasPath: (NSString *)path;
-+ (NSArray *) getRepos;
+- (void) updateLogs;
 
 @end

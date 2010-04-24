@@ -111,9 +111,6 @@ void callbackFunction(
 	return menuItem;
 }
 
-- (void) updateLogs {
-}
-
 - (int) logOffset {
 	return 2;
 }
@@ -144,9 +141,6 @@ void callbackFunction(
 	[NSApp activateIgnoringOtherApps: YES];
 }
 
-- (void) ignoreAll: (id) sender {
-}
-
 - (NSInteger) numberOfRowsInTableView: (NSTableView *)tv {
 	return [currentUntracked count];
 }
@@ -169,47 +163,6 @@ void callbackFunction(
 	[t autorelease];
 	
 	return t;
-}
-
-- (void) ignore: (id) sender {
-	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
-	NSDictionary *dict = [d dictionaryForKey: @"ignoredRepos"];
-	NSMutableDictionary *dict2;
-	if (dict) {
-		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
-	} else {
-		dict2 = [[NSMutableDictionary alloc] initWithCapacity: 1];
-	}
-	[dict2 setObject: [NSMutableDictionary dictionaryWithCapacity: 1] forKey: repository];
-	[d setObject: dict2 forKey: @"ignoredRepos"];
-
-	dict = [d dictionaryForKey: @"cachedRepos"];
-	if (dict) {
-		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
-		[dict2 removeObjectForKey: repository];
-		[d setObject: dict2 forKey: @"cachedRepos"];
-	}
-	
-	dict = [d dictionaryForKey: @"manualRepos"];
-	if (dict) {
-		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
-		[dict2 removeObjectForKey: repository];
-		[d setObject: dict2 forKey: @"manualRepos"];
-	}	
-
-	[d synchronize];
-	FSEventStreamStop(stream);
-}
-
-- (NSTask *)taskFromArguments: (NSArray *)args {
-	return nil;
-}
-
-- (void) setUpstreamMod: (BOOL) b {
-	if (upstreamMod != b) {
-		upstreamMod = b;
-		[[NSNotificationCenter defaultCenter] postNotificationName: @"repoStateChange" object: self];		
-	}
 }
 
 - (void) setUntracked: (BOOL) b {
@@ -290,39 +243,6 @@ void callbackFunction(
 	return ret;
 }
 
-+ (NSUInteger)numLocalEdit {
-	NSUInteger ret = 0;
-	int i = 0;
-	for (i = 0; i < [repos count]; i++) {
-		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
-		if (rbd->localMod)
-			ret++;
-	}
-	return ret;
-}
-
-+ (NSUInteger)numRemoteEdit {
-	NSUInteger ret = 0;
-	int i = 0;
-	for (i = 0; i < [repos count]; i++) {
-		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
-		if (rbd->upstreamMod)
-			ret++;
-	}
-	return ret;
-}
-
-+ (NSUInteger)numUpToDate {
-	NSUInteger ret = 0;
-	int i = 0;
-	for (i = 0; i < [repos count]; i++) {
-		RepoButtonDelegate *rbd = [repos objectAtIndex: i];
-		if (!rbd->upstreamMod && !rbd->localMod)
-			ret++;
-	}
-	return ret;
-}
-
 - (BOOL) hasUntracked {
 	return untrackedFiles;
 }
@@ -353,18 +273,10 @@ void callbackFunction(
 	return NO;
 }
 
-+ (NSArray *)getRepos {
-	return repos;
-}
-
 - (void) commit: (id) menuItem {
 }
 
-- (void) pull: (id) menuItem {
+- (void) updateLogs {
 }
-
-- (void) clickUpdate: (id) button {
-}
-
 
 @end

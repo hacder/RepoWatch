@@ -84,8 +84,8 @@ void mc_callbackFunction(
 	self = [super init];
 	lock = [[NSLock alloc] init];
 	repository_types = [NSArray arrayWithObjects:
-		[[GitRepository alloc] init],
-		[[MercurialRepository alloc] init],
+		[GitRepository sharedInstance],
+		[MercurialRepository sharedInstance],
 		nil];
 	[repository_types retain];
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
@@ -175,7 +175,6 @@ void mc_callbackFunction(
 //		return YES;
 
 	int i;
-	NSLog(@"There are %d repository types", [repository_types count]);
 	for (i = 0; i < [repository_types count]; i++) {
 		BaseRepositoryType *brt = [repository_types objectAtIndex: i];
 		if ([brt validRepositoryContents: contents]) {
