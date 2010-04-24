@@ -276,6 +276,10 @@ void callbackFunction(
 	return localDiff;
 }
 
+- (NSAttributedString *) colorizedRemoteDiff {
+	return remoteDiff;
+}
+
 - (void) fire: (NSTimer *)t {
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		dispatch_async(dispatch_get_main_queue(), ^{

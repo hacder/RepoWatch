@@ -30,6 +30,7 @@
 	
 	NSString *localDiffSummary; // lines changed, files modified, etc.
 	NSAttributedString *localDiff; // the actual diff
+	NSAttributedString *remoteDiff;
 	NSString *commitMessage;
 
 	NSWindow *diffCommitWindow;
@@ -45,7 +46,7 @@
 // In this section are the functions where the flow has been redesigned. These are the good functions.
 // After the first line break are things that might be no longer good.
 - initWithRepositoryName: (NSString *)repo;
-- (void)setupUpstream;
+- (void) setupUpstream;
 - (void) setUntracked: (BOOL) b;
 - (void) checkLocal: (NSTimer *) t;
 - (void) checkUpstream: (NSTimer *)t;
@@ -65,6 +66,7 @@
 - (void) updateLogs;
 - (int) logOffset;
 - (NSAttributedString *) colorizedDiff;
+- (NSAttributedString *) colorizedRemoteDiff;
 
 - (BOOL) hasUntracked;
 - (BOOL) hasUpstream;

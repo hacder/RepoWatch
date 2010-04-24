@@ -21,14 +21,21 @@
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
 		// TODO: Do something sensible with branches.
 		NSString *diffString = [NSString stringWithFormat: @"master...%@/master", upstreamName];
+		[diffString retain];
 		NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", diffString, nil];
 		NSTask *t = [self taskFromArguments: arr];
 		[tq addTask: t withCallback: ^(NSArray *resultarr) {
+			[diffString autorelease];
 			if ([resultarr count]) {
 				upstreamMod = YES;
 				[remoteDiffStat autorelease];
 				remoteDiffStat = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
 				[remoteDiffStat retain];
+				
+				NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", diffString, nil]];
+				[tq addTask: t withCallback: ^(NSArray *resultarr) {
+					remoteDiff = [RepoHelper colorizedDiffFromArray: resultarr];
+				}];				
 			} else {
 				upstreamMod = NO;
 				[remoteDiffStat autorelease];
