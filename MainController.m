@@ -31,17 +31,19 @@ static MainController *shared;
 	}
 	
 	[commitWindow setTitle: [rbd shortTitle]];
-	[[diffView textStorage] setAttributedString: [rbd colorizedDiff]];
-	[NSApp activateIgnoringOtherApps: YES];
-	[tv setString: @""];
-	[commitWindow makeFirstResponder: tv];
-	[rbd setCommitMessage: [tv string]];
-	[butt setEnabled: YES];
-	[butt setTarget: rbd];
-	[butt setAction: @selector(commit:)];
+	if ([rbd hasLocal]) {
+		[[diffView textStorage] setAttributedString: [rbd colorizedDiff]];
+		[NSApp activateIgnoringOtherApps: YES];
+		[tv setString: @""];
+		[commitWindow makeFirstResponder: tv];
+		[rbd setCommitMessage: [tv string]];
+		[butt setEnabled: YES];
+		[butt setTarget: rbd];
+		[butt setAction: @selector(commit:)];
 	
-	Diff *d = [rbd diff];
-	[fileList setDataSource: d];
+		Diff *d = [rbd diff];
+		[fileList setDataSource: d];
+	}
 
 	[commitWindow makeKeyAndOrderFront: self];
 	[commitWindow center];
