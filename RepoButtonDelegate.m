@@ -160,17 +160,6 @@ void callbackFunction(
 	return nil;
 }
 
-- (void) openInFinder: (id) sender {
-	NSTask *t = [self baseTask: @"/usr/bin/open" fromArguments: [NSArray arrayWithObjects: @".", nil]];
-	[tq addTask: t withCallback: nil];
-}
-
-- (void) openInTerminal: (id) sender {
-	NSString *s = [NSString stringWithFormat: @"tell application \"Terminal\" to do script \"cd '%@'\"", repository];
-	NSAppleScript *as = [[NSAppleScript alloc] initWithSource: s];
-	[as executeAndReturnError:nil];
-}
-
 - (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args {
 	NSTask *t = [[NSTask alloc] init];
 	[t setLaunchPath: task];
