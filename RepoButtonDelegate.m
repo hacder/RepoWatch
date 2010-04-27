@@ -8,7 +8,7 @@
 
 static NSMutableArray *repos;
 static float fastFrequency = 5.0;
-static float slowFrequency = 5.0;
+static float slowFrequency = 30.0;
 
 void callbackFunction(
 		ConstFSEventStreamRef streamRef,
