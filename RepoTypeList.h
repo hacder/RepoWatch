@@ -9,5 +9,4 @@
 + (RepoTypeList *) sharedInstance;
 - (RepoInstance *) createRepositoryWithPath: (NSString *)path directoryContents: (NSArray *)contents;
 
-
 @end

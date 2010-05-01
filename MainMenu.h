@@ -8,8 +8,5 @@
 }
 
 - init;
-- (void) newRepository: (NSNotification *) notification;
-- (void) rearrangeRepository: (NSNotification *) notification;
-- (void) updateTitle;
 
 @end

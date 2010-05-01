@@ -47,7 +47,6 @@
 	}
 
 	int size = 10;
-	int stateValue = 10; // [rbd getStateValue];
 
 	if ([rbd logFromToday]) {
 		size = 12;
@@ -62,39 +61,24 @@
 		[menuItem setAttributedTitle: newTitle];
 	}
 	
-	if (stateValue >= 40) {
-		[menuItem setOffStateImage: [BubbleFactory getBlueOfSize: size]];
-	} else if (stateValue >= 30) {
-		[menuItem setOffStateImage: [BubbleFactory getRedOfSize: size]];
-	} else if (stateValue >= 20) {			
-		[menuItem setOffStateImage: [BubbleFactory getYellowOfSize: size]];
-	} else if (stateValue >= 10) {
-		[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: size]];
-	}	
-	
+	[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: size]];
 	[menuItem setTarget: rbd];
 	
 	int i;
-	int state1 = 10; // [rbd getStateValue];
 	NSString *title1 = [rbd shortTitle];
 
 	for (i = 0; i < [self numberOfItems]; i++) {
 		// TODO: There will be other items in here. We can't actually guarantee that this type conversion
 		//       will work.
 		RepoInstance *rbd2 = [[self itemAtIndex: i] target];
-		int stateValue = 10; // [rbd2 getStateValue];
-		if (stateValue > state1)
-			continue;
-		if (stateValue == state1) {
-			NSString *title2 = [rbd2 shortTitle];
-			NSComparisonResult res = [title1 caseInsensitiveCompare: title2];
+		NSString *title2 = [rbd2 shortTitle];
+		NSComparisonResult res = [title1 caseInsensitiveCompare: title2];
 
-			if (res == NSOrderedAscending) {
-				[self insertItem: menuItem atIndex: i];
-				return;
-			} else {
-				continue;
-			}
+		if (res == NSOrderedAscending) {
+			[self insertItem: menuItem atIndex: i];
+			return;
+		} else {
+			continue;
 		}
 		[self insertItem: menuItem atIndex: i];
 		return;
@@ -113,23 +97,9 @@
 	}
 	
 	if ([self numberOfItems]) {
-//		RepoInstance *rbd = [[self itemAtIndex: 0] target];
-//		if ([rbd getStateValue] < 20) {
-			[statusItem setTitle: @""];
-//		} else {
-//			[statusItem setTitle: [rbd shortTitle]];			
-//		}
-
+		[statusItem setTitle: @""];
 		int size = 16;
-//		if ([rbd getStateValue] >= 40) {
-//			[statusItem setImage: [BubbleFactory getBlueOfSize: size]];
-//		} else if ([rbd getStateValue] >= 30) {
-//			[statusItem setImage: [BubbleFactory getRedOfSize: size]];
-//		} else if ([rbd getStateValue] >= 20) {			
-//			[statusItem setImage: [BubbleFactory getYellowOfSize: size]];
-//		} else if ([rbd getStateValue] >= 10) {
-			[statusItem setImage: [BubbleFactory getGreenOfSize: size]];
-//		}	
+		[statusItem setImage: [BubbleFactory getGreenOfSize: size]];
 	} else {
 		[statusItem setTitle: @"No Items"];
 	}

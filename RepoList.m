@@ -1,4 +1,5 @@
 #import "RepoList.h"
+#import "RepoInstance.h"
 
 @implementation RepoList
 
@@ -21,6 +22,28 @@ RepoList *sharedRepoList;
 	[list retain];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(repoFound:) name: @"repoFound" object: nil];
 	return self;
+}
+
+- (NSInteger) numberRecentRepositories {
+	NSInteger ret = 0;
+	int i;
+	for (i = 0; i < [list count]; i++) {
+		RepoInstance *ri = [list objectAtIndex: i];
+		if ([ri logFromToday])
+			ret++;
+	}
+	return ret;
+}
+
+- (NSArray *) recentRepositories {
+	NSMutableArray *ret = [NSMutableArray arrayWithCapacity: [list count]];
+	int i;
+	for (i = 0; i < [list count]; i++) {
+		RepoInstance *ri = [list objectAtIndex: i];
+		if ([ri logFromToday])
+			[ret addObject: ri];
+	}
+	return ret;
 }
 
 @end
