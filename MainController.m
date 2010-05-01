@@ -117,9 +117,10 @@ static MainController *shared;
 	[updater setFeedURL: appcastURL];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
 
+	// Notify ourselves about things happening.
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitDone:) name: @"commitDone" object: nil];
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitStart:) name: @"commitDone" object: nil];
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitStart:) name: @"commitStart" object: nil];
     return self;
 }
 
