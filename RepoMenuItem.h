@@ -7,6 +7,9 @@
 	NSMenu *sub;
 	NSDate *lastUpdate;
 	NSLock *lock;
+	NSDateFormatter *dateFormatter;
+	NSDictionary *dateAttributes;
+	NSDictionary *logAttributes;
 }
 
 - (id) initWithRepository: (RepoButtonDelegate *)repo;
