@@ -74,6 +74,32 @@
 	}
 }
 
+- (NSDate *) doWorkingChangeHelperForOnOff: (NSMutableArray *)onoff index: (int) i lastOff: (NSDate *)lastOff {
+	// We take our previous commit messages.
+	NSArray *previousItems = [[onoff objectAtIndex: i - 1] objectForKey: @"messages"];
+	
+	// And append them to our next "off" time.
+	NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary: [onoff objectAtIndex: i + 1]];
+	
+	NSArray *newArray;
+	if ([dict objectForKey: @"messages"])
+		newArray = [previousItems arrayByAddingObjectsFromArray: [dict objectForKey: @"messages"]];
+	else
+		newArray = previousItems; 
+		
+	if (newArray) {
+		[dict setObject: newArray forKey: @"messages"];
+		[onoff replaceObjectAtIndex: i + 1 withObject: dict];
+	
+		// Now we remove our previous off.
+		[onoff removeObjectAtIndex: i - 1];
+		[onoff removeObjectAtIndex: i - 1];
+		i -= 2;
+		return lastOff;
+	}
+	return nil;
+}
+
 - (void) doWorkingChange: (id) notification {
 	RepoButtonDelegate *rbd = [notification object];
 
@@ -119,36 +145,13 @@
 				if ([ts timeIntervalSinceDate: lastOff] < 60 * 30) {
 					// If we have an off after this.
 					if ([onoff count] > i + 1) {
-						// We take our previous commit messages.
-						NSArray *previousItems = [[onoff objectAtIndex: i - 1] objectForKey: @"messages"];
-						
-						// And append them to our next "off" time.
-						NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary: [onoff objectAtIndex: i + 1]];
-						
-						NSArray *newArray;
-						if ([dict objectForKey: @"messages"])
-							newArray = [previousItems arrayByAddingObjectsFromArray: [dict objectForKey: @"messages"]];
-						else
-							newArray = previousItems; 
-							
-						if (newArray) {
-							[dict setObject: newArray forKey: @"messages"];
-							[onoff replaceObjectAtIndex: i + 1 withObject: dict];
-
-							lastOn = lastOff;
-
-							// Now we remove our previous off.
-							[onoff removeObjectAtIndex: i - 1];
-							[onoff removeObjectAtIndex: i - 1];
-							i -= 2;
-						}
-
+						NSDate *tmp = [self doWorkingChangeHelperForOnOff: onoff index: i lastOff: lastOff];
+						if (tmp)
+							lastOn = tmp;
 						continue;
-					}
-					
+					}		
 				}
-			}
-			
+			}	
 		}
 		
 		if (setting) {
