@@ -40,6 +40,7 @@ static MainController *shared;
 		Diff *d = [rbd diff];
 		[fileList setDataSource: d];
 	} else {
+		NSLog(@"colorizedRemoteDiff: %@", [rbd colorizedRemoteDiff]);
 		[[diffView textStorage] setAttributedString: [rbd colorizedRemoteDiff]];
 	}
 
