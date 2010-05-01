@@ -5,10 +5,6 @@
 
 @implementation BaseRepositoryType
 
-- (RepoInstance *)createRepository: (NSString *)path {
-	return nil;
-}
-
 - (BOOL) validRepositoryContents: (NSArray *)contents {
 	return NO;
 }
@@ -32,6 +28,12 @@
 	[dict setObject: hash forKey: @"hash"];
 	[dict setObject: logString forKey: @"message"];
 	return dict;
+}
+
+- (RepoInstance *)createRepository: (NSString *)path {
+	if (executable == nil)
+		return nil;
+	return [[RepoInstance alloc] initWithRepoType: self shortTitle: [path lastPathComponent] path: path];
 }
 
 - (void) updateLogsWithRepository: (RepoInstance *)repo {

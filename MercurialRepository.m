@@ -25,12 +25,6 @@ static MercurialRepository *shared = nil;
 	[t setArguments: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date} {desc|firstline}\n", nil]];
 }
 
-- (RepoInstance *)createRepository: (NSString *)path {
-	if (executable == nil)
-		return nil;
-	return [[RepoInstance alloc] initWithRepoType: self shortTitle: [path lastPathComponent] path: path];
-}
-
 - (BOOL) validRepositoryContents: (NSArray *)contents {
 	if (executable == nil)
 		return NO;

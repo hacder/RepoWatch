@@ -27,12 +27,6 @@ static GitRepository *shared = nil;
 	[t setArguments: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ct %s", nil]];
 }
 
-- (RepoInstance *)createRepository: (NSString *)path {
-	if (executable == nil)
-		return nil;
-	return [[RepoInstance alloc] initWithRepoType: self shortTitle: [path lastPathComponent] path: path];
-}
-
 - (BOOL) validRepositoryContents: (NSArray *)contents {
 	if (executable == nil)
 		return NO;

@@ -13,7 +13,6 @@ RepoList *sharedRepoList;
 - (void) repoFound: (NSNotification *)notification {
 	if ([notification object])
 		[list addObject: [notification object]];
-	NSLog(@"RepoList now has %d objects", [list count]);
 }
 
 - init {

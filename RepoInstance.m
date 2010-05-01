@@ -50,7 +50,6 @@
 }
 
 - (BOOL) logFromToday {
-	NSLog(@"Repoinstance->logFromToday");
 	return [_repoType logFromTodayWithRepository: self];
 }
 
