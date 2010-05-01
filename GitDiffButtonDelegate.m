@@ -36,8 +36,10 @@
 				
 				NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", diffString, nil]];
 				[tq addTask: t withCallback: ^(NSArray *resultarr) {
+					[remoteDiff autorelease];
 					remoteDiff = [RepoHelper colorizedDiffFromArray: resultarr];
-					NSLog(@"Check upstream end");
+					[remoteDiff retain];
+					NSLog(@"Check upstream end (%@)", remoteDiff);
 				}];				
 			} else {
 				upstreamMod = NO;
