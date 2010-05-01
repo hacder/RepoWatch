@@ -18,7 +18,6 @@
 }
 
 - (void) checkUpstream: (NSTimer *)ti {
-	NSLog(@"checkUpstream start");
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", upstreamName, nil]];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
 		// TODO: Do something sensible with branches.
@@ -39,13 +38,11 @@
 					[remoteDiff autorelease];
 					remoteDiff = [RepoHelper colorizedDiffFromArray: resultarr];
 					[remoteDiff retain];
-					NSLog(@"Check upstream end (%@)", remoteDiff);
 				}];				
 			} else {
 				upstreamMod = NO;
 				[remoteDiffStat autorelease];
 				remoteDiffStat = nil;
-				NSLog(@"Check upstream end 2");
 			}
 			[super checkUpstream: ti];
 			[[NSNotificationCenter defaultCenter] postNotificationName: @"updateTitle" object: self];
