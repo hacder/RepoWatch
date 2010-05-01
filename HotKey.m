@@ -1,7 +1,7 @@
 #import "HotKey.h"
 #import <Carbon/Carbon.h>
 #import "MainController.h"
-#import "RepoButtonDelegate.h"
+#import "RepoInstance.h"
 
 // This is what is called when you press our global hot key: Command + Option + Enter. A lot of
 // logic is in here because the goal of this app is simplicity. There is ONE global hot key that
@@ -25,15 +25,15 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 			// Another exception to the rule is the hidden separator items. Or any other special Button
 			// Delegate instances I may put into the menu in the future. We want to make sure that
 			// we are dealing with some kind of repository.
-			if (![[mi target] isKindOfClass: [RepoButtonDelegate class]])
+			if (![[mi target] isKindOfClass: [RepoInstance class]])
 				continue;
 
-			RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
+			RepoInstance *rbd = (RepoInstance *)[mi target];
 			
 			// Untracked files are the main concern when they exist. We can't deal with local changes
 			// really until we are sure if these untracked files should count as local edits.
 			if ([rbd hasUntracked]) {
-				[rbd dealWithUntracked: nil];
+//				[rbd dealWithUntracked: nil];
 				return noErr;
 			}
 
@@ -49,9 +49,6 @@ OSStatus myHotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void
 				[mc doCommitWindowForRepository: rbd];
 				return noErr;
 			}
-			
-			// Alright, let's let the user use the task switcher.
-			[mc->tc showWindow];
 			
 			return noErr;
 		}

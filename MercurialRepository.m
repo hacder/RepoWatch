@@ -1,7 +1,6 @@
 #import <dirent.h>
 #import <sys/stat.h>
 #import "MercurialRepository.h"
-#import "MercurialDiffButtonDelegate.h"
 
 static MercurialRepository *shared = nil;
 
@@ -17,20 +16,23 @@ static MercurialRepository *shared = nil;
 
 - init {
 	self = [super init];
-	if (self) {
-		hg = find_execable("hg");
-	}
+	if (self)
+		executable = find_execable("hg");
 	return self;
 }
 
-- (RepoButtonDelegate *)createRepository: (NSString *)path {
-	if (hg == nil)
+- (void) setLogArguments: (NSTask *)t {
+	[t setArguments: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date} {desc|firstline}\n", nil]];
+}
+
+- (RepoInstance *)createRepository: (NSString *)path {
+	if (executable == nil)
 		return nil;
-	return [[MercurialDiffButtonDelegate alloc] initWithHG: hg repository: path];
+	return [[RepoInstance alloc] initWithRepoType: self shortTitle: [path lastPathComponent] path: path];
 }
 
 - (BOOL) validRepositoryContents: (NSArray *)contents {
-	if (hg == nil)
+	if (executable == nil)
 		return NO;
 	
 	return [contents containsObject: @".hg"];

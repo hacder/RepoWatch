@@ -1,20 +1,18 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import "Scanner.h"
-#import "TaskSwitcher.h"
 #import "MainMenu.h"
 
-// This is the mega class. Many things need to be moved out of here.
+@class RepoInstance;
 
-@class ButtonDelegate;
-@class RepoButtonDelegate;
+// This is the mega class. Many things need to be moved out of here.
 
 @interface MainController : NSObject {
 	char *date;
 	char *time;
 	
 	Scanner *scanner;
-	ButtonDelegate *activeBD;
+	RepoInstance *activeBD;
 
 @public	
 	MainMenu *theMenu;
@@ -24,8 +22,6 @@
 	IBOutlet NSButton *butt;
 	IBOutlet NSTextView *diffView;
 	IBOutlet NSSearchField *diffSearch;
-	
-	IBOutlet TaskSwitcher *tc;
 	
 	IBOutlet NSWindow *diffCommitWindow;
 	IBOutlet NSButton *undoSingleButton;
@@ -44,7 +40,7 @@
 - init;
 - (IBAction) openFile: (id) sender;
 - (void) ping;
-- (void) doCommitWindowForRepository: (RepoButtonDelegate *)rbd;
+- (void) doCommitWindowForRepository: (RepoInstance *)rbd;
 + (MainController *)sharedInstance;
 
 @end

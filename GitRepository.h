@@ -4,7 +4,6 @@
 #import "BaseRepositoryType.h"
 
 @interface GitRepository : BaseRepositoryType {
-	const char *git;
 }
 
 + (GitRepository *)sharedInstance;

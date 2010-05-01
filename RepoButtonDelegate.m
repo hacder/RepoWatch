@@ -33,13 +33,7 @@ void callbackFunction(
 	} else {
 		ret = 10;
 	}
-	if ([self logFromToday])
-		ret += 1;
 	return ret;
-}
-
-- (BOOL) logFromToday {
-	return [repositoryType logFromToday: self];
 }
 
 - initWithRepositoryName: (NSString *)repo type: (BaseRepositoryType *)type {

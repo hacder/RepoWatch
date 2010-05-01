@@ -1,9 +1,10 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "RepoButtonDelegate.h"
+
+@class RepoInstance;
 
 @interface RepoMenuItem : NSMenuItem {
-	RepoButtonDelegate *repo;
+	RepoInstance *repo;
 	NSMenu *sub;
 	NSDate *lastUpdate;
 	NSLock *lock;
@@ -12,6 +13,6 @@
 	NSDictionary *logAttributes;
 }
 
-- (id) initWithRepository: (RepoButtonDelegate *)repo;
+- (id) initWithRepository: (RepoInstance *)repo;
 
 @end

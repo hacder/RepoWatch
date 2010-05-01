@@ -1,13 +1,11 @@
 #import "MainController.h"
-#import "ButtonDelegate.h"
-#import "GitDiffButtonDelegate.h"
-#import "MercurialDiffButtonDelegate.h"
-#import "RepoButtonDelegate.h"
 #import "Scanner.h"
 #import "RepoHelper.h"
+#import "RepoList.h"
+#import "RepoInstance.h"
+#import "HotKey.h"
 #import <Sparkle/Sparkle.h>
 #import <AppKit/NSApplication.h>
-#import "HotKey.h"
 
 static MainController *shared;
 
@@ -22,7 +20,7 @@ static MainController *shared;
 }
 
 /* This sets up the commit window for local or remote commits. */
-- (void) doCommitWindowForRepository: (RepoButtonDelegate *)rbd {
+- (void) doCommitWindowForRepository: (RepoInstance *)rbd {
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self doCommitWindowForRepository: rbd];
@@ -35,12 +33,10 @@ static MainController *shared;
 		[[diffView textStorage] setAttributedString: [rbd colorizedDiff]];
 		[tv setString: @""];
 		
-		// Ummm... isn't this guaranteed to be @"" thanks to the above?
-		[rbd setCommitMessage: [tv string]];
 		[butt setAction: @selector(commit:)];
 	
-		Diff *d = [rbd diff];
-		[fileList setDataSource: d];
+//		[fileList setDataSource: rbd];
+		[fileList setDataSource: nil];
 	} else {
 		// TODO: Make this the upstream commit message.
 		[tv setString: @""];
@@ -75,6 +71,9 @@ static MainController *shared;
 - init {
 	self = [super init];
 	shared = self;
+
+	// This creates the sharedInstance. A hack, yes.
+	[RepoList sharedInstance];
 	
 	// The active button delegate. This is the Button Delegate that has control of the main menu
 	// text and image.
@@ -98,6 +97,7 @@ static MainController *shared;
 	
 	// Set up the repositories. This winds up working on a background thread, but we want to spawn that
 	// thread as soon as possible, so that it finishes as soon as possible.
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
 	scanner = [[Scanner alloc] init];
 
 	setup_hotkey(self);
@@ -117,8 +117,6 @@ static MainController *shared;
 	[updater setFeedURL: appcastURL];
 	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
 
-	// Notify ourselves about things happening.
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitDone:) name: @"commitDone" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitStart:) name: @"commitStart" object: nil];
     return self;
@@ -163,10 +161,12 @@ static MainController *shared;
 // and any time that the system knows that things have changed. It is the main method for updating global state.
 - (void) ping {
 	dispatch_async(dispatch_get_main_queue(), ^{
-		if (![theMenu numberOfItems])
+		if (![theMenu numberOfItems]) {
+			[[NSNotificationCenter defaultCenter] postNotificationName: @"updateTitle" object: nil];
 			return;
+		}
 		NSMenuItem *mi = [theMenu itemAtIndex: 1];
-		RepoButtonDelegate *rbd = (RepoButtonDelegate *)[mi target];
+		RepoInstance *rbd = (RepoInstance *)[mi target];
 		if (!rbd) {
 			activeBD = nil;
 			return;

@@ -1,7 +1,6 @@
 #import "Scanner.h"
-#import "GitRepository.h"
-#import "MercurialRepository.h"
-#import "RepoButtonDelegate.h"
+#import "RepoInstance.h"
+#import "RepoTypeList.h"
 #import <dirent.h>
 #import <sys/stat.h>
 
@@ -83,11 +82,6 @@ void mc_callbackFunction(
 - init {
 	self = [super init];
 	lock = [[NSLock alloc] init];
-	repository_types = [NSArray arrayWithObjects:
-		[GitRepository sharedInstance],
-		[MercurialRepository sharedInstance],
-		nil];
-	[repository_types retain];
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		[self findRepositories];
 	});
@@ -169,59 +163,27 @@ void mc_callbackFunction(
 }
 
 - (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path {
-//	TODO: This functionality NEEDS to be replicated, but that is relatively
-//	      difficult with the new class structure
-//	if ([RepoButtonDelegate alreadyHasPath: path])
-//		return YES;
-
-	int i;
-	for (i = 0; i < [repository_types count]; i++) {
-		BaseRepositoryType *brt = [repository_types objectAtIndex: i];
-		if ([brt validRepositoryContents: contents]) {
-			[self addCachedRepoPath: path];
-			RepoButtonDelegate *rbd = [brt createRepository: path];
-			[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: rbd];
-			return YES;
-		}
+	RepoInstance *rbd = [[RepoTypeList sharedInstance] createRepositoryWithPath: path directoryContents: contents];
+	if (rbd) {
+		[[NSNotificationCenter defaultCenter] postNotificationName: @"repoFound" object: rbd];
+		return YES;
 	}
 	return NO;
 }
 
-- (void) addCachedRepoPath: (NSString *)path {
+- (void) openFile: (NSString *)filename withContents: (NSArray *)contents {
 	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-	NSDictionary *dict = [def dictionaryForKey: @"cachedRepos"];
-	if ([dict objectForKey: path] != nil)
-		return;
-	
-	NSLog(@"addCachedRepoPath: %@", path);
+	NSDictionary *dict = [def dictionaryForKey: @"manualRepos"];
 	NSMutableDictionary *dict2;
 	if (dict) {
 		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
 	} else {
 		dict2 = [NSMutableDictionary dictionaryWithCapacity: 1];
 	}
-	[dict2 setObject: [[NSDictionary alloc] init] forKey: path];
-	[def setObject: dict2 forKey: @"cachedRepos"];
+	[dict2 setObject: [[NSDictionary alloc] init] forKey: filename];
+	[def setObject: dict2 forKey: @"manualRepos"];
+	
 	[def synchronize];
-}
-
-- (void) openFile: (NSString *)filename withContents: (NSArray *)contents {
-	if (![RepoButtonDelegate alreadyHasPath: filename] && ![self testDirectoryContents: contents ofPath: [filename stringByStandardizingPath]]) {
-		// TODO: Add alert here.
-	} else {
-		NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-		NSDictionary *dict = [def dictionaryForKey: @"manualRepos"];
-		NSMutableDictionary *dict2;
-		if (dict) {
-			dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
-		} else {
-			dict2 = [NSMutableDictionary dictionaryWithCapacity: 1];
-		}
-		[dict2 setObject: [[NSDictionary alloc] init] forKey: filename];
-		[def setObject: dict2 forKey: @"manualRepos"];
-		
-		[def synchronize];
-	}
 }
 
 @end

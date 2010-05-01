@@ -6,14 +6,12 @@
 
 @interface Scanner : NSObject {
 	NSLock *lock;
-	NSArray *repository_types;
 }
 
 - (void) findSupportedSCMS;
 - (void) searchAllPaths;
 - (void) searchPath: (NSString *)path;
 - (BOOL) testDirectoryContents: (NSArray *)contents ofPath: (NSString *)path;
-- (void) addCachedRepoPath: (NSString *)path;
 - (void) openFile: (NSString *)filename withContents: (NSArray *)contents;
 
 @end

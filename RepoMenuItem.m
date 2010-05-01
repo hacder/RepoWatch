@@ -1,4 +1,6 @@
 #import "RepoMenuItem.h"
+#import "RepoInstance.h"
+#import "MainController.h"
 
 @implementation RepoMenuItem
 
@@ -23,8 +25,8 @@
 		NSString *hash = [pieces objectAtIndex: 2];
 	
 		NSRange theRange;
-		theRange.location = [repo logOffset];
-		theRange.length = [pieces count] - [repo logOffset];
+		theRange.location = 0;
+		theRange.length = [pieces count];
 	
 		NSArray *logMessage = [pieces subarrayWithRange: theRange];
 		NSString *logString = [NSString stringWithFormat: @" %@", [logMessage componentsJoinedByString: @" "]];
@@ -81,7 +83,7 @@
 	});
 }
 
-- (id) initWithRepository: (RepoButtonDelegate *)rep {
+- (id) initWithRepository: (RepoInstance *)rep {
 	self = [super initWithTitle: [rep shortTitle] action: nil keyEquivalent: @""];
 	repo = rep;
 	[repo retain];

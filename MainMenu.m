@@ -1,5 +1,5 @@
 #import "MainMenu.h"
-#import "RepoButtonDelegate.h"
+#import "RepoInstance.h"
 #import "BubbleFactory.h"
 #import "RepoMenuItem.h"
 
@@ -23,17 +23,17 @@
 	return self;
 }
 
-- (RepoMenuItem *) menuItemForRepository: (RepoButtonDelegate *)rbd {
+- (RepoMenuItem *) menuItemForRepository: (RepoInstance *)rbd {
 	int i;
 	for (i = 0; i < [self numberOfItems]; i++) {
-		RepoButtonDelegate *rbd2 = [[self itemAtIndex: i] target];
+		RepoInstance *rbd2 = [[self itemAtIndex: i] target];
 		if (rbd2 == rbd)
 			return (RepoMenuItem *)[self itemAtIndex: i];
 	}
 	return nil;
 }
 
-- (void) insertRepository: (RepoButtonDelegate *)rbd {
+- (void) insertRepository: (RepoInstance *)rbd {
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self insertRepository: rbd];
@@ -41,12 +41,13 @@
 		return;
 	}
 	
-	RepoMenuItem *menuItem = [rbd getMenuItem];
-	if (!menuItem)
+	RepoMenuItem *menuItem = [rbd menuItem];
+	if (!menuItem) {
 		menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
+	}
 
 	int size = 10;
-	int stateValue = [rbd getStateValue];
+	int stateValue = 10; // [rbd getStateValue];
 
 	if ([rbd logFromToday]) {
 		size = 12;
@@ -74,14 +75,14 @@
 	[menuItem setTarget: rbd];
 	
 	int i;
-	int state1 = [rbd getStateValue];
+	int state1 = 10; // [rbd getStateValue];
 	NSString *title1 = [rbd shortTitle];
 
 	for (i = 0; i < [self numberOfItems]; i++) {
 		// TODO: There will be other items in here. We can't actually guarantee that this type conversion
 		//       will work.
-		RepoButtonDelegate *rbd2 = [[self itemAtIndex: i] target];
-		int stateValue = [rbd2 getStateValue];
+		RepoInstance *rbd2 = [[self itemAtIndex: i] target];
+		int stateValue = 10; // [rbd2 getStateValue];
 		if (stateValue > state1)
 			continue;
 		if (stateValue == state1) {
@@ -112,23 +113,23 @@
 	}
 	
 	if ([self numberOfItems]) {
-		RepoButtonDelegate *rbd = [[self itemAtIndex: 0] target];
-		if ([rbd getStateValue] < 20) {
+//		RepoInstance *rbd = [[self itemAtIndex: 0] target];
+//		if ([rbd getStateValue] < 20) {
 			[statusItem setTitle: @""];
-		} else {
-			[statusItem setTitle: [rbd shortTitle]];			
-		}
+//		} else {
+//			[statusItem setTitle: [rbd shortTitle]];			
+//		}
 
 		int size = 16;
-		if ([rbd getStateValue] >= 40) {
-			[statusItem setImage: [BubbleFactory getBlueOfSize: size]];
-		} else if ([rbd getStateValue] >= 30) {
-			[statusItem setImage: [BubbleFactory getRedOfSize: size]];
-		} else if ([rbd getStateValue] >= 20) {			
-			[statusItem setImage: [BubbleFactory getYellowOfSize: size]];
-		} else if ([rbd getStateValue] >= 10) {
+//		if ([rbd getStateValue] >= 40) {
+//			[statusItem setImage: [BubbleFactory getBlueOfSize: size]];
+//		} else if ([rbd getStateValue] >= 30) {
+//			[statusItem setImage: [BubbleFactory getRedOfSize: size]];
+//		} else if ([rbd getStateValue] >= 20) {			
+//			[statusItem setImage: [BubbleFactory getYellowOfSize: size]];
+//		} else if ([rbd getStateValue] >= 10) {
 			[statusItem setImage: [BubbleFactory getGreenOfSize: size]];
-		}	
+//		}	
 	} else {
 		[statusItem setTitle: @"No Items"];
 	}
@@ -143,7 +144,7 @@
 		return;
 	}
 	
-	RepoButtonDelegate *rbd = [notification object];
+	RepoInstance *rbd = [notification object];
 	int i;
 	BOOL foundIt = NO;
 	for (i = 0; i < [self numberOfItems]; i++) {
@@ -160,7 +161,7 @@
 }
 
 - (void) newRepository: (NSNotification *)notification {
-	RepoButtonDelegate *rbd = [notification object];
+	RepoInstance *rbd = [notification object];
 	[self insertRepository: rbd];
 	[self updateTitle];
 }

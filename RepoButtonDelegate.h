@@ -53,7 +53,6 @@
 - (void) setCommitMessage: (NSString *)cm;
 - (NSArray *)logs;
 - (void) checkUntracked;
-- (BOOL) logFromToday;
 - (void) setMenuItem: (RepoMenuItem *)mi;
 - (RepoMenuItem *)getMenuItem;
 - (int) logOffset;

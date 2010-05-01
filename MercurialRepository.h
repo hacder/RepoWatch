@@ -4,7 +4,6 @@
 #import "BaseRepositoryType.h"
 
 @interface MercurialRepository : BaseRepositoryType {
-	const char *hg;
 }
 
 + (MercurialRepository *)sharedInstance;
