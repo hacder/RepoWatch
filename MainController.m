@@ -21,7 +21,7 @@ static MainController *shared;
 	[self doCommitWindowForRepository: [menu representedObject]];
 }
 
-/* This sets up the commit window for local commits. */
+/* This sets up the commit window for local or remote commits. */
 - (void) doCommitWindowForRepository: (RepoButtonDelegate *)rbd {
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -34,14 +34,18 @@ static MainController *shared;
 	if ([rbd hasLocal]) {
 		[[diffView textStorage] setAttributedString: [rbd colorizedDiff]];
 		[tv setString: @""];
+		
+		// Ummm... isn't this guaranteed to be @"" thanks to the above?
 		[rbd setCommitMessage: [tv string]];
 		[butt setAction: @selector(commit:)];
 	
 		Diff *d = [rbd diff];
 		[fileList setDataSource: d];
 	} else {
-		NSLog(@"colorizedRemoteDiff: %@", [rbd colorizedRemoteDiff]);
+		// TODO: Make this the upstream commit message.
+		[tv setString: @""];
 		[[diffView textStorage] setAttributedString: [rbd colorizedRemoteDiff]];
+		[fileList setDataSource: nil];
 	}
 
 	[butt setEnabled: YES];
