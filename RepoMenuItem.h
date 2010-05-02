@@ -8,11 +8,13 @@
 	NSMenu *sub;
 	NSDate *lastUpdate;
 	NSLock *lock;
+
 	NSDateFormatter *dateFormatter;
 	NSDictionary *dateAttributes;
 	NSDictionary *logAttributes;
 }
 
 - (id) initWithRepository: (RepoInstance *)repo;
+- (RepoInstance *)repository;
 
 @end

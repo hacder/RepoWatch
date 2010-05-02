@@ -4,6 +4,10 @@
 
 @implementation RepoMenuItem
 
+- (RepoInstance *)repository {
+	return repo;
+}
+
 - (void) doUpdateMenu: (NSNotification *)notif {
 	// Do this before we do work, so that it serves as a stupid little race preventor.
 	[lastUpdate release];
@@ -84,7 +88,7 @@
 }
 
 - (id) initWithRepository: (RepoInstance *)rep {
-	self = [super initWithTitle: [rep shortTitle] action: nil keyEquivalent: @""];
+	self = [super initWithTitle: [rep shortTitle] ? [rep shortTitle] : @"" action: nil keyEquivalent: @""];
 	repo = rep;
 	[repo retain];
 	[self setToolTip: [repo repository]];

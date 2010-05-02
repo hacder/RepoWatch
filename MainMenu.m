@@ -40,6 +40,23 @@
 	return nil;
 }
 
+NSInteger sortRepositories(id num1, id num2, void *context) {
+	BOOL oneRecent = [[num1 repository] logFromToday];
+	BOOL twoRecent = [[num2 repository] logFromToday];
+	
+	if (oneRecent && !twoRecent)
+		return NSOrderedAscending;
+	if (twoRecent && !oneRecent)
+		return NSOrderedDescending;
+	
+	return [[[num1 repository] shortTitle] caseInsensitiveCompare: [[num2 repository] shortTitle]];
+}
+
+- (NSArray *)sortedArray {
+	NSArray *tmp = [self itemArray];
+	return [tmp sortedArrayUsingFunction: sortRepositories context: nil];
+}
+
 - (void) insertRepository: (RepoInstance *)rbd {
 	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -51,48 +68,26 @@
 	RepoMenuItem *menuItem = [rbd menuItem];
 	if (!menuItem) {
 		menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
+		[menuItem setOffStateImage: green];
 	}
-
-	int size = 10;
-
-	if ([rbd logFromToday]) {
-		size = 12;
-	} else {
-		NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSColor grayColor],
-			NSForegroundColorAttributeName,
-			[NSFont labelFontOfSize: 12],
-			NSFontAttributeName,
-			nil];
-		NSMutableAttributedString *newTitle = [[NSMutableAttributedString alloc] initWithString: [rbd shortTitle] attributes: attributes];
-		[menuItem setAttributedTitle: newTitle];
-	}
-	
-	[menuItem setOffStateImage: [BubbleFactory getGreenOfSize: size]];
-	[menuItem setTarget: rbd];
-	
-	int i;
-	NSString *title1 = [rbd shortTitle];
-
-	for (i = 0; i < [self numberOfItems]; i++) {
-		// TODO: There will be other items in here. We can't actually guarantee that this type conversion
-		//       will work.
-		RepoInstance *rbd2 = [[self itemAtIndex: i] target];
-		NSString *title2 = [rbd2 shortTitle];
-		NSComparisonResult res = [title1 caseInsensitiveCompare: title2];
-
-		if (res == NSOrderedAscending) {
-			[self insertItem: menuItem atIndex: i];
-			return;
-		} else {
-			continue;
-		}
-		[self insertItem: menuItem atIndex: i];
+	if (!menuItem)
 		return;
-	}
-
-	// It goes at the end!
-	[self addItem: menuItem];
+	
+	if ([rbd logFromToday]) {
+		[self insertItem: menuItem atIndex: [self numberOfItems]];
+		NSArray *dest = [self sortedArray];
+		[self removeAllItems];
+		int i;
+		for (i = 0; i < [dest count]; i++) {
+			[self addItem: [dest objectAtIndex: i]];
+		}
+	} else {
+		NSInteger index = [self indexOfItem: menuItem];
+		if (index != -1 && index != 0) {
+			NSLog(@"Removing item %d", index);
+			[self removeItem: menuItem];
+		}
+	}	
 }
 
 - (void) updateTitle {
@@ -105,8 +100,7 @@
 	
 	if ([self numberOfItems]) {
 		[statusItem setTitle: @""];
-		int size = 16;
-		[statusItem setImage: [BubbleFactory getGreenOfSize: size]];
+		[statusItem setImage: bigGreen];
 	} else {
 		[statusItem setTitle: @"No Items"];
 	}
