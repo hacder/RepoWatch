@@ -46,7 +46,7 @@
 }
 
 - (NSArray *)logs {
-	return nil;
+	return [_repoType logsWithRepository: self];
 }
 
 - (BOOL) logFromToday {

@@ -73,6 +73,23 @@ NSInteger sortRepositories(id num1, id num2, void *context) {
 	if (!menuItem)
 		return;
 	
+	if (![rbd logFromToday]) {
+		NSString *menuItemTitle = [rbd shortTitle];
+		NSAttributedString *menuItemAttributed = 
+			[[NSAttributedString alloc]
+				initWithString: menuItemTitle
+				attributes: [NSDictionary dictionaryWithObjectsAndKeys:
+					[NSColor grayColor],
+					NSForegroundColorAttributeName,
+					[NSFont systemFontOfSize: 12],
+					NSFontAttributeName,
+					nil]
+			];
+		[menuItem setAttributedTitle: menuItemAttributed];
+	} else {
+		[menuItem setTitle: [rbd shortTitle]];
+	}
+	
 	[self insertItem: menuItem atIndex: [self numberOfItems]];
 	NSArray *dest = [self sortedArray];
 	[self removeAllItems];

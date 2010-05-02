@@ -65,6 +65,12 @@
 	[[repo dict] setObject: arr forKey: @"logs"];
 }
 
+- (NSArray *) logsWithRepository: (RepoInstance *)rep {
+	NSMutableDictionary *data = [rep dict];
+	NSArray *logs = [data objectForKey: @"logs"];
+	return logs;
+}
+
 - (BOOL) logFromTodayWithRepository: (RepoInstance *)rep {
 	NSMutableDictionary *data = [rep dict];
 	NSDate *lastLogUpdate = [data objectForKey: @"lastLogUpdate"];

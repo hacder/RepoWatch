@@ -22,7 +22,7 @@ static MercurialRepository *shared = nil;
 }
 
 - (void) setLogArguments: (NSTask *)t {
-	[t setArguments: [NSArray arrayWithObjects: @"log", @"-l", @"1", @"--template", @"{node|short} {date} {desc|firstline}\n", nil]];
+	[t setArguments: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date} {desc|firstline}\n", nil]];
 }
 
 - (BOOL) validRepositoryContents: (NSArray *)contents {
