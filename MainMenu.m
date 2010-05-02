@@ -20,6 +20,13 @@
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(newRepository:) name: @"repoFound" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(rearrangeRepository:) name: @"repoStateChange" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(rearrangeRepository:) name: @"updateTitle" object: nil];
+//	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
+	
+	green = [BubbleFactory getGreenOfSize: 10];
+	[green retain];
+	bigGreen = [BubbleFactory getGreenOfSize: 16];
+	[bigGreen retain];
+
 	return self;
 }
 
