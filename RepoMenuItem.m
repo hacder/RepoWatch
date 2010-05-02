@@ -54,9 +54,6 @@
 			[mi setView: lmv];
 		}
 	
-		if ([repo hasUntracked] || [repo hasLocal] || [repo hasUpstream])
-			[sub addItem: [NSMenuItem separatorItem]];
-	
 		if ([repo hasLocal]) {
 			mi = [sub addItemWithTitle: @"Commit Local Changes" action: @selector(commitFromMenu:) keyEquivalent: @""];
 			[mi setRepresentedObject: repo];
