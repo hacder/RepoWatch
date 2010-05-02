@@ -16,9 +16,12 @@ char *find_execable(const char *filename);
 
 - (NSArray *) logsWithRepository: (RepoInstance *)data;
 - (NSArray *) pendingWithRepository: (RepoInstance *)data;
+- (BOOL) hasRemoteWithRepository: (RepoInstance *)data;
+- (BOOL) hasLocalWithRepository: (RepoInstance *)data;
 
 - (void) setLogArguments: (NSTask *)t;
 - (void) setLocalOnlyArguments: (NSTask *)t;
 - (NSDictionary *) handleSingleLogLineAsArray: (NSArray *)arr;
+- (NSTask *)baseTaskWithRepository: (RepoInstance *)repo;
 
 @end

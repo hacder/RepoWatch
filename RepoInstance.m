@@ -26,15 +26,15 @@
 }
 
 - (BOOL) hasLocal {
-	return NO;
+	return [_repoType hasLocalWithRepository: self];
 }
 
 - (BOOL) hasUntracked {
 	return NO;
 }
 
-- (BOOL) hasUpstream {
-	return NO;
+- (BOOL) hasRemote {
+	return [_repoType hasRemoteWithRepository: self];
 }
 
 - (NSAttributedString *)colorizedDiff {

@@ -26,6 +26,12 @@
 	[green retain];
 	bigGreen = [BubbleFactory getGreenOfSize: 16];
 	[bigGreen retain];
+	red = [BubbleFactory getRedOfSize: 10];
+	[red retain];
+	bigRed = [BubbleFactory getRedOfSize: 16];
+	[bigRed retain];
+	yellow = [BubbleFactory getYellowOfSize: 10];
+	[yellow retain];
 
 	return self;
 }
@@ -68,7 +74,11 @@ NSInteger sortRepositories(id num1, id num2, void *context) {
 	RepoMenuItem *menuItem = [rbd menuItem];
 	if (!menuItem) {
 		menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
-		[menuItem setOffStateImage: green];
+		if ([rbd hasRemote])
+			[menuItem setOffStateImage: yellow];
+		else
+			[menuItem setOffStateImage: green];
+
 	}
 	if (!menuItem)
 		return;

@@ -47,7 +47,6 @@
 			if ([pending containsObject: [hashs objectAtIndex: i]]) {
 				[lmv setPending: YES];
 			} else {
-				NSLog(@"%@ is not inside of %@", [hashs objectAtIndex: i], pending);
 				[lmv setPending: NO];
 			}
 			[lmv setDate: dateString];

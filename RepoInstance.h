@@ -16,7 +16,7 @@
 - (NSString *)shortTitle;
 - (BOOL) hasLocal;
 - (BOOL) hasUntracked;
-- (BOOL) hasUpstream;
+- (BOOL) hasRemote;
 - (NSAttributedString *)colorizedDiff;
 - (NSAttributedString *)colorizedRemoteDiff;
 - (void) setMenuItem: (RepoMenuItem *)item;

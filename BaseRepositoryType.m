@@ -15,6 +15,14 @@
 - (void) setLocalOnlyArguments: (NSTask *)t {
 }
 
+- (BOOL) hasRemoteWithRepository: (RepoInstance *)data {
+	return NO;
+}
+
+- (BOOL) hasLocalWithRepository: (RepoInstance *)data {
+	return NO;
+}
+
 - (NSDictionary *) handleSingleLogLineAsArray: (NSArray *)pieces {
 	NSString *timestamp = [pieces objectAtIndex: 1];
 	NSString *hash = [pieces objectAtIndex: 0];
@@ -39,13 +47,17 @@
 	return [[RepoInstance alloc] initWithRepoType: self shortTitle: [path lastPathComponent] path: path];
 }
 
-- (void) pendingLogsWithRepository: (RepoInstance *)repo {
+- (NSTask *)baseTaskWithRepository: (RepoInstance *)repo {
 	NSTask *t = [[NSTask alloc] init];
 	[t setLaunchPath: [NSString stringWithCString: executable encoding: NSUTF8StringEncoding]];
 	[t setCurrentDirectoryPath: [repo repository]];
-
-	[self setLocalOnlyArguments: t];
 	[t autorelease];
+	return t;
+}
+
+- (void) pendingLogsWithRepository: (RepoInstance *)repo {
+	NSTask *t = [self baseTaskWithRepository: repo];
+	[self setLocalOnlyArguments: t];
 	
 	NSFileHandle *file = [RepoHelper pipeForTask: t];
 	[t launch];
@@ -65,12 +77,8 @@
 }
 
 - (void) updateLogsWithRepository: (RepoInstance *)repo {
-	NSTask *t = [[NSTask alloc] init];
-	[t setLaunchPath: [NSString stringWithCString: executable encoding: NSUTF8StringEncoding]];
-	[t setCurrentDirectoryPath: [repo repository]];
-
+	NSTask *t = [self baseTaskWithRepository: repo];
 	[self setLogArguments: t];
-	[t autorelease];
 	
 	NSFileHandle *file = [RepoHelper pipeForTask: t];
 	[t launch];

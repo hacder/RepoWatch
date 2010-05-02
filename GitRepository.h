@@ -4,6 +4,7 @@
 #import "BaseRepositoryType.h"
 
 @interface GitRepository : BaseRepositoryType {
+	NSString *remoteName;
 }
 
 + (GitRepository *)sharedInstance;

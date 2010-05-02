@@ -12,16 +12,6 @@
 	return self;
 }
 
-- (NSTask *)taskFromArguments: (NSArray *)args {
-	NSTask *t = [[[NSTask alloc] init] autorelease];
-	NSString *lp = [NSString stringWithFormat: @"%s", hg];
-	[t setLaunchPath: lp];
-	[t setCurrentDirectoryPath: repository];
-	[t setArguments: args];
-
-	return t;
-}
-
 - (void) upstreamUpdate: (id) sender {
 	[sender setEnabled: NO];
 
@@ -101,10 +91,6 @@
 		return;
 	[super commit: something];	
 	[NSApp activateIgnoringOtherApps: YES];
-}
-
-- (void) clickUpdate: (id) button {
-	[NSApp hide: self];
 }
 
 - (NSString *) diffStatOfTask: (NSTask *)t {

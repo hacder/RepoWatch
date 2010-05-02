@@ -6,6 +6,9 @@
 @interface MainMenu : NSMenu {
 	NSImage *green;
 	NSImage *bigGreen;
+	NSImage *red;
+	NSImage *bigRed;
+	NSImage *yellow;
 	
 	NSStatusItem *statusItem;
 }

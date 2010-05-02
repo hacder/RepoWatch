@@ -21,7 +21,6 @@
 }
 
 - (void) setPending: (BOOL)p {
-	NSLog(@"Setting pending: %d", p);
 	pending = p;
 }
 

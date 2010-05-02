@@ -13,10 +13,6 @@
 	return self;
 }
 
-- (NSString *)getDiff {
-	return @"";
-}
-
 - (void) checkUpstream: (NSTimer *)ti {
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"fetch", upstreamName, nil]];
 	[tq addTask: t withCallback: ^(NSArray *resultarr) {
@@ -161,11 +157,6 @@
 	}];
 }
 
-- (NSTask *)taskFromArguments: (NSArray *)args {
-	NSString *lp = [NSString stringWithFormat: @"%s", git];
-	return [self baseTask: lp fromArguments: args];
-}
-
 - (void) pull: (id) menuItem {
 	NSArray *arr = [NSArray arrayWithObjects: @"log", @"HEAD..origin", @"--abbrev-commit", @"--pretty=%h %s", nil];
 	NSTask *t = [self taskFromArguments: arr];
@@ -223,18 +214,6 @@
 			upstreamName = nil;
 		}
 	}];
-}
-
-- (NSString *)shortTitle {
-	if (localMod) {
-		return [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], localDiffSummary];
-	} else if (upstreamMod) {
-		return [NSString stringWithFormat: @"%@: %@", [repository lastPathComponent], remoteDiffStat];
-	} else {
-		if (repository)
-			return [repository lastPathComponent];
-		return @"";
-	}
 }
 
 @end
