@@ -23,6 +23,8 @@
 	IBOutlet NSTextView *diffView;
 	IBOutlet NSSearchField *diffSearch;
 	
+	IBOutlet NSView *menuView;
+	
 	IBOutlet NSWindow *diffCommitWindow;
 	IBOutlet NSButton *undoSingleButton;
 	IBOutlet NSButton *changeCommitButton;

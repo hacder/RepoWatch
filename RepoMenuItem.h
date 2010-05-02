@@ -12,6 +12,7 @@
 	NSDateFormatter *dateFormatter;
 	NSDictionary *dateAttributes;
 	NSDictionary *logAttributes;
+	NSDictionary *datePendingAttributes;
 }
 
 - (id) initWithRepository: (RepoInstance *)repo;

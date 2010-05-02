@@ -1,6 +1,7 @@
 #import "RepoMenuItem.h"
 #import "RepoInstance.h"
 #import "MainController.h"
+#import "LogMenuView.h"
 
 @implementation RepoMenuItem
 
@@ -15,37 +16,43 @@
 	[lastUpdate retain];
 	
 	NSArray *logs = [repo logs];
+	NSArray *pending = [repo pending];
 	int i;
 	
-	NSMutableArray *menuItems = [NSMutableArray arrayWithCapacity: [logs count]];
-
-	NSMutableArray *dateAttrStrings = [NSMutableArray arrayWithCapacity: [logs count]];
+	NSMutableArray *dateStrings = [NSMutableArray arrayWithCapacity: [logs count]];
 	NSMutableArray *logStrings = [NSMutableArray arrayWithCapacity: [logs count]];
+	NSMutableArray *hashs = [NSMutableArray arrayWithCapacity: [logs count]];
 	
 	for (i = 0; i < [logs count]; i++) {
 		NSString *dateString = [dateFormatter stringFromDate: [[logs objectAtIndex: i] objectForKey: @"date"]];
-		NSMutableAttributedString *dateAttrString = [[NSMutableAttributedString alloc] initWithString: dateString attributes: dateAttributes];
 		NSString *logString = [[logs objectAtIndex: i] objectForKey: @"message"];
-		NSAttributedString *logAttributed = [[NSAttributedString alloc] initWithString: logString attributes: logAttributes];
-		[logAttributed autorelease];
-		[dateAttrString appendAttributedString: [[NSAttributedString alloc] initWithString: @" "]];
-		[dateAttrString appendAttributedString: logAttributed];
-		[dateAttrString autorelease];
-	
-		NSString *title = [NSString stringWithFormat: @"%@ %@", dateString, logString];
-		[menuItems addObject: title];
-		[dateAttrStrings addObject: dateAttrString];
+
+		[dateStrings addObject: dateString];
 		[logStrings addObject: logString];
+		[hashs addObject: [[logs objectAtIndex: i] objectForKey: @"hash"]];
 	}
 	
 	dispatch_async(dispatch_get_main_queue(), ^{
 		int i;
 		NSMenuItem *mi;
 		[sub removeAllItems];
-		for (i = 0; i < [menuItems count]; i++) {
-			mi = [sub addItemWithTitle: [menuItems objectAtIndex: i] action: nil keyEquivalent: @""];
-			[mi setAttributedTitle: [dateAttrStrings objectAtIndex: i]];
-			[mi setToolTip: [logStrings objectAtIndex: i]];
+		for (i = 0; i < [dateStrings count]; i++) {
+			mi = [sub addItemWithTitle: @"" action: nil keyEquivalent: @""];
+			
+			NSString *dateString = [dateStrings objectAtIndex: i];
+			NSString *messageString = [logStrings objectAtIndex: i];
+
+			LogMenuView *lmv = [[LogMenuView alloc] initWithFrame: NSMakeRect(0, 0, 400, 20)];
+			[lmv setAutoresizingMask: NSViewWidthSizable];
+			if ([pending containsObject: [hashs objectAtIndex: i]]) {
+				[lmv setPending: YES];
+			} else {
+				NSLog(@"%@ is not inside of %@", [hashs objectAtIndex: i], pending);
+				[lmv setPending: NO];
+			}
+			[lmv setDate: dateString];
+			[lmv setMessage: messageString];
+			[mi setView: lmv];
 		}
 	
 		if ([repo hasUntracked] || [repo hasLocal] || [repo hasUpstream])
@@ -104,6 +111,13 @@
 		NSFontAttributeName,
 		nil];
 	[logAttributes retain];
+	datePendingAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSColor redColor],
+		NSForegroundColorAttributeName,
+		[NSFont systemFontOfSize: 10],
+		NSFontAttributeName,
+		nil];
+	[datePendingAttributes retain];
 	
 	sub = [[NSMenu alloc] initWithTitle: [repo repository]];
 	[sub retain];

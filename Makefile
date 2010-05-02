@@ -3,7 +3,7 @@
 SRC = icons.m Scanner.m MainController.m BugController.m BubbleFactory.m \
 	RepoHelper.m RepoMenuItem.m TaskQueue.m DiffSet.m Diff.m FileDiff.m \
 	MainMenu.m HotKey.m BaseRepositoryType.m GitRepository.m \
-	MercurialRepository.m RepoList.m RepoTypeList.m RepoInstance.m
+	MercurialRepository.m RepoList.m RepoTypeList.m RepoInstance.m LogMenuView.m
 
 CFLAGS=-F./RepoWatch.app/Contents/Frameworks -Wall -Werror -g -arch x86_64 -arch i386
 OBJ = $(addsuffix .o, $(basename $(SRC)))

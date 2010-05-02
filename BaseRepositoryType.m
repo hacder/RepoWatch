@@ -12,6 +12,9 @@
 - (void) setLogArguments: (NSTask *)t {
 }
 
+- (void) setLocalOnlyArguments: (NSTask *)t {
+}
+
 - (NSDictionary *) handleSingleLogLineAsArray: (NSArray *)pieces {
 	NSString *timestamp = [pieces objectAtIndex: 1];
 	NSString *hash = [pieces objectAtIndex: 0];
@@ -34,6 +37,31 @@
 	if (executable == nil)
 		return nil;
 	return [[RepoInstance alloc] initWithRepoType: self shortTitle: [path lastPathComponent] path: path];
+}
+
+- (void) pendingLogsWithRepository: (RepoInstance *)repo {
+	NSTask *t = [[NSTask alloc] init];
+	[t setLaunchPath: [NSString stringWithCString: executable encoding: NSUTF8StringEncoding]];
+	[t setCurrentDirectoryPath: [repo repository]];
+
+	[self setLocalOnlyArguments: t];
+	[t autorelease];
+	
+	NSFileHandle *file = [RepoHelper pipeForTask: t];
+	[t launch];
+	NSString *string = [RepoHelper stringFromFile: file];
+	NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];
+	
+	NSMutableArray *arr = [NSMutableArray arrayWithCapacity: [result count]];
+	
+	int i;
+	for (i = 0; i < [result count]; i++) {
+		NSString *singleLog = [result objectAtIndex: i];
+		if ([singleLog isEqualToString: @""])
+			continue;
+		[arr addObject: singleLog];
+	}
+	[[repo dict] setObject: arr forKey: @"pending"];
 }
 
 - (void) updateLogsWithRepository: (RepoInstance *)repo {
@@ -63,6 +91,13 @@
 			[arr addObject: dict];
 	}
 	[[repo dict] setObject: arr forKey: @"logs"];
+	[self pendingLogsWithRepository: repo];
+}
+
+- (NSArray *) pendingWithRepository: (RepoInstance *)rep {
+	NSMutableDictionary *data = [rep dict];
+	NSArray *pending = [data objectForKey: @"pending"];
+	return pending;
 }
 
 - (NSArray *) logsWithRepository: (RepoInstance *)rep {

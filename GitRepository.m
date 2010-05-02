@@ -27,6 +27,10 @@ static GitRepository *shared = nil;
 	[t setArguments: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ct %s", nil]];
 }
 
+- (void) setLocalOnlyArguments: (NSTask *)t {
+	[t setArguments: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h", @"master...github/master", nil]];
+}
+
 - (BOOL) validRepositoryContents: (NSArray *)contents {
 	if (executable == nil)
 		return NO;

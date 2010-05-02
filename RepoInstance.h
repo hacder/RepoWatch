@@ -21,9 +21,10 @@
 - (NSAttributedString *)colorizedRemoteDiff;
 - (void) setMenuItem: (RepoMenuItem *)item;
 - (RepoMenuItem *) menuItem;
-- (NSArray *)logs;
 - (NSString *)repository;
 - (BOOL) logFromToday;
 - (NSMutableDictionary *) dict;
+- (NSArray *)logs;
+- (NSArray *)pending;
 
 @end

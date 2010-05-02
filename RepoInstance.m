@@ -49,6 +49,10 @@
 	return [_repoType logsWithRepository: self];
 }
 
+- (NSArray *)pending {
+	return [_repoType pendingWithRepository: self];
+}
+
 - (BOOL) logFromToday {
 	return [_repoType logFromTodayWithRepository: self];
 }
