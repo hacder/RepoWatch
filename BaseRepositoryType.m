@@ -66,10 +66,12 @@
 }
 
 - (BOOL) logFromTodayWithRepository: (RepoInstance *)rep {
-	NSDictionary *data = [rep dict];
+	NSMutableDictionary *data = [rep dict];
 	NSDate *lastLogUpdate = [data objectForKey: @"lastLogUpdate"];
+
 	if (!lastLogUpdate || [lastLogUpdate timeIntervalSinceNow] > 60 * 5) {
 		[self updateLogsWithRepository: rep];
+		[data setObject: [NSDate date] forKey: @"lastLogUpdate"];
 	}
 	
 	NSArray *logs = [data objectForKey: @"logs"];

@@ -73,21 +73,13 @@ NSInteger sortRepositories(id num1, id num2, void *context) {
 	if (!menuItem)
 		return;
 	
-	if ([rbd logFromToday]) {
-		[self insertItem: menuItem atIndex: [self numberOfItems]];
-		NSArray *dest = [self sortedArray];
-		[self removeAllItems];
-		int i;
-		for (i = 0; i < [dest count]; i++) {
-			[self addItem: [dest objectAtIndex: i]];
-		}
-	} else {
-		NSInteger index = [self indexOfItem: menuItem];
-		if (index != -1 && index != 0) {
-			NSLog(@"Removing item %d", index);
-			[self removeItem: menuItem];
-		}
-	}	
+	[self insertItem: menuItem atIndex: [self numberOfItems]];
+	NSArray *dest = [self sortedArray];
+	[self removeAllItems];
+	int i;
+	for (i = 0; i < [dest count]; i++) {
+		[self addItem: [dest objectAtIndex: i]];
+	}
 }
 
 - (void) updateTitle {
