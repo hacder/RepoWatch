@@ -9,10 +9,57 @@
 	return NO;
 }
 
-- (void) setLogArguments: (NSTask *)t {
+- (void) setLogArguments: (NSTask *)t forRepository: (RepoInstance *)data {
 }
 
-- (void) setLocalOnlyArguments: (NSTask *)t {
+- (void) setLocalOnlyArguments: (NSTask *)t forRepository: (RepoInstance *)data {
+}
+
+- (void) setRemoteChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
+}
+
+- (void) setLocalChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
+}
+
+- (NSString *) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {
+	return @"";
+}
+
+- (NSString *) remoteDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {
+	return @"";
+}
+
+- (void) checkLocalChangesWithRepository: (RepoInstance *)repo {
+	NSTask *t = [self baseTaskWithRepository: repo];
+	[self setRemoteChangeArguments: t forRepository: repo];
+	
+	NSFileHandle *file = [RepoHelper pipeForTask: t];
+	[t launch];
+	NSString *string = [RepoHelper stringFromFile: file];
+	NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];	
+	NSString *shrt = [self localDiffArray: result toStringWithRepository: repo];
+	if (!shrt || [shrt isEqualToString: @""]) {
+		[[repo dict] removeObjectForKey: @"localDiff"];
+	} else {
+		[[repo dict] setObject: shrt forKey: @"localDiff"];
+	}
+}
+
+- (void) checkRemoteChangesWithRepository: (RepoInstance *)repo {
+	NSTask *t = [self baseTaskWithRepository: repo];
+	[self setRemoteChangeArguments: t forRepository: repo];
+	
+	NSFileHandle *file = [RepoHelper pipeForTask: t];
+	[t launch];
+	NSString *string = [RepoHelper stringFromFile: file];
+	NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];	
+	NSString *shrt = [self remoteDiffArray: result toStringWithRepository: repo];
+	
+	if (!shrt || [shrt isEqualToString: @""]) {
+		[[repo dict] removeObjectForKey: @"remoteDiff"];
+	} else {
+		[[repo dict] setObject: shrt forKey: @"remoteDiff"];
+	}
 }
 
 - (BOOL) hasRemoteWithRepository: (RepoInstance *)data {
@@ -20,6 +67,8 @@
 }
 
 - (BOOL) hasLocalWithRepository: (RepoInstance *)data {
+	if ([[data dict] objectForKey: @"localDiff"] != nil)
+		return YES;
 	return NO;
 }
 
@@ -57,7 +106,7 @@
 
 - (void) pendingLogsWithRepository: (RepoInstance *)repo {
 	NSTask *t = [self baseTaskWithRepository: repo];
-	[self setLocalOnlyArguments: t];
+	[self setLocalOnlyArguments: t forRepository: repo];
 	
 	NSFileHandle *file = [RepoHelper pipeForTask: t];
 	[t launch];
@@ -78,7 +127,7 @@
 
 - (void) updateLogsWithRepository: (RepoInstance *)repo {
 	NSTask *t = [self baseTaskWithRepository: repo];
-	[self setLogArguments: t];
+	[self setLogArguments: t forRepository: repo];
 	
 	NSFileHandle *file = [RepoHelper pipeForTask: t];
 	[t launch];
@@ -99,7 +148,8 @@
 			[arr addObject: dict];
 	}
 	[[repo dict] setObject: arr forKey: @"logs"];
-	[self pendingLogsWithRepository: repo];
+	if ([[[repo dict] objectForKey: @"hasRemote"] boolValue])
+		[self pendingLogsWithRepository: repo];
 }
 
 - (NSArray *) pendingWithRepository: (RepoInstance *)rep {

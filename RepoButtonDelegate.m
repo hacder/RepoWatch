@@ -21,21 +21,6 @@ void callbackFunction(
 	[rbd setDirty: YES];
 }
 
-- (int) getStateValue {
-	int ret;
-	
-	if ([self hasUntracked]) {
-		ret = 40;
-	} else if ([self hasLocal]) {
-		ret = 30;
-	} else if ([self hasUpstream]) {
-		ret = 20;
-	} else {
-		ret = 10;
-	}
-	return ret;
-}
-
 - initWithRepositoryName: (NSString *)repo type: (BaseRepositoryType *)type {
 	self = [super init];
 	repositoryType = type;
@@ -85,35 +70,10 @@ void callbackFunction(
 	return self;
 }
 
-- (void) setMenuItem: (RepoMenuItem *)mi {
-	menuItem = mi;
-}
-
-- (RepoMenuItem *)getMenuItem {
-	return menuItem;
-}
-
-- (int) logOffset {
-	return 2;
-}
-
 - (NSArray *)logs {
 	if (_logs == nil)
 		[self updateLogs];
 	return _logs;
-}
-
-- (NSString *)repositoryPath {
-	return repository;
-}
-
-- (void) setDirty: (BOOL)b {
-	if (dirty != b)
-		dirty = b;
-}
-
-- (void) setupUpstream {
-	upstreamName = nil;
 }
 
 - (void) dealWithUntracked: (id) menuItem {
@@ -131,10 +91,6 @@ void callbackFunction(
 	if ([[tvv tableColumns] indexOfObject: column] != 1)
 		return @"";
 	return [currentUntracked objectAtIndex: row];
-}
-
-- (NSArray *)getUntracked {
-	return nil;
 }
 
 - (NSTask *)baseTask: (NSString *)task fromArguments: (NSArray *)args {
@@ -162,14 +118,6 @@ void callbackFunction(
 	}
 }
 
-- (Diff *)diff {
-	return currLocalDiff;
-}
-
-- (NSString *)repository {
-	return repository;
-}
-
 - (void) checkUpstream: (NSTimer *) t {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[upstreamTimer autorelease];
@@ -192,17 +140,6 @@ void callbackFunction(
 		[self checkUntracked];
 		[timer retain];
 	});
-}
-
-- (void) checkUntracked {
-}
-
-- (NSAttributedString *) colorizedDiff {
-	return localDiff;
-}
-
-- (NSAttributedString *) colorizedRemoteDiff {
-	return remoteDiff;
 }
 
 - (void) fire: (NSTimer *)t {

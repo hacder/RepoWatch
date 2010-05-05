@@ -2,6 +2,7 @@
 #import "RepoInstance.h"
 #import "BubbleFactory.h"
 #import "RepoMenuItem.h"
+#import "RepoList.h"
 
 @implementation MainMenu
 
@@ -18,9 +19,7 @@
 	[statusItem setMenu: self];
 	
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(newRepository:) name: @"repoFound" object: nil];
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(rearrangeRepository:) name: @"repoStateChange" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(rearrangeRepository:) name: @"updateTitle" object: nil];
-//	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scannerDone:) name: @"scannerDone" object: nil];
 	
 	green = [BubbleFactory getGreenOfSize: 10];
 	[green retain];
@@ -32,8 +31,20 @@
 	[bigRed retain];
 	yellow = [BubbleFactory getYellowOfSize: 10];
 	[yellow retain];
+	
+	timer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(timer:) userInfo: nil repeats: NO];
 
 	return self;
+}
+
+- (void) timer: (NSTimer *)t {
+	NSArray *tmp = [[RepoList sharedInstance] allRepositories];
+	int i;
+	for (i = 0; i < [tmp count]; i++) {
+		[[tmp objectAtIndex: i] tick];
+	}
+	timer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(timer:) userInfo: nil repeats: NO];
+	[self updateMenu];
 }
 
 - (RepoMenuItem *) menuItemForRepository: (RepoInstance *)rbd {
@@ -47,9 +58,18 @@
 }
 
 NSInteger sortRepositories(id num1, id num2, void *context) {
+	BOOL oneLocal = [[num1 repository] hasLocal];
+	BOOL twoLocal = [[num2 repository] hasLocal];
+	
+	if (oneLocal && !twoLocal)
+		return NSOrderedAscending;
+	if (twoLocal && !oneLocal)
+		return NSOrderedDescending;
+
+
 	BOOL oneRecent = [[num1 repository] logFromToday];
 	BOOL twoRecent = [[num2 repository] logFromToday];
-	
+
 	if (oneRecent && !twoRecent)
 		return NSOrderedAscending;
 	if (twoRecent && !oneRecent)
@@ -74,10 +94,13 @@ NSInteger sortRepositories(id num1, id num2, void *context) {
 	RepoMenuItem *menuItem = [rbd menuItem];
 	if (!menuItem) {
 		menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
-		if ([rbd hasRemote])
+		if ([rbd hasLocal]) {
+			[menuItem setOffStateImage: red];
+		} else if ([rbd hasRemote]) {
 			[menuItem setOffStateImage: yellow];
-		else
+		} else {
 			[menuItem setOffStateImage: green];
+		}
 
 	}
 	if (!menuItem)
@@ -101,27 +124,27 @@ NSInteger sortRepositories(id num1, id num2, void *context) {
 	}
 	
 	[self insertItem: menuItem atIndex: [self numberOfItems]];
+	[self updateMenu];
+}
+
+- (void) updateMenu {
 	NSArray *dest = [self sortedArray];
 	[self removeAllItems];
+	if ([dest count] == 0)
+		return;
+		
 	int i;
 	for (i = 0; i < [dest count]; i++) {
 		[self addItem: [dest objectAtIndex: i]];
 	}
-}
-
-- (void) updateTitle {
-	if (dispatch_get_current_queue() != dispatch_get_main_queue()) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self updateTitle];
-		});
-		return;
-	}
 	
-	if ([self numberOfItems]) {
-		[statusItem setTitle: @""];
-		[statusItem setImage: bigGreen];
+	RepoInstance *ri = [[dest objectAtIndex: 0] repository];
+	if ([ri hasLocal]) {
+		[statusItem setImage: bigRed];
+		[statusItem setTitle: [ri shortTitle]];
 	} else {
-		[statusItem setTitle: @"No Items"];
+		[statusItem setImage: bigGreen];
+		[statusItem setTitle: @""];
 	}
 }
 
@@ -147,13 +170,11 @@ NSInteger sortRepositories(id num1, id num2, void *context) {
 	if (!foundIt)
 		NSLog(@"Uh oh, didn't find %@", rbd);
 	[self insertRepository: rbd];
-	[self updateTitle];
 }
 
 - (void) newRepository: (NSNotification *)notification {
 	RepoInstance *rbd = [notification object];
 	[self insertRepository: rbd];
-	[self updateTitle];
 }
 
 @end

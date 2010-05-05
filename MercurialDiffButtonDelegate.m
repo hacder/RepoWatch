@@ -93,30 +93,6 @@
 	[NSApp activateIgnoringOtherApps: YES];
 }
 
-- (NSString *) diffStatOfTask: (NSTask *)t {
-	NSPipe *pipe = [NSPipe pipe];
-	[t setStandardOutput: pipe];
-	
-	NSTask *t2 = [[[NSTask alloc] init] autorelease];
-	[t2 setLaunchPath: @"/usr/bin/diffstat"];
-	[t2 setStandardInput: pipe];
-	
-	NSPipe *pipe2 = [NSPipe pipe];
-	[t2 setStandardOutput: pipe2];
-	
-	NSFileHandle *file = [pipe2 fileHandleForReading];
-	
-	[t launch];
-	[t2 launch];
-	NSData *data = [file readDataToEndOfFile];
-	[file closeFile];
-	NSCharacterSet *cs = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-	NSString *utf8String = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
-	NSString *string = [utf8String stringByTrimmingCharactersInSet: cs];
-
-	return string;
-}
-
 - (NSString *) lastGoodComponentOfString: (NSString *)s {
 	NSArray *arr = [s componentsSeparatedByString: @"\n"];
 	NSString *s2 = [arr objectAtIndex: [arr count] - 1];
@@ -135,34 +111,6 @@
 			upstreamName = nil;
 		}
 	}];
-}
-
-- (void) checkLocal: (NSTimer *)ti {
-	if (!dirty) {
-		[super checkLocal: ti];
-		return;
-	}
-	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"diff", nil]];
-	NSString *localChanges = [self lastGoodComponentOfString: [self diffStatOfTask: t]];
-	if (![localChanges isEqual: @"0 files changed"]) {
-		[self setLocalMod: YES];
-		[localDiffSummary autorelease];
-		localDiffSummary = [RepoHelper shortenDiff: localChanges];
-		[localDiffSummary retain];
-		
-		NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
-		NSTask *t = [self taskFromArguments: arr];
-		[tq addTask: t withCallback: ^(NSArray *resultarr) {
-			[localDiff autorelease];
-			localDiff = [RepoHelper colorizedDiffFromArray: resultarr];
-			[localDiff retain];
-			[super checkLocal: ti];
-		}];
-	} else {
-		[self setLocalMod: NO];
-		[super checkLocal: ti];
-		[self setDirty: NO];
-	}
 }
 
 @end

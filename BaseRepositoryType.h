@@ -17,10 +17,17 @@ char *find_execable(const char *filename);
 - (NSArray *) logsWithRepository: (RepoInstance *)data;
 - (NSArray *) pendingWithRepository: (RepoInstance *)data;
 - (BOOL) hasRemoteWithRepository: (RepoInstance *)data;
+- (void) checkRemoteChangesWithRepository: (RepoInstance *)data;
 - (BOOL) hasLocalWithRepository: (RepoInstance *)data;
+- (void) checkLocalChangesWithRepository: (RepoInstance *)data;
 
-- (void) setLogArguments: (NSTask *)t;
-- (void) setLocalOnlyArguments: (NSTask *)t;
+- (void) setLogArguments: (NSTask *)t forRepository: (RepoInstance *)repo;
+- (void) setLocalOnlyArguments: (NSTask *)t forRepository: (RepoInstance *)repo;
+- (void) setRemoteChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo;
+- (void) setLocalChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo;
+- (NSString *) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo;
+- (NSString *) remoteDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo;
+
 - (NSDictionary *) handleSingleLogLineAsArray: (NSArray *)arr;
 - (NSTask *)baseTaskWithRepository: (RepoInstance *)repo;
 

@@ -11,8 +11,10 @@
 	NSImage *yellow;
 	
 	NSStatusItem *statusItem;
+	NSTimer *timer;
 }
 
 - init;
+- (void) updateMenu;
 
 @end

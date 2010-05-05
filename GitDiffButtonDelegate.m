@@ -89,57 +89,6 @@
 	}];	
 }
 
-- (void) checkLocal: (NSTimer *)ti {
-	if (!dirty) {
-		[super checkLocal: ti];
-		return;
-	}
-	[self doFileDiff];
-	
-	NSArray *arr = [NSArray arrayWithObjects: @"diff", @"--shortstat", @"HEAD", nil];
-	NSTask *t = [self taskFromArguments: arr];
-	[tq addTask: t withCallback: ^(NSArray *resultarr) {
-		if (![resultarr count]) {
-			[self setLocalMod: NO];
-			[localDiffSummary autorelease];
-			localDiffSummary = nil;
-			[localDiff autorelease];
-			localDiff = nil;
-			[super checkLocal: ti];
-			[self setDirty: NO];
-			return;
-		}
-
-		NSString *newSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
-		if (localDiffSummary != nil) {
-			if ([newSummary caseInsensitiveCompare: localDiffSummary] == NSOrderedSame) {
-				// The summary did not change. The details might have, though, so we can't completely short-circuit.
-			} else {
-				[localDiffSummary autorelease];
-				localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
-				[localDiffSummary retain];
-				[[NSNotificationCenter defaultCenter] postNotificationName: @"updateTitle" object: self];		
-			}
-		} else {
-			// Repeated code. BAD.
-			[localDiffSummary autorelease];
-			localDiffSummary = [RepoHelper shortenDiff: [resultarr objectAtIndex: 0]];
-			[localDiffSummary retain];
-			[[NSNotificationCenter defaultCenter] postNotificationName: @"updateTitle" object: self];					
-		}
-		[self setLocalMod: YES];
- 		
-		NSArray *arr = [NSArray arrayWithObjects: @"diff", nil];
-		NSTask *t = [self taskFromArguments: arr];
-		[tq addTask: t withCallback: ^(NSArray *resultarr) {
-			[localDiff autorelease];
-			localDiff = [RepoHelper colorizedDiffFromArray: resultarr];
-			[localDiff retain];
-			[super checkLocal: ti];
-		}];
-	}];
-}
-
 - (void)getUntrackedWithCallback: (void (^)(NSArray *)) callback {
 	NSTask *t = [self taskFromArguments: [NSArray arrayWithObjects: @"ls-files", @"--others", @"--exlcude-standard", @"-z", nil]];
 	[tq addTask: t withCallback: ^(NSArray *arr) {
@@ -188,31 +137,6 @@
 		[NSApp hide: self];
 		[sender setEnabled: YES];
 		[self fire: nil];
-	}];
-}
-
-- (void) setupUpstream {
-	NSArray *arr = [NSArray arrayWithObjects: @"remote", nil];
-	NSTask *t = [self taskFromArguments: arr];
-	[tq addTask: t withCallback: ^(NSArray *resultarr) {
-		if ([resultarr count]) {
-			upstreamName = [resultarr objectAtIndex: 0];
-			[upstreamName retain];
-			
-			NSArray *arr = [NSArray arrayWithObjects: @"config", [NSString stringWithFormat: @"remote.%@.url", upstreamName], nil];
-			NSTask *t = [self taskFromArguments: arr];
-			[tq addTask: t withCallback: ^(NSArray *resultarr) {
-				if ([resultarr count]) {
-					upstreamURL = [resultarr objectAtIndex: 0];
-					[upstreamURL retain];
-				} else {
-					upstreamURL = nil;
-				}
-				[self checkUpstream: nil];
-			}];
-		} else {
-			upstreamName = nil;
-		}
 	}];
 }
 

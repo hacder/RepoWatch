@@ -8,5 +8,6 @@
 + (RepoList *) sharedInstance;
 - (NSInteger) numberRecentRepositories;
 - (NSArray *) recentRepositories;
+- (NSArray *) allRepositories;
 
 @end

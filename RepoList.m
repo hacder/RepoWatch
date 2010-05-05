@@ -46,4 +46,8 @@ RepoList *sharedRepoList;
 	return ret;
 }
 
+- (NSArray *) allRepositories {
+	return list;
+}
+
 @end

@@ -15,10 +15,24 @@
 }
 
 - (NSString *)shortTitle {
-	if ([_repoType respondsToSelector: @selector(shortTitle:)]) {
-		return [_repoType performSelector: @selector(shortTitle:) withObject: _shortTitle];
-	}
 	return _shortTitle;
+}
+
+- (void)checkRemoteChanges {
+	[_repoType checkRemoteChangesWithRepository: self];
+}
+
+- (void)checkLocalChanges {
+	[_repoType checkLocalChangesWithRepository: self];
+}
+
+// TODO: This is run every 10 seconds, roughly. It should hold off on the
+//       remote changes at least.
+- (void)tick {
+	if ([self hasRemote]) {
+		[self checkRemoteChanges];
+	}
+	[self checkLocalChanges];
 }
 
 - (NSMutableDictionary *)dict {

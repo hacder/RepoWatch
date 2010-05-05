@@ -24,12 +24,25 @@ static GitRepository *shared = nil;
 	return self;
 }
 
-- (void) setLogArguments: (NSTask *)t {
+- (void) setRemoteChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
+	[t setArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
+}
+
+- (void) setLocalChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
+	[t setArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
+}
+
+- (NSString *) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {
+	return [result objectAtIndex: 0];
+}
+
+- (void) setLogArguments: (NSTask *)t forRepository: (RepoInstance *)data {
 	[t setArguments: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h %ct %s", nil]];
 }
 
-- (void) setLocalOnlyArguments: (NSTask *)t {
-	[t setArguments: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h", @"master...github/master", nil]];
+- (void) setLocalOnlyArguments: (NSTask *)t forRepository: (RepoInstance *)data {
+	NSString *s = [NSString stringWithFormat: @"master..%@/master", [[data dict] objectForKey: @"remoteName"]];
+	[t setArguments: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h", s, nil]];
 }
 
 - (BOOL) validRepositoryContents: (NSArray *)contents {
@@ -54,6 +67,7 @@ static GitRepository *shared = nil;
 		remoteName = string;
 		[remoteName retain];
 		[dict setObject: @"1" forKey: @"hasRemote"];
+		[dict setObject: remoteName forKey: @"remoteName"];
 	} else {
 		[dict setObject: @"0" forKey: @"hasRemote"];
 	}

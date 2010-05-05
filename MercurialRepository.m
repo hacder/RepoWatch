@@ -21,6 +21,20 @@ static MercurialRepository *shared = nil;
 	return self;
 }
 
+- (void) setRemoteChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
+	[t setArguments: [NSArray arrayWithObjects: @"diff", @"--stat", nil]];
+}
+
+- (void) setLocalChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
+	[t setArguments: [NSArray arrayWithObjects: @"diff", @"--stat", nil]];
+}
+
+- (NSString *) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {
+	if ([result count] > 1)
+		return [result objectAtIndex: [result count] - 2];
+	return @"";
+}
+
 - (void) setLogArguments: (NSTask *)t {
 	[t setArguments: [NSArray arrayWithObjects: @"log", @"-l", @"10", @"--template", @"{node|short} {date} {desc|firstline}\n", nil]];
 }

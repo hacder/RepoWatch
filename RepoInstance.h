@@ -26,5 +26,8 @@
 - (NSMutableDictionary *) dict;
 - (NSArray *)logs;
 - (NSArray *)pending;
+- (void)tick;
+- (void)checkRemoteChanges;
+- (void)checkLocalChanges;
 
 @end
