@@ -29,5 +29,6 @@
 - (void)tick;
 - (void)checkRemoteChanges;
 - (void)checkLocalChanges;
+- (NSString *)localDiff;
 
 @end

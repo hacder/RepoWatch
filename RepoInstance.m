@@ -1,5 +1,6 @@
 #import "RepoInstance.h"
 #import "BaseRepositoryType.h"
+#import "RepoHelper.h"
 
 @implementation RepoInstance
 
@@ -16,6 +17,10 @@
 
 - (NSString *)shortTitle {
 	return _shortTitle;
+}
+
+- (NSString *)localDiff {
+	return [NSString stringWithFormat: @"%@: %@", [_path lastPathComponent], [RepoHelper shortenDiff: [[self dict] objectForKey: @"localDiff"]]];
 }
 
 - (void)checkRemoteChanges {

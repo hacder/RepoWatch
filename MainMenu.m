@@ -141,7 +141,7 @@ NSInteger sortRepositories(id num1, id num2, void *context) {
 	RepoInstance *ri = [[dest objectAtIndex: 0] repository];
 	if ([ri hasLocal]) {
 		[statusItem setImage: bigRed];
-		[statusItem setTitle: [ri shortTitle]];
+		[statusItem setTitle: [ri localDiff]];
 	} else {
 		[statusItem setImage: bigGreen];
 		[statusItem setTitle: @""];
