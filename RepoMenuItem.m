@@ -87,6 +87,7 @@
 	[self setToolTip: [repo repository]];
 	lock = [[NSLock alloc] init];
 	[rep setMenuItem: self];
+	[self setTarget: rep];
 	
 	dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setTimeStyle: NSDateFormatterShortStyle];

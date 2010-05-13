@@ -118,6 +118,7 @@ NSInteger sortRepositories(id num1, id num2, void *context) {
 					NSFontAttributeName,
 					nil]
 			];
+		[menuItemAttributed autorelease];
 		[menuItem setAttributedTitle: menuItemAttributed];
 	} else {
 		[menuItem setTitle: [rbd shortTitle]];

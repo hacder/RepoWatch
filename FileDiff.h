@@ -5,9 +5,15 @@
 
 @interface FileDiff : NSObject {
 	NSString *fileName;
-	NSString *diff;
+	NSArray *lines;
+	NSMutableArray *hunks;
 }
 
 - init;
+- (void) setLines: (NSArray *)lines;
+- (void) setFileName: (NSString *)fileName;
+- (int) numHunks;
+- (int) numAdded;
+- (int) numRemoved;
 
 @end

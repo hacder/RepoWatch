@@ -3,7 +3,7 @@
 @implementation LogMenuView
 
 - (void) drawRect: (NSRect) rect {
-	CGFloat targetWidth = 150.0;
+	CGFloat targetWidth = 120.0;
 
 	if (pending) {
 		[[NSColor lightGrayColor] set];
@@ -16,7 +16,7 @@
 	p.y = 0;
 	
 	[_date drawAtPoint: p withAttributes: attributes];
-	p.x = 160;
+	p.x = 130;
 	[_message drawAtPoint: p withAttributes: attributes2];
 }
 
@@ -27,7 +27,7 @@
 - (void) updateWidth {
 	NSInteger width = 0;
 	NSSize s = [self frame].size;
-	width += 165;
+	width += 145;
 	width += [_message sizeWithAttributes: attributes2].width;
 	if (s.width < width) {
 		s.width = width;
@@ -61,7 +61,7 @@
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				[NSColor grayColor],
 				NSForegroundColorAttributeName,
-				[NSFont systemFontOfSize: 12],
+				[NSFont systemFontOfSize: 10],
 				NSFontAttributeName,
 				nil];
 		[attributes retain];

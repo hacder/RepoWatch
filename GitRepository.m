@@ -25,15 +25,12 @@ static GitRepository *shared = nil;
 }
 
 - (void) setRemoteChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
-	[t setArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
+	[t setArguments: [NSArray arrayWithObjects: @"diff", nil]];
 }
 
 - (void) setLocalChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
-	[t setArguments: [NSArray arrayWithObjects: @"diff", @"--shortstat", nil]];
-}
-
-- (NSString *) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {
-	return [result objectAtIndex: 0];
+	NSLog(@"Local change arguments");
+	[t setArguments: [NSArray arrayWithObjects: @"diff", nil]];
 }
 
 - (void) setLogArguments: (NSTask *)t forRepository: (RepoInstance *)data {

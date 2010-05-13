@@ -15,6 +15,10 @@
 	return self;
 }
 
+- (void)localCommitWindow {
+	NSLog(@"Wish I knew how to make the windows...");
+}
+
 - (NSString *)shortTitle {
 	return _shortTitle;
 }

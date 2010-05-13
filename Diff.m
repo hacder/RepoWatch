@@ -4,53 +4,42 @@
 
 - init {
 	self = [super init];
-	files = [NSMutableArray arrayWithCapacity: 10];
-	[files retain];
-	backingStore = [NSMutableArray arrayWithCapacity: 10];
-	[backingStore retain];
-	lock = [[NSLock alloc] init];
+	countAdded = 0;
+	countRemoved = 0;
 	return self;
 }
 
-- (void) start {
-	[lock lock];
-	[backingStore removeAllObjects];
-	[lock unlock];
+- (int) numAdded {
+	return countAdded;
 }
 
-- (void) flip {
-	[lock lock];
-	if ([files isEqualToArray: backingStore])
-		[[NSNotificationCenter defaultCenter] postNotificationName: @"localFilesChange" object: self];
-		
-	NSMutableArray *tmp = backingStore;
-	backingStore = files;
-	files = tmp;
-	[lock unlock];
+- (int) numRemoved {
+	return countRemoved;
 }
 
-- (void) addFile: (NSString *)fileName {
-	[lock lock];
-	[backingStore addObject: fileName];
-	[lock unlock];
+- (void) setLines: (NSArray *)l {
+	[lines autorelease];
+	lines = l;
+	[lines retain];
+	
+	countAdded = 0;
+	countRemoved = 0;
+	
+	int i;
+	for (i = 0; i < [lines count]; i++) {
+		NSString *curline = [lines objectAtIndex: i];
+		NSRange r = [curline rangeOfString: @"+"];
+		if (r.location == 0)
+			countAdded++;
+		r = [curline rangeOfString: @"-"];
+			countRemoved++;
+	}
 }
 
-- (int) numberOfRowsInTableView: (NSTableView *)tv {
-	[lock lock];
-	int ret = [files count];
-	[lock unlock];
-	return ret;
+- (void) setFile: (FileDiff *)f {
+	[file autorelease];
+	file = f;
+	[file retain];
 }
-
-- (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)col row: (NSInteger)r {
-	[lock lock];
-	id ret = nil;
-	if ([files count] > r)
-		ret = [files objectAtIndex: r];
-	[lock unlock];
-	return ret;
-}
-
-
 
 @end

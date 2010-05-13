@@ -7,6 +7,7 @@ char *find_execable(const char *filename);
 
 @interface BaseRepositoryType : NSObject {
 	char *executable;
+	NSMutableArray *diffs;
 }
 
 - (BOOL) validRepositoryContents: (NSArray *)contents;

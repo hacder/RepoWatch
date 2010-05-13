@@ -30,5 +30,6 @@
 - (void)checkRemoteChanges;
 - (void)checkLocalChanges;
 - (NSString *)localDiff;
+- (void)localCommitWindow;
 
 @end

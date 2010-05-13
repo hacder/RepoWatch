@@ -2,8 +2,16 @@
 #import <sys/stat.h>
 #import "BaseRepositoryType.h"
 #import "RepoHelper.h"
+#import "FileDiff.h"
 
 @implementation BaseRepositoryType
+
+- (id) init {
+	self = [super init];
+	diffs = [NSMutableArray arrayWithCapacity: 10];
+	[diffs retain];
+	return self;
+}
 
 - (BOOL) validRepositoryContents: (NSArray *)contents {
 	return NO;
@@ -21,8 +29,63 @@
 - (void) setLocalChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
 }
 
+- (int) numHunks {
+	int i;
+	int tot = 0;
+	for (i = 0; i < [diffs count]; i++) {
+		tot += [[diffs objectAtIndex: i] numHunks];
+	}
+	return tot;
+}
+
+- (int) addedLines {
+	int i;
+	int tot = 0;
+	for (i = 0; i < [diffs count]; i++) {
+		tot += [[diffs objectAtIndex: i] numAdded];
+	}
+	return tot;
+}
+
+- (int) removedLines {
+	int i;
+	int tot = 0;
+	for (i = 0; i < [diffs count]; i++) {
+		tot += [[diffs objectAtIndex: i] numRemoved];
+	}
+	return tot;
+}
+
 - (NSString *) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {
-	return @"";
+	int i;
+	NSMutableArray *tmp = [NSMutableArray arrayWithCapacity: 10];
+	FileDiff *fd = nil;
+	
+	[diffs removeAllObjects];
+	for (i = 0; i < [result count]; i++) {
+		NSString *line = [result objectAtIndex: i];
+		NSRange r = [line rangeOfString: @"diff"];
+		if (r.location == 0) {
+			[fd setLines: tmp];
+			
+			fd = [[FileDiff alloc] init];
+			[diffs addObject: fd];
+			
+			NSArray *arr = [line componentsSeparatedByString: @" "];
+			[fd setFileName: [NSString stringWithFormat: @"%@%@", [repo repository], [[arr objectAtIndex: 2] substringFromIndex: 1]]];
+			tmp = [NSMutableArray arrayWithCapacity: 10];
+		} else {
+			[tmp addObject: line];
+		}
+	}
+	if ([diffs count]) {
+		if ([diffs count] == 1) {
+			return [[diffs objectAtIndex: 0] fileName];
+		} else {
+			return [NSString stringWithFormat: @"%d files, %d hunks, %d added, %d removed", [diffs count], [self numHunks], [self addedLines], [self removedLines]];
+		}
+	}
+	return nil;
 }
 
 - (NSString *) remoteDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {

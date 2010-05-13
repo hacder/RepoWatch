@@ -1,23 +1,22 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import "FileDiff.h"
 
 // A class that I want to start using, but that isn't used at all right now, which contains information
 // about a single changeset. Most of the information is contained in the files array.
 
 @interface Diff : NSObject <NSTableViewDataSource> {
-	NSString *hash;
-	NSString *author;
-	NSDate *ts;
-	NSMutableArray *files; // Array of FileDiff objects
-	NSMutableArray *backingStore;
-	NSLock *lock;
+	FileDiff *file;
+	NSArray *lines;
+	int countAdded;
+	int countRemoved;
 }
 
-- (void) addFile: (NSString *)fileName;
-- (void) flip;
-- (void) start;
-- (int) numberOfRowsInTableView: (NSTableView *)tv;
-- (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)col row: (NSInteger)r;
 - init;
+- (void) setLines: (NSArray *)lines;
+- (void) setFile: (FileDiff *)file;
+- (int) numAdded;
+- (int) numRemoved;
+
 
 @end
