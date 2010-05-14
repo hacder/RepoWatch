@@ -4,8 +4,17 @@
 
 - (id) init {
 	self = [super init];
+
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(doCommit:) name: @"doCommit" object: nil];
+	cell = [[FileDiffListCell alloc] initTextCell: @"poop"];
 	return self;
+}
+
+- (void) awakeFromNib {
+	[commitWindow center];
+
+	NSTableColumn *column = [[changedFilesTable tableColumns] objectAtIndex:0];
+	[column setDataCell: cell];
 }
 
 - (void) doCommit: (NSNotification *)notif {
@@ -13,7 +22,6 @@
 	
 	[changedFilesTable setDataSource: self];
 	
-	[commitWindow center];
 	[commitWindow makeKeyAndOrderFront: self];
 	[NSApp activateIgnoringOtherApps: YES];
 }
