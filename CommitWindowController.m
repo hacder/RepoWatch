@@ -9,9 +9,21 @@
 }
 
 - (void) doCommit: (NSNotification *)notif {
+	currentRepo = [notif object];
+	
+	[changedFilesTable setDataSource: self];
+	
 	[commitWindow center];
 	[commitWindow makeKeyAndOrderFront: self];
 	[NSApp activateIgnoringOtherApps: YES];
+}
+
+- (NSInteger) numberOfRowsInTableView: (NSTableView *)aTableView {
+	return [currentRepo changedFiles];
+}
+
+- (id) tableView: (NSTableView *)aTableView objectValueForTableColumn: (NSTableColumn *)aTableColumn row: (NSInteger)rowIndex {
+	return [[[[[currentRepo dict] objectForKey: @"diffs"] objectAtIndex: rowIndex] fileName] lastPathComponent];
 }
 
 @end

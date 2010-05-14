@@ -4,7 +4,7 @@
 // A class representing a changeset to a single file.
 
 @interface FileDiff : NSObject {
-	NSString *fileName;
+	NSString *fn;
 	NSArray *lines;
 	NSMutableArray *hunks;
 }
@@ -15,5 +15,6 @@
 - (int) numHunks;
 - (int) numAdded;
 - (int) numRemoved;
+- (NSString *) fileName;
 
 @end

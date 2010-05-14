@@ -64,10 +64,14 @@
 	[d setLines: arr];
 }
 
-- (void) setFileName: (NSString *)fn {
-	[fileName autorelease];
-	fileName = fn;
-	[fileName retain];
+- (NSString *)fileName {
+	return fn;
+}
+
+- (void) setFileName: (NSString *)fileName {
+	[fn autorelease];
+	fn = fileName;
+	[fn retain];
 }
 
 @end
