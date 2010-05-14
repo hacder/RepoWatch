@@ -3,7 +3,7 @@
 
 // A class representing a changeset to a single file.
 
-@interface FileDiff : NSObject {
+@interface FileDiff : NSObject <NSCopying> {
 	NSString *fn;
 	NSArray *lines;
 	NSMutableArray *hunks;

@@ -7,6 +7,8 @@
 
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(doCommit:) name: @"doCommit" object: nil];
 	cell = [[FileDiffListCell alloc] initTextCell: @"poop"];
+	[cell setBordered: NO];
+	[cell setBezeled: NO];
 	return self;
 }
 
@@ -31,7 +33,7 @@
 }
 
 - (id) tableView: (NSTableView *)aTableView objectValueForTableColumn: (NSTableColumn *)aTableColumn row: (NSInteger)rowIndex {
-	return [[[[[currentRepo dict] objectForKey: @"diffs"] objectAtIndex: rowIndex] fileName] lastPathComponent];
+	return [[[currentRepo dict] objectForKey: @"diffs"] objectAtIndex: rowIndex];
 }
 
 @end

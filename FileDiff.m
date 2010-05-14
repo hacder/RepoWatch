@@ -10,6 +10,10 @@
 	return self;
 }
 
+- (id) copyWithZone: (NSZone *)z {
+	return NSCopyObject(self, 0, z);
+}
+
 - (int) numHunks {
 	return [hunks count];
 }
