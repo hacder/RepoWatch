@@ -25,7 +25,6 @@ char *find_execable(const char *filename);
 - (void) setLocalOnlyArguments: (NSTask *)t forRepository: (RepoInstance *)repo;
 - (void) setRemoteChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo;
 - (void) setLocalChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo;
-- (NSString *) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo;
 - (NSString *) remoteDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo;
 
 - (NSDictionary *) handleSingleLogLineAsArray: (NSArray *)arr;

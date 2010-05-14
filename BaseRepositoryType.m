@@ -66,7 +66,7 @@
 	return tot;
 }
 
-- (NSString *) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {
+- (void) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {
 	int i;
 	NSMutableArray *tmp = [NSMutableArray arrayWithCapacity: 10];
 	FileDiff *fd = nil;
@@ -93,14 +93,6 @@
 			[tmp addObject: line];
 		}
 	}
-	if ([diffs count]) {
-		if ([diffs count] == 1) {
-			return [[diffs objectAtIndex: 0] fileName];
-		} else {
-			return [NSString stringWithFormat: @"%d files, %d hunks, %d added, %d removed", [diffs count], [self numHunksForRepository: repo], [self addedLinesForRepository: repo], [self removedLinesForRepository: repo]];
-		}
-	}
-	return nil;
 }
 
 - (int) changedFilesForRepository: (RepoInstance *)repo {
@@ -119,12 +111,7 @@
 	[t launch];
 	NSString *string = [RepoHelper stringFromFile: file];
 	NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];	
-	NSString *shrt = [self localDiffArray: result toStringWithRepository: repo];
-	if (!shrt || [shrt isEqualToString: @""]) {
-		[[repo dict] removeObjectForKey: @"localDiff"];
-	} else {
-		[[repo dict] setObject: shrt forKey: @"localDiff"];
-	}
+	[self localDiffArray: result toStringWithRepository: repo];
 }
 
 - (void) checkRemoteChangesWithRepository: (RepoInstance *)repo {
@@ -149,7 +136,7 @@
 }
 
 - (BOOL) hasLocalWithRepository: (RepoInstance *)data {
-	if ([[data dict] objectForKey: @"localDiff"] != nil)
+	if ([self changedFilesForRepository: data])
 		return YES;
 	return NO;
 }

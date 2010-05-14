@@ -29,7 +29,6 @@ static GitRepository *shared = nil;
 }
 
 - (void) setLocalChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
-	NSLog(@"Local change arguments");
 	[t setArguments: [NSArray arrayWithObjects: @"diff", nil]];
 }
 
