@@ -32,4 +32,8 @@
 - (NSString *)localDiff;
 - (void)localCommitWindow;
 
+- (int) removedLines;
+- (int) addedLines;
+- (int) changedFiles;
+
 @end

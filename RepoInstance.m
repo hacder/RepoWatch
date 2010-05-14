@@ -24,11 +24,23 @@
 }
 
 - (NSString *)localDiff {
-	return [NSString stringWithFormat: @"%@: %@", [_path lastPathComponent], [RepoHelper shortenDiff: [[self dict] objectForKey: @"localDiff"]]];
+	return [RepoHelper shortDiff: self];
 }
 
 - (void)checkRemoteChanges {
 	[_repoType checkRemoteChangesWithRepository: self];
+}
+
+- (int) removedLines {
+	return [_repoType removedLinesForRepository: self];
+}
+
+- (int) addedLines {
+	return [_repoType addedLinesForRepository: self];
+}
+
+- (int) changedFiles {
+	return [_repoType changedFilesForRepository: self];
 }
 
 - (void)checkLocalChanges {

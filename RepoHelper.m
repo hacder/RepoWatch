@@ -2,13 +2,6 @@
 
 @implementation RepoHelper
 
-// This provides us with our name for the repository. In the future, the user will be able to
-// adjust this with format flags. For now, just hard code (in one place) the policy that was
-// hard coded in multiple places.
-+ (NSString *)makeNameFromRepo: (RepoButtonDelegate *)repo {
-	return [[repo repositoryPath] lastPathComponent];
-}
-
 + (NSAttributedString *)colorizedDiffFromArray: (NSArray *)arr {
 	int i;
 	NSMutableAttributedString *res = [[NSMutableAttributedString alloc] initWithString: @""];
@@ -45,7 +38,41 @@
 	return res;
 }
 
-+ (NSString *)shortenDiff: (NSString *)diff {
++ (NSString *)shortDiff: (RepoInstance *)repo {
+	NSString *formatString = @"%s: %f Files, +%a -%d";
+	
+	NSArray *arr = [formatString componentsSeparatedByString: @"%"];
+	int i;
+	NSString *result = [arr objectAtIndex: 0];
+	for (i = 1; i < [arr count]; i++) {
+		NSString *tmp = [arr objectAtIndex: i];
+		if ([tmp length] == 0) {
+			result = [NSString stringWithFormat: @"%@%%", result];
+			i++;
+		} else {
+			unichar tmpchar = [tmp characterAtIndex: 0];
+			tmp = [tmp substringFromIndex: 1];
+			NSString *replacement = @"";
+			switch (tmpchar) {
+				// deletions
+				case 'd':
+					replacement = [NSString stringWithFormat: @"%d", [repo removedLines]];
+					break;
+				case 'a':
+					replacement = [NSString stringWithFormat: @"%d", [repo addedLines]];
+					break;
+				case 'f':
+					replacement = [NSString stringWithFormat: @"%d", [repo changedFiles]];
+					break;
+				case 's':
+					replacement = [NSString stringWithFormat: @"%@", [[repo repository] lastPathComponent]];
+					break;
+			}
+			result = [NSString stringWithFormat: @"%@%@%@", result, replacement, tmp];
+		}
+	}
+	return result;
+
 //	NSArray *parts = [diff componentsSeparatedByString: @", "];
 //	if ([parts count] == 3) {
 //		int num_files = [[parts objectAtIndex: 0] intValue];
@@ -57,7 +84,7 @@
 //		NSString *ret = [NSString stringWithFormat: @"%d files, +%d -%d", num_files, num_plus, num_minus];
 //		return ret;
 //	} else {
-		return diff;
+//		return diff;
 //	}
 }
 

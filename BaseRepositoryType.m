@@ -8,8 +8,6 @@
 
 - (id) init {
 	self = [super init];
-	diffs = [NSMutableArray arrayWithCapacity: 10];
-	[diffs retain];
 	return self;
 }
 
@@ -29,7 +27,11 @@
 - (void) setLocalChangeArguments: (NSTask *)t forRepository: (RepoInstance *)repo {
 }
 
-- (int) numHunks {
+- (int) numHunksForRepository: (RepoInstance *)repo {
+	NSArray *diffs = [[repo dict] objectForKey: @"diffs"];
+	if (!diffs)
+		diffs = [[NSArray alloc] init];
+		
 	int i;
 	int tot = 0;
 	for (i = 0; i < [diffs count]; i++) {
@@ -38,7 +40,11 @@
 	return tot;
 }
 
-- (int) addedLines {
+- (int) addedLinesForRepository: (RepoInstance *)repo {
+	NSArray *diffs = [[repo dict] objectForKey: @"diffs"];
+	if (!diffs)
+		diffs = [[NSArray alloc] init];
+		
 	int i;
 	int tot = 0;
 	for (i = 0; i < [diffs count]; i++) {
@@ -47,7 +53,11 @@
 	return tot;
 }
 
-- (int) removedLines {
+- (int) removedLinesForRepository: (RepoInstance *)repo {
+	NSArray *diffs = [[repo dict] objectForKey: @"diffs"];
+	if (!diffs)
+		diffs = [[NSArray alloc] init];
+		
 	int i;
 	int tot = 0;
 	for (i = 0; i < [diffs count]; i++) {
@@ -61,6 +71,11 @@
 	NSMutableArray *tmp = [NSMutableArray arrayWithCapacity: 10];
 	FileDiff *fd = nil;
 	
+	NSMutableArray *diffs = [[NSMutableArray alloc] initWithArray: [[repo dict] objectForKey: @"diffs"]];
+	if (!diffs)
+		diffs = [[NSArray alloc] init];
+	[[repo dict] setObject: diffs forKey: @"diffs"];
+
 	[diffs removeAllObjects];
 	for (i = 0; i < [result count]; i++) {
 		NSString *line = [result objectAtIndex: i];
@@ -82,10 +97,14 @@
 		if ([diffs count] == 1) {
 			return [[diffs objectAtIndex: 0] fileName];
 		} else {
-			return [NSString stringWithFormat: @"%d files, %d hunks, %d added, %d removed", [diffs count], [self numHunks], [self addedLines], [self removedLines]];
+			return [NSString stringWithFormat: @"%d files, %d hunks, %d added, %d removed", [diffs count], [self numHunksForRepository: repo], [self addedLinesForRepository: repo], [self removedLinesForRepository: repo]];
 		}
 	}
 	return nil;
+}
+
+- (int) changedFilesForRepository: (RepoInstance *)repo {
+	return [[[repo dict] objectForKey: @"diffs"] count];
 }
 
 - (NSString *) remoteDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {

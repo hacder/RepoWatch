@@ -7,7 +7,6 @@ char *find_execable(const char *filename);
 
 @interface BaseRepositoryType : NSObject {
 	char *executable;
-	NSMutableArray *diffs;
 }
 
 - (BOOL) validRepositoryContents: (NSArray *)contents;
@@ -31,5 +30,9 @@ char *find_execable(const char *filename);
 
 - (NSDictionary *) handleSingleLogLineAsArray: (NSArray *)arr;
 - (NSTask *)baseTaskWithRepository: (RepoInstance *)repo;
+
+- (int) removedLinesForRepository: (RepoInstance *)repo;
+- (int) addedLinesForRepository: (RepoInstance *)repo;
+- (int) changedFilesForRepository: (RepoInstance *)repo;
 
 @end
