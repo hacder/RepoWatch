@@ -66,7 +66,7 @@
 	return tot;
 }
 
-- (void) localDiffArray: (NSArray *)result toStringWithRepository: (RepoInstance *)repo {
+- (void) localDiffArray: (NSArray *)result withRepository: (RepoInstance *)repo {
 	int i;
 	NSMutableArray *tmp = [NSMutableArray arrayWithCapacity: 10];
 	FileDiff *fd = nil;
@@ -93,6 +93,13 @@
 			[tmp addObject: line];
 		}
 	}
+	[fd setLines: tmp];
+	
+	if ([diffs count]) {
+		for (i = 0; i < [diffs count]; i++) {
+			fd = [diffs objectAtIndex: i];
+		}
+	}
 }
 
 - (int) changedFilesForRepository: (RepoInstance *)repo {
@@ -111,7 +118,7 @@
 	[t launch];
 	NSString *string = [RepoHelper stringFromFile: file];
 	NSArray *result = [string componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\n\0"]];	
-	[self localDiffArray: result toStringWithRepository: repo];
+	[self localDiffArray: result withRepository: repo];
 }
 
 - (void) checkRemoteChangesWithRepository: (RepoInstance *)repo {

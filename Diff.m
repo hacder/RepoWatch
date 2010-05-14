@@ -32,6 +32,7 @@
 		if (r.location == 0)
 			countAdded++;
 		r = [curline rangeOfString: @"-"];
+		if (r.location == 0)
 			countRemoved++;
 	}
 }
