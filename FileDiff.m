@@ -7,7 +7,6 @@
 	self = [super init];
 	hunks = [NSMutableArray arrayWithCapacity: 10];
 	[hunks retain];
-	NSLog(@"\tCreating FileDiff: %@", self);
 	return self;
 }
 
@@ -41,8 +40,6 @@
 	[lines retain];
 	[hunks removeAllObjects];
 	
-	NSLog(@"\tFileDiff->setLines");
-	
 	Diff *d = nil;
 	NSMutableArray *arr = nil;
 	
@@ -56,7 +53,6 @@
 			}
 			arr = [NSMutableArray arrayWithCapacity: 10];
 			
-			NSLog(@"\t\tFileDiff->setLines create Diff object");
 			// Hunk just started!
 			d = [[Diff alloc] init];
 			[d setFile: self];
@@ -66,7 +62,6 @@
 		}
 	}
 	[d setLines: arr];
-	NSLog(@"\tFileDiff->setLines over");
 }
 
 - (void) setFileName: (NSString *)fn {

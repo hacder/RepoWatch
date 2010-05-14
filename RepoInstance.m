@@ -16,7 +16,7 @@
 }
 
 - (void)localCommitWindow {
-	NSLog(@"Wish I knew how to make the windows...");
+	[[NSNotificationCenter defaultCenter] postNotificationName: @"doCommit" object: self];
 }
 
 - (NSString *)shortTitle {
