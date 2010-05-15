@@ -39,7 +39,7 @@
 }
 
 + (NSString *)shortDiff: (RepoInstance *)repo {
-	NSString *formatString = @"%s: %f Files, +%a -%d";
+	NSString *formatString = @"%s: %f files, +%a -%d";
 	
 	NSArray *arr = [formatString componentsSeparatedByString: @"%"];
 	int i;

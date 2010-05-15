@@ -33,7 +33,18 @@
 }
 
 - (id) tableView: (NSTableView *)aTableView objectValueForTableColumn: (NSTableColumn *)aTableColumn row: (NSInteger)rowIndex {
-	return [[[currentRepo dict] objectForKey: @"diffs"] objectAtIndex: rowIndex];
+	NSDictionary *dict = [currentRepo dict];
+	if (!dict)
+		return nil;
+	
+	NSArray *diffs = [dict objectForKey: @"diffs"];
+	if (!diffs)
+		return nil;
+	
+	if ([diffs count] > rowIndex)
+		return [diffs objectAtIndex: rowIndex];
+	
+	return nil;
 }
 
 @end

@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import "RepoInstance.h"
 
 // A class representing a changeset to a single file.
 
@@ -7,6 +8,7 @@
 	NSString *fn;
 	NSArray *lines;
 	NSMutableArray *hunks;
+	RepoInstance *repoInstance;
 }
 
 - init;
@@ -16,5 +18,7 @@
 - (int) numAdded;
 - (int) numRemoved;
 - (NSString *) fileName;
+- (void) setRepo: (RepoInstance *)ri;
+- (RepoInstance *)repo;
 
 @end

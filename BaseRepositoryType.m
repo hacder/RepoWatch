@@ -84,6 +84,7 @@
 			[fd setLines: tmp];
 			
 			fd = [[FileDiff alloc] init];
+			[fd setRepo: repo];
 			[diffs addObject: fd];
 			
 			NSArray *arr = [line componentsSeparatedByString: @" "];

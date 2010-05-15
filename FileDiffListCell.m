@@ -31,30 +31,41 @@
 				NSFontAttributeName,
 				nil];
 
+	NSDictionary *attributes4 = 
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				[NSColor grayColor],
+				NSForegroundColorAttributeName,
+				[NSFont systemFontOfSize: 8],
+				NSFontAttributeName,
+				nil];
+
 	NSString *fileName = [[fd fileName] lastPathComponent];
 	int numAdded = [fd numAdded];
 	int numRemoved = [fd numRemoved];
 	
-//	NSGradient *g = [[NSGradient alloc] initWithStartingColor: [NSColor lightGrayColor] endingColor: [NSColor whiteColor]];
-//	[g drawInRect: frame angle: 90];
-
-//	[[NSColor lightGrayColor] set];
-//	[NSBezierPath fillRect: frame];
-
+	NSString *fullName = [fd fileName];
+	NSString *baseRepo = [[fd repo] repository];
+	fullName = [fullName substringFromIndex: [baseRepo length] + 1];
+	
 	NSPoint p;
-	p.x = frame.origin.x + 25;
-	p.y = frame.origin.y + 5;
+	p.x = frame.origin.x + 5;
+	p.y = frame.origin.y;
 	
 	[fileName drawAtPoint: p withAttributes: attributes];
+	p.y += 15;
 	
-	p.y += 25;
+	if (![fullName isEqualToString: fileName])
+		[fullName drawAtPoint: p withAttributes: attributes4];
+	
+	p.x += 20;
+	p.y += 10;
 	[[NSString stringWithFormat: @"+%d", numAdded] drawAtPoint: p withAttributes: attributes2];
 	
 	p.x += 30;
 	[[NSString stringWithFormat: @"-%d", numRemoved] drawAtPoint: p withAttributes: attributes2];
 	
 	p.x = 5;
-	p.y = 15;
+	p.y = frame.origin.y + 15;
 	unichar ch = 0x2713;
 	[[NSString stringWithCharacters: &ch length: 1] drawAtPoint: p withAttributes: attributes3];
 	

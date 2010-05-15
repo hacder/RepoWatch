@@ -38,6 +38,10 @@
 	return tot;
 }
 
+- (RepoInstance *)repo {
+	return repoInstance;
+}
+
 - (void) setLines: (NSArray *)l {
 	[lines autorelease];
 	lines = l;
@@ -76,6 +80,12 @@
 	[fn autorelease];
 	fn = fileName;
 	[fn retain];
+}
+
+- (void) setRepo: (RepoInstance *)ri {
+	[repoInstance autorelease];
+	repoInstance = ri;
+	[repoInstance retain];
 }
 
 @end
