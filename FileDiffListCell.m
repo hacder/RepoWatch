@@ -57,26 +57,26 @@
 	if (![fullName isEqualToString: fileName])
 		[fullName drawAtPoint: p withAttributes: attributes4];
 	
-	p.x += 20;
-	p.y += 10;
-	[[NSString stringWithFormat: @"+%d", numAdded] drawAtPoint: p withAttributes: attributes2];
-	
-	p.x += 30;
-	[[NSString stringWithFormat: @"-%d", numRemoved] drawAtPoint: p withAttributes: attributes2];
+
+	NSString *stringAdded = [NSString stringWithFormat: @"%d", numAdded];
+	NSSize s = [stringAdded sizeWithAttributes: attributes2];
+	NSString *stringRemoved = [NSString stringWithFormat: @"%d", numRemoved];
+	NSSize s2 = [stringRemoved sizeWithAttributes: attributes2];
+
+	p.y = 30;
+	p.x = frame.origin.x + frame.size.width - (s.width + s2.width + 10);
+	[[NSColor greenColor] set];
+	NSBezierPath *b = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(p.x - 5, 30, s.width + s2.width + 15, s.height) xRadius: 5.0 yRadius: 5.0];
+	[b fill];
+	[[NSColor blackColor] set];
+	[stringAdded drawAtPoint: p withAttributes: attributes2];
+	p.x += s.width + 5;
+	[stringRemoved drawAtPoint: p withAttributes: attributes2];
 	
 	p.x = 5;
 	p.y = frame.origin.y + 15;
 	unichar ch = 0x2713;
 	[[NSString stringWithCharacters: &ch length: 1] drawAtPoint: p withAttributes: attributes3];
-	
-//	NSSize s = [_date sizeWithAttributes: attributes];
-//	NSPoint p;
-//	p.x = targetWidth - s.width;
-//	p.y = 0;
-//	
-//	[_date drawAtPoint: p withAttributes: attributes];
-//	p.x = 130;
-//	[_message drawAtPoint: p withAttributes: attributes2];
 }
 
 @end
