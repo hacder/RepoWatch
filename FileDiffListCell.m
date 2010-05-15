@@ -63,7 +63,7 @@
 	NSString *stringRemoved = [NSString stringWithFormat: @"%d", numRemoved];
 	NSSize s2 = [stringRemoved sizeWithAttributes: attributes2];
 
-	p.y = 30;
+	p.y = frame.origin.y + 30;
 	p.x = frame.origin.x + frame.size.width - (s.width + s2.width + 10);
 	[[NSColor greenColor] set];
 	NSBezierPath *b = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(p.x - 5, 30, s.width + s2.width + 15, s.height) xRadius: 5.0 yRadius: 5.0];
