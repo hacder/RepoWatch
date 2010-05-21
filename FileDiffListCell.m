@@ -4,6 +4,18 @@
 
 @implementation FileDiffListCell
 
+- (NSBezierPath *)bezierPathWithRightRoundInRect: (NSRect)aRect radius:(float)radius {
+	NSBezierPath* path = [NSBezierPath bezierPath];
+	radius = MIN(radius, 0.5f * MIN(NSWidth(aRect), NSHeight(aRect)));
+	NSRect rect = NSInsetRect(aRect, radius, radius);
+	[path moveToPoint: NSMakePoint(NSMinX(aRect), NSMinY(aRect))];
+	[path appendBezierPathWithArcWithCenter: NSMakePoint(NSMaxX(rect), NSMinY(rect)) radius: radius startAngle: 270.0 endAngle: 360.0];
+	[path appendBezierPathWithArcWithCenter: NSMakePoint(NSMaxX(rect), NSMaxY(rect)) radius: radius startAngle:   0.0 endAngle:  90.0];
+	[path lineToPoint: NSMakePoint(NSMinX(aRect), NSMaxY(aRect))];
+	[path closePath];
+	return path;
+}
+
 - (void) drawWithFrame: (NSRect)frame inView: (NSView *)view {
 	FileDiff *fd = [self objectValue];
 	
@@ -25,7 +37,7 @@
 
 	NSDictionary *attributes2 = 
 			[NSDictionary dictionaryWithObjectsAndKeys:
-				[NSColor grayColor],
+				[NSColor blackColor],
 				NSForegroundColorAttributeName,
 				[NSFont systemFontOfSize: 12],
 				NSFontAttributeName,
@@ -63,12 +75,16 @@
 	NSString *stringRemoved = [NSString stringWithFormat: @"%d", numRemoved];
 	NSSize s2 = [stringRemoved sizeWithAttributes: attributes2];
 
-	p.y = frame.origin.y + 30;
+	p.y = frame.origin.y + 25;
 	p.x = frame.origin.x + frame.size.width - (s.width + s2.width + 10);
 	[[NSColor greenColor] set];
-	NSBezierPath *b = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(p.x - 5, 30, s.width + s2.width + 15, s.height) xRadius: 5.0 yRadius: 5.0];
+	NSBezierPath *b = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(p.x - 5, frame.origin.y + 25, s.width + s2.width + 15, s.height) xRadius: 5.0 yRadius: 5.0];
 	[b fill];
-	[[NSColor blackColor] set];
+	NSBezierPath *b2 = [self bezierPathWithRightRoundInRect: NSMakeRect(p.x + s.width + 2, frame.origin.y + 25, s2.width + 8, s.height) radius: 5.0];
+	[[NSColor redColor] set];
+	[b2 fill];
+	[[NSColor grayColor] set];
+	[b stroke];
 	[stringAdded drawAtPoint: p withAttributes: attributes2];
 	p.x += s.width + 5;
 	[stringRemoved drawAtPoint: p withAttributes: attributes2];
