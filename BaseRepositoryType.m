@@ -74,7 +74,6 @@
 	NSMutableArray *diffs = [[NSMutableArray alloc] initWithArray: [[repo dict] objectForKey: @"diffs"]];
 	if (!diffs)
 		diffs = [[NSArray alloc] init];
-	NSLog(@"Setting diffs");
 	[[repo dict] setObject: diffs forKey: @"diffs"];
 
 	[diffs removeAllObjects];

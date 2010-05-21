@@ -16,9 +16,6 @@ static NSImage *blue;
 }
 
 - (void) doUpdateMenu: (NSNotification *)notif {
-	// Do this before we do work, so that it serves as a stupid little race preventor.
-	
-	NSLog(@"updateMenu");
 	[lastUpdate release];
 	lastUpdate = [NSDate date];
 	[lastUpdate retain];
