@@ -92,17 +92,8 @@ NSInteger sortRepositories(id num1, id num2, void *context) {
 	}
 	
 	RepoMenuItem *menuItem = [rbd menuItem];
-	if (!menuItem) {
+	if (!menuItem)
 		menuItem = [[RepoMenuItem alloc] initWithRepository: rbd];
-		if ([rbd hasLocal]) {
-			[menuItem setOffStateImage: red];
-		} else if ([rbd hasRemote]) {
-			[menuItem setOffStateImage: yellow];
-		} else {
-			[menuItem setOffStateImage: green];
-		}
-
-	}
 	if (!menuItem)
 		return;
 	

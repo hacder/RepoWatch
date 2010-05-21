@@ -119,7 +119,7 @@ static MainController *shared;
 
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitDone:) name: @"commitDone" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitStart:) name: @"commitStart" object: nil];
-    return self;
+	    return self;
 }
 
 // The user has asked to open a specific file. Actually, this can easily be a directory,

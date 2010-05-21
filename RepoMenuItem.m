@@ -2,8 +2,14 @@
 #import "RepoInstance.h"
 #import "MainController.h"
 #import "LogMenuView.h"
+#import "BubbleFactory.h"
 
 @implementation RepoMenuItem
+
+static NSImage *green;
+static NSImage *yellow;
+static NSImage *red;
+static NSImage *blue;
 
 - (RepoInstance *)repository {
 	return repo;
@@ -11,6 +17,8 @@
 
 - (void) doUpdateMenu: (NSNotification *)notif {
 	// Do this before we do work, so that it serves as a stupid little race preventor.
+	
+	NSLog(@"updateMenu");
 	[lastUpdate release];
 	lastUpdate = [NSDate date];
 	[lastUpdate retain];
@@ -34,6 +42,15 @@
 	
 	dispatch_async(dispatch_get_main_queue(), ^{
 		int i;
+
+		if ([repo hasLocal]) {
+			[self setOffStateImage: red];
+		} else if ([repo hasRemote]) {
+			[self setOffStateImage: yellow];
+		} else {
+			[self setOffStateImage: green];
+		}
+
 		NSMenuItem *mi;
 		[sub removeAllItems];
 		for (i = 0; i < [dateStrings count]; i++) {
@@ -88,6 +105,17 @@
 	lock = [[NSLock alloc] init];
 	[rep setMenuItem: self];
 	[self setTarget: rep];
+	
+	if (!green) {
+		green = [BubbleFactory getGreenOfSize: 10];
+		[green retain];
+		red = [BubbleFactory getRedOfSize: 10];
+		[red retain];
+		yellow = [BubbleFactory getYellowOfSize: 10];
+		[yellow retain];
+		blue = [BubbleFactory getBlueOfSize: 10];
+		[blue retain];
+	}
 	
 	dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setTimeStyle: NSDateFormatterShortStyle];
