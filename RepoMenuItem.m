@@ -22,6 +22,7 @@ static NSImage *blue;
 	
 	NSArray *logs = [repo logs];
 	NSArray *pending = [repo pending];
+	
 	int i;
 	
 	NSMutableArray *dateStrings = [NSMutableArray arrayWithCapacity: [logs count]];

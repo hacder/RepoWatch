@@ -226,6 +226,7 @@
 			[arr addObject: dict];
 	}
 	[[repo dict] setObject: arr forKey: @"logs"];
+	[self hasRemoteWithRepository: repo];
 	if ([[[repo dict] objectForKey: @"hasRemote"] boolValue])
 		[self pendingLogsWithRepository: repo];
 }

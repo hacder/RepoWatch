@@ -37,7 +37,7 @@ static GitRepository *shared = nil;
 }
 
 - (void) setLocalOnlyArguments: (NSTask *)t forRepository: (RepoInstance *)data {
-	NSString *s = [NSString stringWithFormat: @"master..%@/master", [[data dict] objectForKey: @"remoteName"]];
+	NSString *s = [NSString stringWithFormat: @"master...%@/master", [[data dict] objectForKey: @"remoteName"]];
 	[t setArguments: [NSArray arrayWithObjects: @"log", @"-n", @"10", @"--pretty=%h", s, nil]];
 }
 
