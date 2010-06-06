@@ -6,7 +6,7 @@
 	self = [super init];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(doCommit:) name: @"doCommit" object: nil];
-	cell = [[FileDiffListCell alloc] initTextCell: @"poop"];
+	cell = [[FileDiffListCell alloc] initTextCell: @""];
 	[cell setBordered: NO];
 	[cell setBezeled: NO];
 	return self;

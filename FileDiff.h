@@ -9,6 +9,7 @@
 	NSArray *lines;
 	NSMutableArray *hunks;
 	RepoInstance *repoInstance;
+	BOOL included;
 }
 
 - init;
@@ -20,5 +21,7 @@
 - (NSString *) fileName;
 - (void) setRepo: (RepoInstance *)ri;
 - (RepoInstance *)repo;
+- (void) setIncluded: (BOOL)i;
+- (BOOL) getIncluded;
 
 @end

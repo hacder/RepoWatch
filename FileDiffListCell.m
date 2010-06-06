@@ -4,6 +4,40 @@
 
 @implementation FileDiffListCell
 
+- (id) initTextCell: (NSString *)text {
+	self = [super initTextCell: text];
+	[self setButtonType: NSSwitchButton];
+	[self setEnabled: YES];
+	attributes =
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSColor blackColor],
+			NSForegroundColorAttributeName,
+			[NSFont systemFontOfSize: 16],
+			NSFontAttributeName,
+			nil];
+	[attributes retain];
+
+	attributes2 = 
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSColor blackColor],
+			NSForegroundColorAttributeName,
+			[NSFont systemFontOfSize: 12],
+			NSFontAttributeName,
+			nil];
+	[attributes2 retain];
+
+	attributes4 = 
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSColor grayColor],
+			NSForegroundColorAttributeName,
+			[NSFont systemFontOfSize: 8],
+			NSFontAttributeName,
+			nil];
+	[attributes4 retain];
+	
+	return self;
+}
+
 - (NSBezierPath *)bezierPathWithRightRoundInRect: (NSRect)aRect radius:(float)radius {
 	NSBezierPath* path = [NSBezierPath bezierPath];
 	radius = MIN(radius, 0.5f * MIN(NSWidth(aRect), NSHeight(aRect)));
@@ -16,41 +50,20 @@
 	return path;
 }
 
+- (void) setObjectValue: (id <NSCopying, NSObject>) object {
+	if ([object isKindOfClass: [FileDiff class]]) {
+		[super setObjectValue: [NSNumber numberWithBool: [(FileDiff *)object getIncluded]]];
+		[realObjectValue autorelease];
+		realObjectValue = object;
+		[realObjectValue retain];
+	} else {
+		[super setObjectValue: object];
+	}
+}
+
 - (void) drawWithFrame: (NSRect)frame inView: (NSView *)view {
-	FileDiff *fd = [self objectValue];
+	FileDiff *fd = (FileDiff *)realObjectValue;
 	
-	NSDictionary *attributes = 
-			[NSDictionary dictionaryWithObjectsAndKeys:
-				[NSColor blackColor],
-				NSForegroundColorAttributeName,
-				[NSFont systemFontOfSize: 16],
-				NSFontAttributeName,
-				nil];
-
-	NSDictionary *attributes3 = 
-			[NSDictionary dictionaryWithObjectsAndKeys:
-				[NSColor greenColor],
-				NSForegroundColorAttributeName,
-				[NSFont systemFontOfSize: 24],
-				NSFontAttributeName,
-				nil];
-
-	NSDictionary *attributes2 = 
-			[NSDictionary dictionaryWithObjectsAndKeys:
-				[NSColor blackColor],
-				NSForegroundColorAttributeName,
-				[NSFont systemFontOfSize: 12],
-				NSFontAttributeName,
-				nil];
-
-	NSDictionary *attributes4 = 
-			[NSDictionary dictionaryWithObjectsAndKeys:
-				[NSColor grayColor],
-				NSForegroundColorAttributeName,
-				[NSFont systemFontOfSize: 8],
-				NSFontAttributeName,
-				nil];
-
 	NSString *fileName = [[fd fileName] lastPathComponent];
 	int numAdded = [fd numAdded];
 	int numRemoved = [fd numRemoved];
@@ -91,8 +104,8 @@
 	
 	p.x = 5;
 	p.y = frame.origin.y + 15;
-	unichar ch = 0x2713;
-	[[NSString stringWithCharacters: &ch length: 1] drawAtPoint: p withAttributes: attributes3];
+	
+	[super drawWithFrame: frame inView: view];
 }
 
 @end

@@ -38,6 +38,14 @@
 	return tot;
 }
 
+- (void) setIncluded: (BOOL)i {
+	included = i;
+}
+
+- (BOOL) getIncluded {
+	return included;
+}
+
 - (RepoInstance *)repo {
 	return repoInstance;
 }
