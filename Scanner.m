@@ -173,7 +173,7 @@ void mc_callbackFunction(
 
 - (void) openFile: (NSString *)filename withContents: (NSArray *)contents {
 	NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-	NSDictionary *dict = [def dictionaryForKey: @"manualRepos"];
+	NSDictionary *dict = [def dictionaryForKey: @"cachedRepos"];
 	NSMutableDictionary *dict2;
 	if (dict) {
 		dict2 = [NSMutableDictionary dictionaryWithDictionary: dict];
@@ -181,9 +181,10 @@ void mc_callbackFunction(
 		dict2 = [NSMutableDictionary dictionaryWithCapacity: 1];
 	}
 	[dict2 setObject: [[NSDictionary alloc] init] forKey: filename];
-	[def setObject: dict2 forKey: @"manualRepos"];
-	
+	[def setObject: dict2 forKey: @"cachedRepos"];
 	[def synchronize];
+	
+	NSLog(@"Got here!");
 }
 
 @end

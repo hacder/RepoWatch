@@ -35,7 +35,6 @@ static MainController *shared;
 		
 		[butt setAction: @selector(commit:)];
 	
-//		[fileList setDataSource: rbd];
 		[fileList setDataSource: nil];
 	} else {
 		// TODO: Make this the upstream commit message.
@@ -130,6 +129,8 @@ static MainController *shared;
 	[op setCanChooseFiles: NO];
 	[op setCanChooseDirectories: YES];
 	[op setAllowsMultipleSelection: NO];
+	
+	NSLog(@"Got to openFile:");
 
 	// TODO: Find some way to verify directory before they hit OK. This may be difficult since we want to be
 	// able to scan. MAYBE there is a toggle for scan, or a different menu item. That way the simple, most
