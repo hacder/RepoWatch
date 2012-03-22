@@ -115,7 +115,11 @@ void mc_callbackFunction(
 }
 
 - (void) searchAllPaths {
-	[self searchPath: [@"~" stringByStandardizingPath]];
+    NSString *baseDir = [[NSUserDefaults standardUserDefaults] stringForKey: @"baseDir"];
+    if (baseDir == nil)
+        baseDir = [@"~" stringByStandardizingPath];
+    
+    [self searchPath: baseDir];
 }
 
 - (void) searchPath: (NSString *)path {
@@ -155,7 +159,7 @@ void mc_callbackFunction(
 			struct timespec ts;
 			ts.tv_nsec = delay;
 			ts.tv_sec = 0;
-			NSLog(@"Delaying for %d.%d seconds to ease off on CPU usage, %d paths to go", 0, delay, [paths count]);
+			// NSLog(@"Delaying for %d.%d seconds to ease off on CPU usage, %d paths to go", 0, delay, [paths count]);
 			nanosleep(&ts, NULL);
 		}
 	}
