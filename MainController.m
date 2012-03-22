@@ -4,7 +4,6 @@
 #import "RepoList.h"
 #import "RepoInstance.h"
 #import "HotKey.h"
-#import <Sparkle/Sparkle.h>
 #import <AppKit/NSApplication.h>
 
 static MainController *shared;
@@ -63,10 +62,6 @@ static MainController *shared;
 	[commitWindow close];
 }
 
-- (void) updater: (SUUpdater *)updater didFindValidUpdate: (SUAppcastItem *)item {
-	[NSApp activateIgnoringOtherApps: YES];
-}
-
 - init {
 	self = [super init];
 	shared = self;
@@ -101,24 +96,9 @@ static MainController *shared;
 
 	setup_hotkey(self);
 	
-	// Set up Sparkle. Unfortunately I haven't started using this yet, and I'm not sure how to make it do the
-	// updates correctly, but it's here already.
-	SUUpdater *updater = [SUUpdater sharedUpdater];
-	[updater setDelegate: self];
-	NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-	NSString *build = [infoDict objectForKey: @"CFBundleVersion"];
-	
-	NSURL *appcastURL = [NSURL URLWithString: [NSString stringWithFormat: @"http://www.doomstick.com/shine/appcast.php?id=7&uuid=%@&version=%@&osv=%f",
-			[[NSUserDefaults standardUserDefaults] stringForKey: @"UUID"],
-			[build stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding],
-			NSAppKitVersionNumber]];
-		NSLog(@"Using url: %@", appcastURL);
-	[updater setFeedURL: appcastURL];
-	[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
-
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitDone:) name: @"commitDone" object: nil];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(commitStart:) name: @"commitStart" object: nil];
-	    return self;
+	return self;
 }
 
 // The user has asked to open a specific file. Actually, this can easily be a directory,

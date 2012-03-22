@@ -11,10 +11,12 @@ OBJ = $(addsuffix .o, $(basename $(SRC)))
 PRO_OBJ = $(addsuffix .o, $(basename $(PRO_SRC)))
 
 RepoWatch: $(OBJ) Info.plist
-	gcc -Wall -Werror -F./RepoWatch.app/Contents/Frameworks -framework Growl -framework Sparkle -framework Carbon -framework Foundation \
+	gcc -Wall -Werror -framework Carbon -framework Foundation \
 		-framework AppKit -lobjc $(OBJ) -g -o RepoWatch -arch x86_64 -arch i386
 	cp RepoWatch RepoWatch.app/Contents/MacOS/
 	cp Info.plist RepoWatch.app/Contents/
+	rm -rf RepoWatch.app/Contents/Resources/MainMenu.nib
+	cp -r MainMenu.nib RepoWatch.app/Contents/Resources/
 
 clean:
 	rm -f *.o RepoWatch RepoWatchPro
